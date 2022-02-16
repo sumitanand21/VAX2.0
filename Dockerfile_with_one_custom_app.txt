@@ -1,0 +1,10 @@
+From python:3.6-buster
+RUN apt-get update
+RUN apt-get install -y git
+RUN apt-get install -y libsasl2-dev python-dev libldap2-dev libssl-dev psmisc libpq-dev
+RUN apt-get -y install python3-pip
+ADD userconfig.json .
+ADD container /app/container
+RUN pip install katanaframework
+RUN ["/usr/local/bin/appmanage.py", "appconfig", "userconfig.json"]
+CMD ["/usr/local/bin/manage.py", "runserver","0.0.0.0:8000"]

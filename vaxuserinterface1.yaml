@@ -1,0 +1,287 @@
+# Note : SOCKET_SCHEDULER_EXP_TIME is in minutes [ 60 to 4320 (3 days) | recommended : 360 ]
+# Note : In EL_URL replace modelName value with '_vaxModelNamevax_' for dynamizing the url in UI
+# Note : In FORECAST_GRAFANA_URL replace data Id value with '_vax_var-PM_name_vax_' for dynamizing the url in UI
+apiVersion: v1
+kind: Template
+metadata:
+  name: userinterface
+parameters:
+- description: userinterface
+  displayName: userinterface
+  name: DOCKER_POSTGRES_IMAGE_NAME
+  value: postgres:10.4
+
+- description: userinterface
+  displayName: userinterface
+  name: DOCKER_FRONTEND_IMAGE_NAME
+  value:
+
+- description: userinterface
+  displayName: userinterface
+  name: DOCKER_BACKEND_IMAGE_NAME
+  value:
+
+- description: NFS SERVER
+  displayName: userinterface
+  name: NFS_SERVER
+  value: 
+
+- description: userinterface
+  displayName: userinterface
+  name: CONFIG_MAP_NAME
+  value: war-config
+
+objects:
+- apiVersion: v1
+  kind: PersistentVolume
+  metadata:
+    name: katana-db-volume-vax-ui
+    namespace:
+  spec:
+    storageClassName: manual
+    capacity:
+      storage: 2Gi
+    persistentVolumeReclaimPolicy: Retain
+    accessModes:
+    - ReadWriteMany
+    nfs:
+      path: /mnt/k8sMount/data/warrior/katana-db-vax
+      server: ${NFS_SERVER}
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    name: katana-db-volume-claim-vax
+    namespace:
+    creationTimestamp: null
+  spec:
+    storageClassName: manual
+    accessModes:
+    - ReadWriteMany
+    resources:
+      requests:
+        storage: 1Gi
+    volumeName: katana-db-volume-vax-ui
+- apiVersion: extensions/v1beta1
+  kind: Deployment
+  metadata:
+    name: ml-angular-userinterface-katana-db
+    namespace:
+    creationTimestamp: null
+  spec:
+    replicas: 1
+    strategy:
+      type: Recreate
+    template:
+      metadata:
+        labels:
+          app: katana-db
+        creationTimestamp: null
+      spec:
+        containers:
+        - name: katana-db
+          image: ${DOCKER_POSTGRES_IMAGE_NAME} 
+          imagePullPolicy: IfNotPresent
+          envFrom:
+          - configMapRef:
+              name: katana-db-config
+          volumeMounts:
+          - mountPath: /var/lib/postgresql/data
+            name: katana-db
+          resources:
+            limits:
+              cpu: 300m
+              memory: 300M
+            requests:
+              cpu: 100m
+              memory: 100M
+        volumes:
+        - name: katana-db
+          persistentVolumeClaim:
+            claimName: katana-db-volume-claim-vax
+
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: katana-db
+  spec:
+    type: ClusterIP
+    selector:
+      app: katana-db
+    ports:
+      - port: 5432
+        targetPort: 5432
+        protocol: TCP
+
+- apiVersion: v1
+  kind: ConfigMap
+  metadata:
+    name: katana-db-config
+    labels:
+      app: katana-db
+  data:
+    POSTGRES_PASSWORD: qwerty
+    POSTGRES_USER: warrior
+
+
+- apiVersion: v1
+  kind: PersistentVolume
+  metadata:
+    name: katana-configs-volume-vax
+    namespace:
+  spec:
+    storageClassName: manual
+    capacity:
+      storage: 2Gi
+    persistentVolumeReclaimPolicy: Retain
+    accessModes:
+    - ReadWriteMany
+    nfs:
+      path: /mnt/k8sMount/data/warrior/katana-configs-vax
+      server: ${NFS_SERVER}
+
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    name: katana-configs-volume-claim-vax
+    namespace:
+    creationTimestamp: null
+  spec:
+    storageClassName: manual
+    accessModes:
+    - ReadWriteMany
+    resources:
+      requests:
+        storage: 1Gi
+    volumeName: katana-configs-volume-vax
+         
+- apiVersion: extensions/v1beta1
+  kind: Deployment
+  metadata:
+    name: ml-angular-userinterface-warrior
+    namespace:
+    creationTimestamp: null
+  spec:
+    replicas: 1
+    strategy:
+      type: Recreate
+    template:
+      metadata:
+        labels:
+          app: warrior
+        creationTimestamp: null
+      spec:
+        hostAliases:
+        - ip: "127.0.0.1"
+          hostnames:
+          - "backend"
+          - "frontend"
+        initContainers:
+          - name: init-backend
+            imagePullPolicy: IfNotPresent
+            image: ${DOCKER_BACKEND_IMAGE_NAME}
+            command: ["sh", "-c"]
+            args: ["cp -n -r /katana/katana_configs/* /tmp/katana/katana_configs; sleep 1"]
+            volumeMounts:
+              - mountPath: /tmp/katana/katana_configs
+                name: katana-configs-vax
+        containers:
+        - name: backend
+          imagePullPolicy: IfNotPresent
+          image: ${DOCKER_BACKEND_IMAGE_NAME}
+          command: ["sh", "-c"]
+          args: [
+              '
+              appmanage.py appconfig /apps/InstallApp.json || true ;
+              manage.py collectstatic --noinput;
+              manage.py makemigrations;
+              manage.py migrate --database postgresql;
+              echo "from django.contrib.auth import get_user_model; User = get_user_model(); x = User.objects.create_superuser(''admin'', '''', ''admin'') if not User.objects.filter(username=''admin'').exists() else User.objects.get(username=''admin''); x.set_password(''admin''); x.save()" | manage.py shell;
+              uwsgi -b 65535 --socket :4000 --workers 100 --cpu-affinity 1 --module katana.wui.wsgi --py-autoreload 1 --static-map /static=/usr/local/lib/python3.7/site-packages/static;
+              ',
+            ]
+  
+          env:
+            - name: DB_HOST
+              value: "katana-db"
+            - name: DB_NAME
+              value: "warrior"
+            - name: DB_PASSWORD
+              value: "qwerty"
+            - name: DB_USER
+              value: "warrior"
+            - name: pipmode
+              value: "True"
+            - name: KATANA_CRYPTO_KEY
+              value: ""
+          volumeMounts:
+          - mountPath: /katana/katana_configs
+            name: katana-configs-vax
+          - mountPath: "/etc/config"
+            name: config
+          - mountPath: /usr/local/lib/python3.7/site-packages/static/mnt/k8sMount/ml/profiler
+            name: classification  
+        - name: frontend
+          imagePullPolicy: IfNotPresent
+          image: ${DOCKER_FRONTEND_IMAGE_NAME}
+          ports:
+          - containerPort: 8443
+          
+        restartPolicy: Always
+        nodeSelector:
+          node-app: ui-warrior
+        volumes:
+        - name: katana-configs-vax
+          persistentVolumeClaim:
+            claimName: katana-configs-volume-claim-vax
+        - name: classification
+          nfs:
+            server: ${NFS_SERVER}
+            path: /mnt/k8sMount/ml/profiler
+        - name: config
+          configMap:
+            name: war-config
+  status: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: warrior
+    creationTimestamp: null
+  spec:
+    selector:
+      app: warrior
+    type: NodePort
+    ports:
+    - nodePort: 30298
+      port: 8443
+      protocol: TCP
+      targetPort: 8443
+  status:
+    loadBalancer: {} 
+- apiVersion: v1
+  kind: ConfigMap
+  metadata:
+    creationTimestamp: 2020-04-06T18:52:05Z
+    name: war-config
+    labels:
+      chart: "ml-angular-userinterface-0.1.0-SNAPSHOT"
+  data:
+    warrior_conf.conf: |
+      [WARRIOR]
+      FORECAST_POD=30920
+      FORECAST_ORDERID=1
+      FORECAST_GRAFANA=32300/d/CijHdYGMk/pm_forcast_1 
+      FORECAST_GRAFANA_URL=32300/d/CijHdYGMk/pm_forcast_1?orgId=1&orderId=1&var-PM_name=_vax_var-PM_name_vax_&kiosk=tv&refresh=5s
+      ANOMALY_POD=30807
+      SCHEDULER_POD=30189
+      CORRELATION_POD=30065
+      CLASSIFICATION_POD=31126
+      DATAINSIGHT_POD=31007
+      FORECAST_SOCKET=31005/socket
+      ANOMALY_SOCKET=31006/socket
+      PROFILER_SOCKET=31004/socket
+      DATAINSIGHT_SOCKET=31005/socket
+      ANOMALY_PROFILER=anomaly_profiler*
+      CLASSIFICATION_PROFILER=basic_profiler*
+      SOCKET_SCHEDULER_EXP_TIME=360
+      EL_POD=32101
+      EL_URL=/app/dashboards#/view/093906e0-6d22-11eb-933b-df15118cab21?_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-1M,to:now))&_a=(description:'',filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'9ffb3930-6468-11eb-80b3-01f3d29be0ec',key:kafka_consumer.modelName,negate:!f,params:(query:'_vaxModelNamevax_'),type:phrase),query:(match_phrase:(kafka_consumer.modelName:'_vaxModelNamevax_')))),fullScreenMode:!t,options:(hidePanelTitles:!f,useMargins:!t),query:(language:kuery,query:''),timeRestore:!f,title:'Loss Histogram',viewMode:view)
