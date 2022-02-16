@@ -1,0 +1,333 @@
+<div class="parent-main">
+    <div class="feature-head">
+        <div class="no-height">
+            <form #upsertDataSet="ngForm">
+            <div class="header-pad">
+                <div class="mar-b-header">
+                    <div class="action-label data-set mar-b-label">Name:</div>
+                    <div class="wrap-mat">
+                        <input autocomplete="off" maxlength="30" matInput class="form-control input-feild-name" type="text" placeholder="Name"
+                        name="custname" [(ngModel)]="dataSetName" [disabled]="upsertType === 'U'" [appAlphaNumeric]="'text'" required>
+
+                        <!-- <mat-select disableOptionCentering class="form-control drop-mat mat_width_css"
+                            [(ngModel)]="selectedDataSet" (selectionChange)="OnDDChangeAction('dataSet')">
+                            <mat-option hidden disabled value="">Select</mat-option>
+                            <mat-option *ngFor="let dataSetObj of dataSetDD" [value]="dataSetObj">{{dataSetObj}}
+                            </mat-option>
+                        </mat-select> -->
+                    </div>
+                </div>
+                <div class="mar-b-header">
+                    <div class="action-label data-set mar-b-label">Data Source Type:</div>
+                    <div class="wrap-mat-rd">
+                        <div class="setdisp">
+                            <label class="check-outer">
+                                <input autocomplete="off" type="checkbox" [(ngModel)]="stored" id="storedid" name="storedNm" [required]="!stream" />
+                                <span class="checkmark"></span>
+                            </label>
+                            <div class="text-data">Stored Data</div>
+                        </div>
+
+                        <div class="setdisp">
+                            <label class="check-outer">
+                                <input autocomplete="off" type="checkbox" [(ngModel)]="stream" id="streamid" name="streamNm" [required]="!stored" />
+                                <span class="checkmark"></span>
+                            </label>
+                            <div class="text-data">Stream Data</div>
+                        </div>
+                        <!-- <mat-radio-group class="radio-feild-model" aria-label="Select an option" name="options" [(ngModel)]="options">
+                            <mat-radio-button [value]="true" name="StoreData" class="mat-rd-btn-s2">
+                                Stored Data
+                            </mat-radio-button>
+                            <mat-radio-button [value]="false" class="mat-rd-btn-s2 predifined_radio_css" name="StreamData">
+                               Stream Data
+                            </mat-radio-button>
+                        </mat-radio-group> -->
+                    </div>
+                </div>
+                <div class="action-label data-set mar-b-label ">Job Type:</div>
+
+                <div class="wrap-mat">
+                    <mat-select  disableOptionCentering name="jobtypeNm" [(ngModel)]="selectedJobType" placeholder="Select" class="form-control drop-mat mat_width_css" multiple required>
+                        <mat-select-trigger>
+                          {{selectedJobType ? selectedJobType[0] : ''}}
+                          <span *ngIf="selectedJobType.length > 1" class="example-additional-selection">
+                            (+{{selectedJobType.length - 1}} {{selectedJobType.length === 2 ? 'other' : 'others'}})
+                          </span>
+                        </mat-select-trigger>
+                        <mat-option *ngFor="let dataSource of jobTypeList" [value]="dataSource">
+                            {{dataSource}}</mat-option>
+                      </mat-select>
+                </div>
+                <div class="mar-b-header mar-t-22">
+                    <!-- <div class="action-label data-set mar-b-label file-feild-label">Description:</div>
+                    <div class="wrap-mat">
+                        <input autocomplete="off" matInput class="form-control input-feild-name" type="text" placeholder="Description"
+                            [appAlphaNumeric]="'text'">
+
+                  
+                    </div> -->
+                    <div class="wrap-mat-rd">
+                        <mat-radio-group class="radio-feild-model" aria-label="Select an option" name="options" [(ngModel)]="options" (change)="onOptionChange()">
+                            <mat-radio-button [value]="true" name="StoreData" class="mat-rd-btn-s2">
+                                Configuration
+                            </mat-radio-button>
+                            <mat-radio-button [value]="false" class="mat-rd-btn-s2 predifined_radio_css" name="StreamData">
+                               File Upload
+                            </mat-radio-button>
+                        </mat-radio-group>
+                    </div>
+                </div>
+
+                <div class="stored_data_div bdr-seperator">
+                    <div class="mar-b-header">
+                        <div *ngIf="options">
+                        <div class="action-label data-set mar-b-label">Configuration:</div>
+                        <div class="wrap-mat">
+                            <mat-select disableOptionCentering placeholder="Select" class="form-control drop-mat mat_width_css"
+                            name="ConfigurationNm" [(ngModel)]="selectedConfiguration" (selectionChange)="getConfigDetails(selectedConfiguration)" [required]="options">
+                                <mat-option *ngFor="let configurationObj of configurationDD" [value]="configurationObj">
+                                    {{configurationObj}}</mat-option>
+                            </mat-select>
+                        </div>
+                    </div>
+                    <div *ngIf="!options">
+                        <div class="action-label data-set mar-b-label">Select File:</div>
+                        <div class="wrap-mat max-w">
+                            <div class="wrap-file">
+                                <button type="button" class="browse-btn">Choose File</button>
+                                <label class="label-txt">{{fileName ? fileName : 'No file chosen'}}</label>
+                                <input autocomplete="off" class="form-control file-feild upload-file" type="file" placeholder="Name" (change)="saveFileTOBlob($event)">
+                            </div>
+                            
+                        </div>
+                    </div>
+                    </div>
+
+                 
+                    
+                    <div class="mar-b-header">
+                        <div class="action-label data-set mar-b-label">DB Type:</div>
+                        <div class="wrap-mat">
+                            <mat-select disableOptionCentering class="form-control drop-mat mat_width_css" placeholder="Select"
+                            name="datasrc" [(ngModel)]="configurationDet.selectedDataSource" required>
+                                <mat-option *ngFor="let storeddataSource of configurationDet.storeddataSourceList" [value]="storeddataSource.dbType">
+                                    {{storeddataSource.dbType}}</mat-option>
+                            </mat-select>
+                        </div>
+                    </div>
+
+                    <!-- <div class="database_div" *ngIf="selectedDataSource === 'KAFKA'">                        
+                        <div class="action-label data-set mar-b-label file-feild-label">Data Base:</div>
+                        <div class="wrap-mat">
+                            <mat-select disableOptionCentering class="form-control drop-mat mat_width_css"
+                            name="database" [(ngModel)]="selectedDatabase">
+                                <mat-option *ngFor="let dataSource of databaseList" [value]="dataSource">
+                                    {{dataSource}}</mat-option>
+                            </mat-select>
+                        </div>
+                    </div> -->
+                    <div class="table_div" *ngIf="configurationDet.step1Name">
+                        <div class="action-label data-set mar-b-label file-feild-label">{{configurationDet.step1Name}}:</div>
+                         <div class="wrap-mat">
+                             <mat-select disableOptionCentering class="form-control drop-mat mat_width_css" placeholder="Select"
+                             name="step1det" [(ngModel)]="configurationDet.selectedStep1" (selectionChange)="onStep1Change(configurationDet.selectedStep1)" [required]="configurationDet.step1Name">
+                                 <mat-option *ngFor="let step1Obj of configurationDet.step1DD" [value]="step1Obj">
+                                     {{step1Obj}}</mat-option>
+                             </mat-select>
+                         </div>
+                     </div>
+
+                    <div class="table_div" *ngIf="configurationDet.step2Name">
+                       <div class="action-label data-set mar-b-label file-feild-label">{{configurationDet.step2Name}}:</div>
+                        <div class="wrap-mat">
+                            <mat-select disableOptionCentering class="form-control drop-mat mat_width_css" placeholder="Select"
+                            name="step2det" [(ngModel)]="configurationDet.selectedStep2" [required]="configurationDet.step2Name">
+                                <mat-option *ngFor="let step2Obj of configurationDet.step2DD" [value]="step2Obj">
+                                    {{step2Obj}}</mat-option>
+                            </mat-select>
+                        </div>
+                    </div>
+                    <br>
+                    <button class="shadowbtn btn-primary run-cor-btn run-cor-width" type="button" (click)="getFeatureListValidation()">Fetch Features</button>
+                </div>
+
+                <!-- <div class="stream_data_div" *ngIf="false">
+                    <div class="mar-b-header bdr-seperator">
+                        <div class="action-label data-set mar-b-label">Data Source:</div>
+                        <div class="wrap-mat">
+                            <mat-select disableOptionCentering class="form-control drop-mat mat_width_css"
+                            name="datasrc1" [(ngModel)]="selectedstreamDataSource">
+                                <mat-option *ngFor="let dataSource of streamdataSourceList" [value]="dataSource">
+                                    {{dataSource}}</mat-option>
+                            </mat-select>
+                        </div>
+                    </div>
+                    <div>
+                    <div class="action-label data-set mar-b-label file-feild-label">Select File:</div>
+                        <div class="wrap-mat">
+                            <input autocomplete="off" class="form-control file-feild " type="file" placeholder="Name">
+                        </div>
+                    </div>
+                    <div class="database_div" *ngIf="selectedstreamDataSource === 'KAFKA'">                        
+                        <div class="action-label data-set mar-b-label file-feild-label">Data Base:</div>
+                        <div class="wrap-mat">
+                            <mat-select disableOptionCentering class="form-control drop-mat mat_width_css"
+                            name="database1" [(ngModel)]="storedselectedDatabase">
+                                <mat-option *ngFor="let dataSource of databaseList" [value]="dataSource">
+                                    {{dataSource}}</mat-option>
+                            </mat-select>
+                        </div>
+                    </div>
+                    <div class="table_div">
+                        <div class="action-label data-set mar-b-label file-feild-label" *ngIf="selectedstreamDataSource === 'KAFKA'">Table:</div>
+                        <div class="action-label data-set mar-b-label file-feild-label" *ngIf="selectedstreamDataSource === 'GRPC'">Servers:</div>
+                        <div class="wrap-mat">
+                            <mat-select disableOptionCentering class="form-control drop-mat mat_width_css"
+                            name="selval1" [(ngModel)]="selectedTable">
+                                <mat-option *ngFor="let dataSource of tableList" [value]="dataSource">
+                                    {{dataSource}}</mat-option>
+                            </mat-select>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="stored_data_btns">
+                        <button type="button" routerLink="/datamanagement" class="back_css_stream shadowbtn btn btn-default cancel-mod">Back</button>
+                        <button type="button" class="save_css_stream shadowbtn btn-primary run-cor-btn run-cor-width" (click)="saveDataSetDetails()">Save DataSet</button>
+                    </div>
+                </div> -->
+
+            </div>
+           </form>
+        </div>
+    </div>
+
+
+
+    <div class="feature-body df-col">
+
+        <div class="dc-flex body-head">
+            <div class="feature-head-text">All Features <span
+                    class="feature-count-text">({{featureDetails.length}})</span></div>
+
+            <div class="shift-right">
+                <button type="button" routerLink="/datamanagement" class="shadowbtn btn btn-default cancel-mod">Back</button>
+                <button type="button" class="shadowbtn btn btn-default cancel-mod" (click)="saveDataSetDetails()">Save Data
+                    Set</button>
+            </div>
+
+        </div>
+
+        <div class="body-tab f-max df-col">
+            <div *ngIf="featureLoader" class="spinner-div col-12">
+                <mat-progress-spinner color="slategrey" mode="indeterminate">
+                </mat-progress-spinner>
+            </div>
+
+            <div *ngIf="!featureLoader">
+                <div class="page_css_view">
+                    <div class="paginate_css">
+                        <span>
+                            <!-- <i class="fa fa-search search_fafa" aria-hidden="true">
+                            </i> -->
+                            <mat-icon aria-hidden="false" class="search_mat" aria-label="search icon">search</mat-icon>
+                            <input autocomplete="off" maxlength="150" matInput class="form-control css_search" type="text" [(ngModel)]="searchFilter"
+                                placeholder="Search" (ngModelChange)="onsearchChange(searchFilter)">
+                        </span>
+                    </div>
+                    <div class="dc-flex paginate-align">
+                        <pagination-template #pT="paginationApi" [id]="config.id" class="dc-flex"
+                            (pageChange)="changepage($event)">
+                            <div class="dc-flex process_rows_css">
+                                <span class="mar-r-8 paginate-text">Rows:</span>
+                                <mat-select disableOptionCentering class="select-page" [(ngModel)]="itemPerPage"
+                                    (selectionChange)="setNewPageSize(itemPerPage)">
+                                    <mat-option *ngFor="let pgrec of pageArr" [value]="pgrec">{{pgrec}}</mat-option>
+                                </mat-select>
+                            </div>
+                            <div class="pagination-previous" [class.disabled]="pT.isFirstPage()">
+                                <button type="button" class="pagination-btn" (click)="pT.previous()"
+                                    [disabled]="pT.isFirstPage()">
+                                    < </button>
+                            </div>
+
+                            <div class="dc-flex process_matselect">
+                                <span class="paginate-text"> Page</span>
+                                <input autocomplete="off" matInput class="currpage-input" type="text" [(ngModel)]="inputCurrentpage"
+                                    (change)="changepageinp(inputCurrentpage,pT.getLastPage())">
+
+                                <span class="paginate-text"> of {{pT.getLastPage()}}</span>
+                            </div>
+                            <div class="pagination-next" [class.disabled]="pT.isLastPage()">
+                                <button type="button" class="pagination-btn" (click)="pT.next()"
+                                    [disabled]="pT.isLastPage()"> > </button>
+                            </div>
+                        </pagination-template>
+
+                    </div>
+                </div>
+
+            </div>
+
+
+            <div *ngIf="!featureLoader" class="f-max out-table mod-table-scroll">
+                <table class="df-col">
+                    <thead class="sticky-head">
+                        <tr class="row no-mar head-tr">
+                            <th class="dc-flex feature-width">
+                                <div class="check-main">
+
+                                </div>
+                                <div class="wrap-text">Feature</div>
+                            </th>
+                            <th class="type-width">
+                                <div class="wrap-text">Property Type</div>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="row no-mar body-tr"
+                            *ngFor="let featureDet of featureDetails | filterBy : {'feature' :searchFilter} | paginate: config">
+                            <td class="dc-flex feature-width">
+                                <div class="check-main">
+
+                                </div>
+                                <div class="wrap-text">{{featureDet.feature}}</div>
+                            </td>
+                            <td class="type-width">
+                                <div class="row">
+                                    <div class="wrap-text col-6" *ngIf="!featureDet.select">{{featureDet.propertyType}}</div>
+                                    <div class="col-6">
+                                        <mat-icon aria-hidden="false" *ngIf="!featureDet.select" (click)="enableDropDown(featureDet)" class="edit_mat edit_icon" aria-label="edit icon"
+                                        >edit</mat-icon>
+                                       
+                                    </div>
+                                </div>
+                                <div class="row no-mar">
+                                <mat-select *ngIf="featureDet.select" disableOptionCentering class="form-control drop-mat mat_width_css col-6"
+                                    [(ngModel)]="featureDet.propertyType">
+                                    <mat-option *ngFor="let dataSource of propertyTypeList" [value]="dataSource">
+                                        {{dataSource}}</mat-option>
+                                </mat-select>
+                                <mat-icon *ngIf="featureDet.select" aria-hidden="false"  (click)="disableDropDown(featureDet)" class="edit_mat edit_icon col-3" aria-label="done icon"
+                                >done</mat-icon>
+                            </div>
+                            </td>
+
+                        </tr>
+                        <tr class="row no-mar no-rec body-tr"
+                            *ngIf="(featureDetails | filterBy : {'feature' :searchFilter}).length == 0">
+                            <td class="col-12 wrap-text no_rec_css">Feature not available</td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+
+
+
+</div>

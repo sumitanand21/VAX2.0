@@ -1,0 +1,42 @@
+<div class="container-fluid tab-selector-bar df-col">
+
+    <div class="col-md-12 min-height-48 f-min main_border_css" id="colspan_css_scroll" *ngIf="showTabView"> 
+        <input autocomplete="off" type="button" value="All Tasks" class="tab-css" [ngClass]="{'active-tab' : anomalyService.AnomalyAllTask }" id="allTaskTab" (click)="anomalyNavigation('/anomaly/alltask')" [disabled]="anomalyService.disableheader">
+        <input autocomplete="off" type="button" value="Anomaly Detection" class="tab-css" [ngClass]="{'active-tab' : anomalyService.AnomalyDetection }" id="anomalyDetectTab" (click)="anomalyNavigation('/anomaly/anomalydetection')" [disabled]="anomalyService.disableheader">
+        <input autocomplete="off" type="button" value="Anomaly" class="tab-css" [ngClass]="{'active-tab' : anomalyService.AnomalyView }" id="anomalyViewTab"  (click)="anomalyNavigation('/anomaly/anomalyview')" [disabled]="anomalyService.disableheader"> 
+
+        <button type="button" class="shadowbtn disp-model-btn btn btn-default move-r" (click)="anomalyNavigation('/anomaly/_page_/anomalymodelconfig', 1)" [disabled]="anomalyService.disableheader">Model Configuration</button>
+    </div>
+
+     <div class="col-md-12 min-height-48 d-flex no-padd f-min" id="colspan_css_scroll" *ngIf="!showTabView"> 
+      
+      <div class="d-flex col-12 no-padd-r">  
+        <div class="col-10 d-flex no-padd" >
+          <ul class="breadcrumb-mod">
+            <li>
+              <button *ngIf="anomalyService.activatedPath.includes('alltask')" type="button" class="breadcrumb-btn btn btn-default" (click)="anomalyNavigation('/anomaly/alltask')">All Task</button>
+              <button *ngIf="anomalyService.activatedPath.includes('anomalydetection')" type="button" class="breadcrumb-btn btn btn-default" (click)="anomalyNavigation('/anomaly/anomalydetection')">Anomaly Detection</button>
+              <button *ngIf="anomalyService.activatedPath.includes('anomalyview')" type="button" class="breadcrumb-btn btn btn-default" (click)="anomalyNavigation('/anomaly/anomalyview')">Anomaly</button>
+            </li>
+            <li *ngIf="anomalyService.AnomalyModel"><button  type="button" class="breadcrumb-btn btn btn-default" (click)="anomalyNavigation('upsertmodelconfig', 3)">Model Configuration</button></li>
+            <li *ngIf="anomalyService.AnomalyUpdateModel"><button  disabled type="button" class="breadcrumb-btn btn btn-default">{{anomalyService.AnomalymodelName ? anomalyService.AnomalymodelName : 'New Model Configuration'}}</button></li>
+
+            <li *ngIf="anomalyService.AnomalyModelTraining"><button type="button" class="breadcrumb-btn btn btn-default" (click)="anomalyNavigation('/anomaly/alltask')">Model Training</button></li>
+            <li *ngIf="anomalyService.AnomalyModelTraining"><button type="button" class="breadcrumb-btn btn btn-default" (click)="anomalyNavigation('/anomaly/alltask')">{{anomalyService.AnomalyTaskName}}</button></li>
+            <li *ngIf="anomalyService.AnomalyModelTraining"><button  disabled type="button" class="breadcrumb-btn btn btn-default">{{anomalyService.AnomalyModelTrainingNameDisp ? anomalyService.AnomalyModelTrainingNameDisp : 'Training Progress'}}</button></li>
+          
+          </ul>
+        </div>
+         <div class="col-2">
+          <button *ngIf="anomalyService.AnomalyModelTraining" type="button" class="shadowbtn model-btn btn btn-default move-r" (click)="anomalyNavigation('/anomaly/alltask')">Back</button>
+          <button *ngIf="anomalyService.AnomalyModel && !anomalyService.AnomalyUpdateModel" type="button" class="shadowbtn model-btn btn btn-default move-r" (click)="anomalyNavigation('upsertmodelconfig',2)">Add New Model</button>
+        </div>
+        </div>
+    </div>
+   <div class="main_route_css f-max">
+     <div class="height-100">
+       <router-outlet></router-outlet>
+       </div>
+   </div>
+     
+</div>

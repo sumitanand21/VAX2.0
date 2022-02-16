@@ -1,0 +1,226 @@
+<div class="df-col">
+    
+    <div class="model-head">
+        <div>{{title}}
+        </div>
+        <button mat-dialog-close type="button" class="disp-close" aria-label="Close" id="ModalClose">
+            &times;
+        </button>
+    </div>
+    <div *ngIf="masterDataLoader" class="spinner-div" >
+        <mat-progress-spinner color="slategrey" mode="indeterminate">
+        </mat-progress-spinner>
+    </div>
+    <div *ngIf="!masterDataLoader" class="col-12 model-body f-max">
+        <form [formGroup]="upsertTask">
+
+
+        <div>
+            <div class="row no-mar data-set">
+                <div class="col-3">
+                    <label class="body-label">Task Name:</label>
+                </div>
+                <div *ngIf="data.action === 'Add'" class="col-6">
+                    <input autocomplete="off" formControlName="schedule_name" maxlength="30" type="text" matInput class="input-feild-model " [ngClass]="{'border-den': ( upsertTask.controls.schedule_name.errors && upsertTask.controls.schedule_name.errors.cannotContainSpace)}"> 
+
+                </div>
+                <div *ngIf="data.action === 'Update'" class="col-6 selectio-div">
+                     {{data.task.schedule_name}}
+                </div>
+            </div>
+            <div class="row no-mar data-set">
+                <div class="col-3">
+                    <label class="body-label">Model Type:</label>
+                </div>
+                <div class="col-6" *ngIf="data.action === 'Add'">
+                    <mat-radio-group formControlName="modelType" class="radio-feild-model"
+                        aria-label="Select an option">
+                        <mat-radio-button *ngFor="let item of modelTypes;let i = index" (change)="modelChange($event.value)" class="mat-rd-btn-s2"
+                            color="primary" [value]="item" [checked]="i === 0">{{item}}
+                        </mat-radio-button>
+                    </mat-radio-group>
+                </div>
+                <div class="col-6 selectio-div" *ngIf="data.action === 'Update'">
+                    {{data.task.data.modelType}}
+                </div>
+            </div>
+            <div class="row no-mar data-set">
+                <div class="col-3">
+                    <label class="body-label">Data Set:</label>
+                </div>
+                <div class="col-6  selectio-div"  *ngIf="data.action === 'Add'">
+                    <mat-select disableOptionCentering formControlName="dataSetName" (selectionChange)="modelChange(undefined, $event.value)" class="form-control drop-mat s2-dropdown drop_css_one">
+                        <mat-option *ngFor="let selData of dataSetList" [value]="selData">{{selData}}
+                        </mat-option>
+                    </mat-select>
+                </div>
+                <div class="col-6 selectio-div" *ngIf="data.action === 'Update'">
+                    {{data.task.data.dataSetName}}
+                </div>
+            </div>
+            <div class="row no-mar data-set">
+                <div class="col-3">
+                    <label class="body-label">Model Configuration:</label>
+                </div>
+                <div class="col-6 selectio-div">
+                    <mat-select disableOptionCentering formControlName="modelConfigName"
+                        class="form-control drop-mat s2-dropdown drop_css_one">
+                        <mat-option *ngFor="let selData of modelConfigList" [value]="selData">{{selData}}
+                        </mat-option>
+                    </mat-select>
+                </div>
+            </div>
+            <div class="row no-mar data-set">
+                <div class="col-3">
+                    <label class="body-label">Training Frequency:</label>
+                </div>
+                <div class="col-8 selectio-div">
+                    <div class="row no-padd no-mar">
+                        <mat-select (selectionChange)="setFreqData($event.value)" disableOptionCentering formControlName="recur_on" class="form-control drop-mat s2-dropdown drop_css_one">
+                            <mat-option *ngFor="let selData of freqList" [value]="selData">{{selData}}
+                            </mat-option>
+                        </mat-select>
+                    </div>
+                    <div *ngIf="isDayEnabled" class="row no-padd no-mar padd-t">
+                        <label class="check-outer">
+                            <input autocomplete="off" type="checkbox" formControlName="daySu" name="all" />
+                            <span class="checkmark"></span>
+                        </label> <label class="body-label-s1"> Su</label>
+
+                        <label class="check-outer">
+                            <input autocomplete="off" type="checkbox" name="all" formControlName="dayMo" />
+                            <span class="checkmark"></span>
+                        </label> <label class="body-label-s1"> Mo</label>
+
+                        <label class="check-outer">
+                            <input autocomplete="off" type="checkbox" name="all" formControlName="dayTu" />
+                            <span class="checkmark"></span>
+                        </label> <label class="body-label-s1"> Tu</label>
+
+                        <label class="check-outer">
+                            <input autocomplete="off" type="checkbox" name="all" formControlName="dayWe"/>
+                            <span class="checkmark"></span>
+                        </label> <label class="body-label-s1"> We</label>
+
+                        <label class="check-outer">
+                            <input autocomplete="off" type="checkbox" name="all" formControlName="dayTh"/>
+                            <span class="checkmark"></span>
+                        </label> <label class="body-label-s1"> Th</label>
+
+                        <label class="check-outer">
+                            <input autocomplete="off" type="checkbox" name="all" formControlName="dayFr"/>
+                            <span class="checkmark"></span>
+                        </label> <label class="body-label-s1"> Fr</label>
+
+                        <label class="check-outer">
+                            <input autocomplete="off" type="checkbox" name="all" formControlName="daySa"/>
+                            <span class="checkmark"></span>
+                        </label> <label class="body-label-s1"> Sa</label>
+                    </div>
+
+                </div>
+            </div>
+            <mat-divider class="divider-div"></mat-divider>
+
+            <div class="row no-mar data-set">
+                <div class="col-3">
+                    <label class="body-label">Schedule Starts:</label>
+                </div>
+                <div class="col-4">
+                    <input autocomplete="off" matInput class="input-feild-model " (dateChange)="setOccurrence()"  [min]="minStartScDate" [ngModelOptions]="{standalone: true}"
+                        [(ngModel)]="startScDate" [matDatepicker]="startDate" readonly>
+                    <mat-datepicker-toggle matSuffix [for]="startDate" class="dt-picker">
+                    </mat-datepicker-toggle>
+                    <mat-datepicker #startDate></mat-datepicker>
+
+                </div>
+                <div class="col-2">
+                    <input autocomplete="off" type="text" [appAlphaNumeric]="'num'" formControlName="scStartHours" class="input-number-css"  [min]="minScHr" (change)="limitHRInput($event,2)">
+                    <label class="body-label-s2">(Hours)</label>
+                </div>
+                <div class="col-2">
+                    <input autocomplete="off" type="text" [appAlphaNumeric]="'num'" formControlName="scStartMinutes"  class="input-number-css" [min]="minScMin" (change)="limitMNInput($event,2)">
+                    <label class="body-label-s2">(Minutes)</label>
+                </div>
+            </div>
+
+            <div class="row no-mar data-set">
+                <div class="col-3">
+                    <label class="body-label">Schedule Ends:</label>
+                </div>
+                <div class="col-6">
+                    <div class="row mar-t5">
+                        <div class="col-3">
+                            <mat-radio-group [ngModelOptions]="{standalone: true}" [(ngModel)]="endDateFlag"
+                                class="radio-feild-model" aria-label="Select an option">
+                                <mat-radio-button #enDateRadio1 class="mat-rd-btn-s2" color="primary" value="1" [ngClass]="{'change-color': (changeonetime === 'bluronetime')}"
+                                    (click)="checkState($event, enDateRadio1)">No End Date
+                                </mat-radio-button>
+                            </mat-radio-group>
+                        </div>
+                    </div>
+                    <div class="row mar-t">
+                        <div class="col-3">
+                            <mat-radio-group [ngModelOptions]="{standalone: true}" [(ngModel)]="endDateFlag"
+                                class="radio-feild-model" aria-label="Select an option">
+                                <mat-radio-button #enDateRadio2 class="mat-rd-btn-s2" color="primary" value="2" [ngClass]="{'change-color': (changeonetime === 'bluronetime')}"
+                                    (click)="checkState($event, enDateRadio2)">End On
+                                </mat-radio-button>
+                            </mat-radio-group>
+                        </div>
+                        <div class="col-3" *ngIf="endDateFlag !== '1'">
+                            <input autocomplete="off" matInput  class="input-feild-model " [min]="startScDate"   (dateChange)="setOccurrence()" formControlName="scEnd"
+                                [(ngModel)]="endScDate" [matDatepicker]="endDate" readonly>
+                            <mat-datepicker-toggle matSuffix [for]="endDate" class="dt-picker1">
+                            </mat-datepicker-toggle>
+                            <mat-datepicker #endDate></mat-datepicker>
+                        </div>
+                    </div>
+                    <div class="row mar-t">
+                        <div class="col-3">
+                            <mat-radio-group [ngModelOptions]="{standalone: true}" [(ngModel)]="endDateFlag"
+                                class="radio-feild-model" aria-label="Select an option">
+                                <mat-radio-button #enDateRadio3 class="mat-rd-btn-s2" color="primary" value="3" [ngClass]="{'change-color': (changeonetime === 'bluronetime')}"
+                                    (click)="checkState($event, enDateRadio3)">After
+                                </mat-radio-button>
+                            </mat-radio-group>
+                        </div>
+                        <div class="col-3 " *ngIf="endDateFlag !== '1'">
+                            <input autocomplete="off" type="number" formControlName="afterOcc"  (change)="setEndDate($event)" value="1" class="input-number-css" min="1" max="99" step="1"
+                               >
+                            <label class="body-label-s2">Occurrences</label>
+                        </div>
+                    </div>
+
+
+                </div>
+
+            </div>
+          
+
+            <div class="row no-mar data-set">
+                <div class="col-3">
+                    <label class="body-label">Data Range:</label>
+                </div>
+                <div class="col-2">
+                    <input autocomplete="off" [appAlphaNumeric]="'num'" type="text" formControlName="dataRange" value="00" maxlength="2" class="input-number-css-s1">
+                </div>
+                <div class="col-4 no-padd">
+                    <mat-select  disableOptionCentering formControlName="frequency" class="cap-text form-control drop-mat s2-dropdown drop_css_one-s1">
+                        <mat-option *ngFor="let selData of dataRangeList"[value]="selData">{{selData}}
+                        </mat-option>
+                    </mat-select>
+                </div>
+            </div>
+
+
+        </div>
+        
+</form>
+    </div>
+
+    <div class="model-foot">
+        <button type="button" class="cancel-btn" #ddd mat-dialog-close>Cancel</button>
+        <button type="button" class="done-btn" [disabled]="isActionStarted || masterDataLoader" (click)="upsertSc()">{{data.action}}</button>
+    </div>
+</div>

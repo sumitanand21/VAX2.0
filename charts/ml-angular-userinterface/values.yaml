@@ -1,0 +1,24 @@
+# Default values for node projects.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+replicaCount: 1
+image:
+  repository: draft
+  tag: dev
+  pullPolicy: IfNotPresent
+
+configMap:
+  name: war-config
+  path: "/etc/config"
+
+nfs:
+  server_ip: 167.254.204.64
+  server_path: /mnt/k8sMount
+
+volume:
+  pv_katana_db: katana-db-volume-metis
+  pv_katana_configs: katana-configs-volume
+
+path:
+  katana_db_mnt_path: /mnt/k8sMount/data/warrior/katana-db
+  katana_configs_mnt_path: /mnt/k8sMount/data/warrior/katana-configs

@@ -1,0 +1,145 @@
+<div class="df-col main-border">
+    <div *ngIf="isLoading" class="spinner-div" >
+        <mat-progress-spinner color="slategrey" mode="indeterminate">
+        </mat-progress-spinner>
+    </div>
+    <!-- Pagination view with search Starts Here -->
+    <div  *ngIf="!isLoading" class="row">
+    <div class="col-12 no-padd bor-btm">   
+        <div class="row mar-tb-12">
+        <div class="col-md-3 col-sm-4 col-xs-12 d-flex load_mat_css">
+            <mat-select disableOptionCentering  class="form-control drop-mat mat_width_css forecast_css" [(ngModel)]="selectedDataId" (ngModelChange)="loadData()" >
+                <mat-option value="" >All</mat-option>
+                <mat-option *ngFor="let selData of selectionDataSet" [value]="selData" >{{selData}}</mat-option>
+            </mat-select>
+        </div>
+        <div class="col-md-9 col-sm-8 col-xs-12">
+            <button type="button" class="shadowbtn forecast-btn btn btn-primary float-md-right float-sm-right" (click)="scheduleSelection()" [disabled]="!atLeastOneChecked()">Forecast</button>
+        </div>
+    </div>
+    </div>
+
+    <div class="col-12 no-padd">   
+        <div class="row no-mar">
+        <div class="page_css_view">
+            <div class="col-md-4 col-sm-4 col-xs-12 d-flex">
+                <!-- <i class="fa fa-search serach-icon" aria-hidden="true"></i>  -->
+                <mat-icon aria-hidden="false" class="search_mat" aria-label="search icon">search</mat-icon>
+                <input autocomplete="off" maxlength="150" matInput  placeholder="Search with data id..." class="input-feild form-control" type="text" [(ngModel)]="searchFilter" (ngModelChange)="onsearchChange(searchFilter)">
+            </div>
+            <div class="col-md-8 col-sm-8 col-xs-12">
+                <pagination-template #pT="paginationApi" [id]="config.id" class="d-flex float-md-right float-sm-right page_select_css"
+                (pageChange)="changepage($event)">
+                    <div class="d-flex process_rows_css"> 
+                    <span class="mar-r-8 paginate-text">Rows:</span> 
+                        <mat-select disableOptionCentering class="select-page" [(ngModel)]="itemPerPage" (selectionChange)="setNewPageSize(itemPerPage)">
+                            <mat-option *ngFor="let pgrec of pageArr" [value]="pgrec">{{pgrec}}</mat-option>
+                        </mat-select>
+                    </div>
+            <div class="pagination-previous" [class.disabled]="pT.isFirstPage()">
+            <button type="button" class="pagination-btn" (click)="pT.previous()" [disabled]="pT.isFirstPage()"> < </button>
+            </div>
+            
+            <div class="d-flex process_matselect"> 
+                <span class="paginate-text"> Page</span>
+                    <input autocomplete="off" matInput class="currpage-input" type="text" [(ngModel)]="inputCurrentpage" [appAlphaNumeric]="'num'" (change)="changepageinp(inputCurrentpage,pT.getLastPage())">
+            
+            <span class="paginate-text"> of {{pT.getLastPage()}}</span>
+            </div>
+            <div class="pagination-next" [class.disabled]="pT.isLastPage()">
+                <button type="button" class="pagination-btn" (click)="pT.next()" [disabled]="pT.isLastPage()"> > </button>
+            </div>
+            </pagination-template> 
+            </div>
+        </div>
+    </div>
+    </div>
+
+      </div>
+        <!-- Pagination view with search Ends Here -->
+    <!-- Table view Starts Here -->
+
+    <div *ngIf="!isLoading" class="f-max out-table mod-table-scroll">
+    <table class="df-col">
+        <!-- <div class="scrollit_css"> -->
+            <thead class="sticky-head">
+            <tr class="row no-mar head-r head-tr">
+                <th class="col-1 checkbox_col_one text-center">
+                <label class="check-outer">
+                    <input autocomplete="off" type="checkbox" name="all" [checked]="isAllChecked()" (change)="checkAlls($event)"/>
+                    <span class="checkmark"></span>
+                </label>
+                </th>
+                <th class="col-3 wrap-text">Data ID
+                    <div class="select-cur" (click)="sort('dataId')">
+                        <mat-icon *ngIf="!(key == 'dataId' && reverse)" aria-hidden="false" class="arrow_mat align-middle" aria-label="down icon">arrow_drop_down</mat-icon>
+                        <mat-icon *ngIf="key == 'dataId' && reverse" aria-hidden="false" class="arrow_mat align-middle" aria-label="up icon">arrow_drop_up</mat-icon>
+                    </div>
+                    <!-- <span class="glyphicon sort-icon" *ngIf="key =='dataID'" [ngClass]="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>   -->
+                </th>
+                <th class="wrap-text col-2">Sample Time Found
+                    <div class="select-cur" (click)="sort('sampleTime')">
+                        <mat-icon *ngIf="!(key == 'sampleTime' && reverse)" aria-hidden="false" class="arrow_mat align-middle" aria-label="down icon">arrow_drop_down</mat-icon>
+                        <mat-icon *ngIf="key == 'sampleTime' && reverse" aria-hidden="false" class="arrow_mat align-middle" aria-label="up icon">arrow_drop_up</mat-icon>
+                    </div>
+                    <!-- <span class="glyphicon sort-icon" *ngIf="key =='sampleTime'" [ngClass]="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> -->
+                </th>
+                <th class="wrap-text col-2">Data Range
+                    <div class="select-cur" (click)="sort('defaultDataRange')">
+                        <mat-icon *ngIf="!(key == 'defaultDataRange' && reverse)" aria-hidden="false" class="arrow_mat align-middle" aria-label="down icon">arrow_drop_down</mat-icon>
+                        <mat-icon *ngIf="key == 'defaultDataRange' && reverse" aria-hidden="false" class="arrow_mat align-middle" aria-label="up icon">arrow_drop_up</mat-icon>
+                    </div>
+                    <!-- <span class="glyphicon sort-icon" *ngIf="key =='dataRange'" [ngClass]="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> -->
+                </th>
+                <th class="wrap-text col-2">Time For Forward Prediction
+                    <div class="select-cur" (click)="sort('timeForForwardPrediction')">
+                        <mat-icon *ngIf="!(key == 'timeForForwardPrediction' && reverse)" aria-hidden="false" class="arrow_mat align-middle" aria-label="down icon">arrow_drop_down</mat-icon>
+                        <mat-icon *ngIf="key == 'timeForForwardPrediction' && reverse" aria-hidden="false" class="arrow_mat align-middle" aria-label="up icon">arrow_drop_up</mat-icon>
+                    </div>
+                    <!-- <span class="glyphicon sort-icon" *ngIf="key =='frwrdPredict'" [ngClass]="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> -->
+                </th>
+                <th class="wrap-text col-2">Model Configuration
+                    <div class="select-cur" (click)="sort('modelConfigName')">
+                        <mat-icon *ngIf="!(key == 'modelConfigName' && reverse)" aria-hidden="false" class="arrow_mat align-middle" aria-label="down icon">arrow_drop_down</mat-icon>
+                        <mat-icon *ngIf="key == 'modelConfigName' && reverse" aria-hidden="false" class="arrow_mat align-middle" aria-label="up icon">arrow_drop_up</mat-icon>
+                    </div>
+                    <!-- <span class="glyphicon sort-icon" *ngIf="key =='modelConfig'" [ngClass]="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> -->
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let forecast of tempforecast | orderBy: key : reverse | searchFilter: {'dataId': searchFilter} | exactFilter : {'dataSetName':  selectedDataId }  | paginate: config; let i = index" role="row" class="row no-mar body-tr" [class.active]="i == selectedRow" (click)="setClickedRow(i)" id="trdata{{i}}">
+                    <td class="text-center col-1 checkbox_col_one check_css">
+                    <label class="check-outer">
+                        <input autocomplete="off" type="checkbox" [(ngModel)]="forecast.checkboxdata" id="{{forecast.dataId}}" name="checkboxdata"/>
+                        <span class="checkmark"></span>
+                    </label>
+                    </td>
+                    <td class="r-name wrap-text col-3" (click)="opentEditpopup(forecast)" title="{{forecast.dataId}}">{{forecast.dataId}}</td>
+                    <td class="wrap-text col-2">{{forecast.sampleTime}}</td>
+                    <td class="wrap-text col-2">{{forecast.defaultDataRange}}</td>
+                    <td class="wrap-text col-2">{{forecast.timeForForwardPrediction}}</td>
+                    <td class="wrap-text col-2">{{forecast.modelConfigName}}</td>
+                    <!-- <td>
+                        <span *ngIf="game.status" [ngClass]="{'bg-green': game.status == 'Finish','bg-blue': game.status == 'running','bg-orange': game.status == 'waiting'}" class="status">
+                        {{game.status}}
+                        </span>
+                    </td> -->
+                </tr>
+                <tr class="row no-mar body-tr" *ngIf="(tempforecast | searchFilter: {'dataId': searchFilter} | exactFilter : {'dataSetName':  selectedDataId }).length == 0">
+                    <td class="col-12 wrap-text no_rec_css">No records found</td>
+                </tr>
+            <br/>
+            <!-- <ng-container *ngIf="this.forecastData.length == 0">
+                <div  class="nodata_avail">No Data Available..!</div>
+            </ng-container>
+            <ng-container *ngIf="this.forecastData.length > 0">
+              <pagination [totalItems]="this.tableData" *ngIf="this.tableData > 0" [maxSize]="10" (pageChanged)="pageChanged($event)" previousText="&lsaquo;" nextText="&rsaquo;">  
+            </pagination> -->
+            <!-- </ng-container> -->
+                </tbody>
+        <!-- </div> -->
+    </table>
+    </div>
+    <!-- Table view Ends Here -->
+</div>

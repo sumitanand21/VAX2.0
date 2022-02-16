@@ -1,0 +1,46 @@
+{
+    "status": "success",
+    "data": [{
+        "modelConfigName" : "Ae_loieas_hhgvh",
+        "status" : "Active",
+        "modelType": "Model 1",
+        "dataSet": "Config ABC",
+        "accuracy" : "0.98877"
+        },
+        {
+        "modelConfigName" : "Ae_loiesavh",
+        "status" : "Active",
+        "modelType": "Model 1",
+        "dataSet": "Config ABC",
+        "accuracy" : "0.98877"
+        },
+        {
+        "modelConfigName" : "Ae_loagvh",
+        "status" : "Active",
+        "modelType": "Model 2",
+        "dataSet": "Config XYZ",
+        "accuracy" : "0.98877"
+        },
+        {
+        "modelConfigName" : "Ae_loisseas_hhgvh",
+        "status" : "Stopped",
+        "modelType": "Model 5",
+        "dataSet": "Config ABC",
+        "accuracy" : "0.98877"
+        },
+        {
+        "modelConfigName" : "A_loieas_hhgvh",
+        "status" : "Active",
+        "modelType": "Model 1",
+        "dataSet": "Config AB",
+        "accuracy" : "0.98877"
+        },
+        {
+        "modelConfigName" : "Ae_loisseas_hhgvh",
+        "status" : "Stopped",
+        "modelType": "Model 1",
+        "dataSet": "Config ABCd",
+        "accuracy" : "0.98877"
+        }
+        ]
+}

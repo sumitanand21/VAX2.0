@@ -1,0 +1,451 @@
+<div class="parent-content">
+    <div *ngIf="isLoading || masterDataLoader" class="spinner-div">
+        <mat-progress-spinner color="slategrey" mode="indeterminate">
+        </mat-progress-spinner>
+    </div>
+    <div *ngIf="!isLoading && !masterDataLoader" class="row no-mar wrap-cont">
+        <div class="col-12 col-xs-12 col-sm-12 col-md-6 border-r border-t no-padd" *ngIf="isShown">
+            <!-- Table view Starts  -->
+            <div class="df-col">
+
+                <div class="row no-mar">
+                    <!-- Dropdowns and refresh icon Starts here -->
+                    <div class="d-flex left_div_border-s1">
+
+
+                        <div class="drop-wid">
+                            <div class="row">
+                                <label class="s2-label-model">Data Sets: </label>
+                            </div>
+
+                            <mat-select disableOptionCentering [(ngModel)]="dataSetSelected"
+                                class="form-control drop-mat s2-dropdown drop_css_one">
+                                <mat-option *ngFor="let selData of dataSetList" [value]="selData">{{selData}}
+                                </mat-option>
+                            </mat-select>
+                        </div>
+                        <div class="drop-wid-range">
+                            <div class="row no-mar range-div">
+                                <label class="s1-label-model"> Data Range: </label>
+                            </div>
+                            <!-- <div class="row">
+                                <div class="col-6 inner-cal-div">
+                                    <div class="row">
+                                        <label class="modal-text">From: </label>
+                                        <div class="col-sm-8 input-box-cont">
+                                        <input autocomplete="off" matInput class="form-control input-box"
+                                            [(ngModel)]="startScDate" [matDatepicker]="startDate" readonly>
+                                        <mat-datepicker-toggle matSuffix [for]="startDate" class="dt-picker">
+                                        </mat-datepicker-toggle>
+                                        <mat-datepicker #startDate></mat-datepicker>
+                                    </div>
+                                    </div>
+                                </div>
+                                <div class="col-6 inner-cal-div">
+                                    <div class="row">
+                                        <label class="modal-text">To: </label>
+                                        <div class="col-sm-8 input-box-cont">
+                                        <input autocomplete="off" matInput class="form-control input-box" [min]="startScDate"
+                                            [(ngModel)]="endScDate" [matDatepicker]="endDate" readonly>
+                                        <mat-datepicker-toggle matSuffix [for]="endDate" class="dt-picker-s1">
+                                        </mat-datepicker-toggle>
+                                        <mat-datepicker #endDate></mat-datepicker>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div> -->
+                            <!-- <span class="correlation-value" title="{{timeFilterValue}}">{{correlationFromTimePeriod}} To {{correlationToTimePeriod}}</span> -->
+                            <span class="correlation-value time-css"> {{correlationFromTimePeriod}} To {{correlationToTimePeriod}} </span>
+                            <span class="menu-div">
+                              <mat-icon aria-hidden="false" class="edit_mat edit_icon" aria-label="edit icon" [matMenuTriggerFor]="editmenu" #clickMenuTrigger="matMenuTrigger" (click)="openTimeEditMenu()">edit</mat-icon>
+                              <mat-menu #editmenu="matMenu" class="edit_menu"  xPosition="before" hasBackdrop="false">
+                                <div class="menu-main" (click)="$event.stopPropagation();" (keydown.tab)="$event.stopPropagation()">
+                              
+                              <form #menuDateRange="ngForm" >
+                                <fieldset>
+                              <div class="menu_edit_item">
+                                <div class="menu_label">Date Time:</div>
+                                <div>
+                                  <div class="date_time">
+                                  <div class="date-label">From:</div>
+                                  <div class="main-date-div">
+                                    <input autocomplete="off" matInput class="inputfeild form-control" [(ngModel)]="timeFilterDetails.fromDate" name="fromDate" placeholder="Select Date" (dateChange)="onFromDateChange()"  [matDatepicker]="pickerFrom" readonly required/>
+                                    <mat-datepicker-toggle
+                                      class="dat-pixk"
+                                      matSuffix
+                                      [for]="pickerFrom"
+                                    ></mat-datepicker-toggle>
+                                    <mat-datepicker #pickerFrom></mat-datepicker>
+                                  </div>
+                                  <div class="input-time-div">
+                                    <input autocomplete="off" matInput class="input-feild-time form-control" [(ngModel)]="timeFilterDetails.fromTimeHr" name="fromTimeHr" [appAlphaNumeric]="'num'" maxlength="2"  placeholder="00" type="text" name="timeHrFrom"
+                                       [appAlphaNumeric]="'num'" required>
+                                  </div>
+                                  <div class="input-time-div">
+                                    <input autocomplete="off" matInput class="input-feild-time form-control" [(ngModel)]="timeFilterDetails.fromTimeMin" name="fromTimeMin" [appAlphaNumeric]="'num'" maxlength="2"  placeholder="00" type="text" name="timeMinFrom"
+                                       [appAlphaNumeric]="'num'" required>
+                                  </div>
+                                  <div class="time-stamp">
+                                    (HH-MM)
+                                  </div>
+                                 </div>
+                                 <div class="date_time">
+                                  <div class="date-label">To:</div>
+                                  <div class="main-date-div">
+                                    <input autocomplete="off" matInput class="inputfeild form-control" [(ngModel)]="timeFilterDetails.toDate" name="toDate" placeholder="Select Date" [matDatepicker]="pickerTo" [min]="timeFilterDetails.minToDate" readonly required/>
+                                    <mat-datepicker-toggle
+                                      class="dat-pixk"
+                                      matSuffix
+                                      [for]="pickerTo"
+                                    ></mat-datepicker-toggle>
+                                    <mat-datepicker #pickerTo></mat-datepicker>
+                                  </div>
+                                  <div class="input-time-div">
+                                    <input autocomplete="off" matInput class="input-feild-time form-control" [(ngModel)]="timeFilterDetails.toTimeHr" name="toTimeHr" [appAlphaNumeric]="'num'" maxlength="2"  placeholder="00" type="text" name="timeHrTo"
+                                       [appAlphaNumeric]="'num'" required>
+                                  </div>
+                                  <div class="input-time-div">
+                                    <input autocomplete="off" matInput class="input-feild-time form-control" [(ngModel)]="timeFilterDetails.toTimeMin" name="toTimeMin" [appAlphaNumeric]="'num'" maxlength="2"  placeholder="00" type="text" name="timeMinTo"
+                                       [appAlphaNumeric]="'num'" required>
+                                  </div>
+                                  <div class="time-stamp">
+                                    (HH-MM)
+                                  </div>
+                                 </div>
+                                </div>
+                              </div>
+                            </fieldset>
+                             </form>
+                              <div class="menu-action">
+                                <button type="button" class="shadowbtn btn btn-default cancel-mod" (click)="someMethod()">Cancel</button>
+                                <button type="button" class="shadowbtn btn-primary run-cor-btn" (click)="setDateDetailsToRunCorrelation()">Apply</button>
+                              </div>
+                            </div>
+                              </mat-menu>
+                            </span>
+                            
+                        </div>
+                        
+                    </div>
+                    <div class="d-flex left_div_border-s2" align="end">
+                        <button type="button" mat-stroked-button class="shadowbtn mts-btn-save" [disabled]="isTableLoading" (click)="loadTableData()">Show Anomaly</button>
+          
+                    </div>
+                    <!-- Dropdowns and refresh icon Ends here -->
+
+                </div>
+
+                <div class="row no-mar">
+                    <div class="d-flex left_div_border-s3">
+                    <div class="drop-wid-s2">
+                            <label class="s7-label-model">Model Type: </label>
+
+                            <mat-select disableOptionCentering [(ngModel)]="modelTypeSelected"
+                            class="form-control s1-dropdown drop-mat drop_css_one" (ngModelChange)="clearSelection()">
+                            <mat-option value="">All </mat-option>
+                            <mat-option *ngFor="let selData of modelTypeList" [value]="selData">
+                                {{selData}}</mat-option>
+                        </mat-select>
+                    </div>
+                    <div class="drop-wid-s1"  align="end">
+                        <label class="modal-text">Anomaly Found:  </label> <label class="modal-text-s1">{{anomalyCount}}</label>
+                    </div>
+                    </div>
+                    <div class="page_css_view">
+                        <div class="paginate_css">
+                            <span>
+                                <!-- <i class="fa fa-search search_fafa" aria-hidden="true"></i> -->
+                                <mat-icon aria-hidden="false" class="search_mat" aria-label="search icon">search</mat-icon>
+                                <input autocomplete="off" matInput class="form-control css_search" type="text" placeholder="Search with data id..." [(ngModel)]="searchFilterMain" maxlength="150"
+                                    (ngModelChange)="onsearchChange(searchFilterMain)">
+                            </span>
+                        </div>
+                        <div class="paginate_css-s1">
+                           
+                       
+                    </div>
+                        <div class="d-flex paginate-align align_css_mar">
+                            <pagination-template #pT="paginationApi" [id]="config.id" class="d-flex"
+                                (pageChange)="changepage($event, true)">
+                                <div class="d-flex process_rows_css">
+                                    <span class="mar-r-8 paginate-text">Rows:</span>
+                                    <mat-select disableOptionCentering class="select-page" [(ngModel)]="itemPerPage"
+                                        (selectionChange)="setNewPageSize(itemPerPage, true)">
+                                        <mat-option *ngFor="let pgrec of pageArr" [value]="pgrec">{{pgrec}}</mat-option>
+                                    </mat-select>
+                                </div>
+                                <div class="pagination-previous" [class.disabled]="pT.isFirstPage()">
+                                    <button type="button" class="pagination-btn" (click)="pT.previous()"
+                                        [disabled]="pT.isFirstPage()">
+                                        < </button>
+                                </div>
+
+                                <div class="d-flex process_matselect">
+                                    <span class="paginate-text"> Page</span>
+                                    <input autocomplete="off" matInput class="currpage-input" type="text" [(ngModel)]="inputCurrentpage"
+                                        (change)="changepageinp(inputCurrentpage,pT.getLastPage(), true)">
+
+                                    <span class="paginate-text"> of {{pT.getLastPage()}}</span>
+                                </div>
+                                <div class="pagination-next" [class.disabled]="pT.isLastPage()">
+                                    <button type="button" class="pagination-btn" (click)="pT.next()"
+                                        [disabled]="pT.isLastPage()"> > </button>
+                                </div>
+                            </pagination-template>
+
+                        </div>
+                    </div>
+
+                </div>
+                <div *ngIf="isTableLoading" class="spinner-div">
+                    <mat-progress-spinner color="slategrey" mode="indeterminate">
+                    </mat-progress-spinner>
+                </div>
+                <div *ngIf="!isTableLoading" class="f-max out-table mod-table-scroll">
+                    <table class="df-col">
+                        <thead class="sticky-head">
+                            <tr class="row no-mar head-tr">
+
+                                <th class="width-Id wrap-text">Anomaly Data ID
+                                    <div class="select-cur" (click)="sort('dataSet')">
+                                        <mat-icon *ngIf="!(key == 'dataSet' && reverse)" aria-hidden="false" class="arrow_mat align-middle" aria-label="down icon">arrow_drop_down</mat-icon>
+                                        <mat-icon *ngIf="key == 'dataSet' && reverse" aria-hidden="false" class="arrow_mat align-middle" aria-label="up icon">arrow_drop_up</mat-icon>
+                                    </div>
+
+                                </th>
+                                <!-- <input autocomplete="off" type="checkbox" class="check-tick" [(ngModel)]="anmdModel.checkboxdata" (click)="sample(forecast,input)" id="{{anmdModel.dataId}}" name="checkboxdata"/> -->
+                                <th class="width-model wrap-text">Model Config
+                                    <div class="select-cur" (click)="sort('modelConfigName')">
+                                        <mat-icon *ngIf="!(key == 'modelConfigName' && reverse)" aria-hidden="false" class="arrow_mat align-middle" aria-label="down icon">arrow_drop_down</mat-icon>
+                                        <mat-icon *ngIf="key == 'modelConfigName' && reverse" aria-hidden="false" class="arrow_mat align-middle" aria-label="up icon">arrow_drop_up</mat-icon>
+                                    </div>
+                                </th>
+
+                                <th class="width-type wrap-text">Model Type
+                                    <div class="select-cur" (click)="sort('modelType')">
+                                        <mat-icon *ngIf="!(key == 'modelType' && reverse)" aria-hidden="false" class="arrow_mat align-middle" aria-label="down icon">arrow_drop_down</mat-icon>
+                                        <mat-icon *ngIf="key == 'modelType' && reverse" aria-hidden="false" class="arrow_mat align-middle" aria-label="up icon">arrow_drop_up</mat-icon>
+                                    </div>
+                                </th>
+                                <th  class="width-name wrap-text">Model Name
+                                    <div class="select-cur" (click)="sort('modelNameDisp')">
+                                        <mat-icon *ngIf="!(key == 'modelNameDisp' && reverse)" aria-hidden="false" class="arrow_mat align-middle" aria-label="down icon">arrow_drop_down</mat-icon>
+                                        <mat-icon *ngIf="key == 'modelNameDisp' && reverse" aria-hidden="false" class="arrow_mat align-middle" aria-label="up icon">arrow_drop_up</mat-icon>
+                                    </div>
+                                </th>
+                               
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let anmdModel of tempAnomalyDetections | orderBy: key : reverse | searchFilter: {'dataSet': searchFilterMain} | exactFilter : {'modelType':  modelTypeSelected } | paginate: config; let i = index;"
+                                 class="row no-mar body-tr selectTask" [class.active]="selectedModel && selectedModel.dataSet === anmdModel.dataSet"
+                                (click)="getConfigDetailsOnRow(anmdModel,i)" id="trdata{{i}}">
+                                <td class="width-Id r-name wrap-text" (click)="displayModel(anmdModel)">
+                                    {{anmdModel.dataSet}}</td>
+                                <!-- <td>
+                                    <span *ngIf="game.status" [ngClass]="{'bg-green': game.status == 'Finish','bg-blue': game.status == 'running','bg-orange': game.status == 'waiting'}" class="status">
+                                    {{game.status}}
+                                    </span>
+                                    </td> -->
+                                    <td class="width-model wrap-text" (click)="displayModel(anmdModel)">{{anmdModel.modelConfigName}}
+                                    <td class="width-type wrap-text" (click)="displayModel(anmdModel)">{{anmdModel.modelType}}
+                                    </td>
+                                <td class="width-name wrap-text" (click)="displayModel(anmdModel)">{{anmdModel.modelNameDisp}}
+                                </td>
+                                
+                            </tr>
+                            <tr class="row no-mar"
+                                *ngIf="(tempAnomalyDetections | searchFilter: {'dataSet': searchFilterMain} | exactFilter : {'modelType':  modelTypeSelected } | paginate: config).length == 0">
+                                <td class="col-12 wrap-text no_rec_css">No records found</td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Table view Ends -->
+
+        </div>
+        <div class="col-12 col-xs-12 col-sm-12 padd-22 df-col cont-scrl" [ngClass]="isShown?'col-md-6':'col-md-12'">
+            <div class="fmax sub-cont-scrl">
+
+                <div class="shadowbtn collapse-view-cont" [ngClass]="{'bg-open':!isShown}" (click)="toggleShow()">
+                    <!-- <i *ngIf="!isShown" class="fa fa-chevron-right open-tab"></i>
+                    <i *ngIf="isShown" class="fa fa-chevron-left close-tab"></i> -->
+                    <mat-icon *ngIf="!isShown" class="arrow_mat open-tab" aria-hidden="false" aria-label="arrowright icon">keyboard_arrow_right</mat-icon>
+                    <mat-icon *ngIf="isShown" class="arrow_mat close-tab" aria-hidden="false" aria-label="arrowleft icon">keyboard_arrow_left</mat-icon>
+                </div>
+                <div class="row no-mar" *ngIf="checkifObjectExist() == false && !dataSetDetailsLoading">
+                    <div class="col-md-12 col-sm-12 col-xs-12 mar-b-25">
+                        <label class="head-label">Select at least one anomaly data to show the details</label>
+                    </div>
+
+                </div>
+                <div *ngIf="dataSetDetailsLoading" class="spinner-div">
+                    <mat-progress-spinner color="slategrey" mode="indeterminate">
+                    </mat-progress-spinner>
+                </div>
+                <div *ngIf="checkifObjectExist() == true && !dataSetDetailsLoading ">
+                    <div class="row no-mar">
+                        <label class="s2-page-title">{{selectedModel.dataSet}}</label><label
+                            class="s2-label-model">{{selectedModel.modelType}}</label>
+
+                    </div>
+                    <!-- <div class="row no-mar">
+                            <label class="s3-page-title">Abnormal Features (6)</label>
+                        </div> -->
+                    <div *ngIf=" selectedModel && checkifObjectExist() == true && !dataSetDetailsLoading " class="row no-mar top-mar border-a bck-white bot-padd">
+
+                        <div class="col-6 ">
+                            <div class="row">
+                                <label class="s3-label-model">Data Set: </label>
+                            </div>
+
+                            <div *ngIf="selectedModel.dataSetName" class="data-label">{{selectedModel.dataSetName}}</div>
+                            <div  *ngIf="!selectedModel.dataSetName" class="data-label">NA</div>
+                        </div>
+                        <div class="col-6">
+                            <div class="row">
+                                <label class="s3-label-model">Loss: </label>
+                            </div>
+
+                            <div *ngIf="selectedModel.loss" class="data-label">{{selectedModel.loss}}</div>
+                            <div  *ngIf="!selectedModel.loss" class="data-label">NA</div>
+                        </div>
+                        <div class="col-6">
+                            <div class="row">
+                                <label class="s3-label-model">Model Config Used: </label>
+                            </div>
+
+                            <div *ngIf="selectedModel.modelConfigName" class="data-label model-color" (click)="openModelConfigDialog(selectedModel)">{{selectedModel.modelConfigName}}</div>
+                            <div  *ngIf="!selectedModel.modelConfigName" class="data-label">NA</div>
+                        </div>
+                       
+                        <div class="col-6">
+                            <div class="row">
+                                <label class="s3-label-model">Prediction Reason: </label>
+                            </div>
+                            <span *ngIf="selectedModel.reasonStatus"
+                            [ngClass]="{'bg-blue': (selectedModel.reasonStatus.toLowerCase() === 'active'  || selectedModel.reasonStatus.toLowerCase() === 'running' || selectedModel.reasonStatus.toLowerCase() === 'training'), 'bg-yellow' : (selectedModel.reasonStatus.toLowerCase() === 'waiting' || selectedModel.reasonStatus.toLowerCase() === 'queued' || selectedModel.reasonStatus.toLowerCase() === 'initiated')}"
+                            class="status ">
+                            {{selectedModel.reasonStatus.toLowerCase()}}
+                        </span>
+                            <div  *ngIf="!selectedModel.reasonStatus" class="data-label">NA</div>
+                        </div>
+                    </div>
+
+                    <div  *ngIf="checkifObjectExist() == true && !dataSetDetailsLoading && selectedModel &&  selectedModel.predictionReason" class="row no-mar">
+                        <label class="s4-page-title">Anomaly Prediction Reason Details ({{selectedModel.predictionReason.length}})</label>
+                    </div>
+
+                    <div *ngIf="checkifObjectExist() == true && !dataSetDetailsLoading && selectedModel &&  selectedModel.predictionReason" class="row no-mar df-col anm-details-table  top-mar border-a bck-white ">
+
+                       
+                       
+
+
+
+                        <div class="row no-mar">
+                            <div class="page_css_view">
+                                <div class="paginate_css">
+                                    <span>
+                                        <!-- <i class="fa fa-search search_fafa" aria-hidden="true"></i> -->
+                                        <mat-icon aria-hidden="false" class="search_mat" aria-label="search icon">search</mat-icon>
+                                        <input autocomplete="off" matInput class="form-control css_search" type="text" placeholder="Search with attribute" [(ngModel)]="searchFilter" maxlength="150"
+                                            (ngModelChange)="onsearchChangeMin(searchFilter)">
+                                    </span>
+                                </div>
+                                <div class="d-flex paginate-align">
+                                    <pagination-template #pT1="paginationApi" [id]="configMinTable.id" class="d-flex"
+                                        (pageChange)="changepage($event, false)">
+                                        <div class="d-flex process_rows_css">
+                                            <span class="mar-r-8 paginate-text">Rows:</span>
+                                            <mat-select disableOptionCentering class="select-page" [(ngModel)]="itemPerPageMinTable"
+                                                (selectionChange)="setNewPageSize(itemPerPageMinTable , false)">
+                                                <mat-option *ngFor="let pgrec of pageArr" [value]="pgrec">{{pgrec}}</mat-option>
+                                            </mat-select>
+                                        </div>
+                                        <div class="pagination-previous" [class.disabled]="pT1.isFirstPage()">
+                                            <button type="button" class="pagination-btn" (click)="pT1.previous()"
+                                                [disabled]="pT1.isFirstPage()">
+                                                < </button>
+                                        </div>
+        
+                                        <div class="d-flex process_matselect">
+                                            <span class="paginate-text"> Page</span>
+                                            <input autocomplete="off" matInput class="currpage-input" type="text" [(ngModel)]="inputCurrentpageMinTable"
+                                                (change)="changepageinp(inputCurrentpageMinTable,pT1.getLastPage() , false)">
+        
+                                            <span class="paginate-text"> of {{pT1.getLastPage()}}</span>
+                                        </div>
+                                        <div class="pagination-next" [class.disabled]="pT1.isLastPage()">
+                                            <button type="button" class="pagination-btn" (click)="pT1.next()"
+                                                [disabled]="pT1.isLastPage()"> > </button>
+                                        </div>
+                                    </pagination-template>
+        
+                                </div>
+                            </div>
+        
+                        </div>
+
+
+                        <div *ngIf="checkifObjectExist() == true && !dataSetDetailsLoading && selectedModel &&  selectedModel.predictionReason" class="f-max out-table mod-table-scroll">
+                            <table class="df-col">
+                                <thead class="sticky-head">
+                                    <tr class="row no-mar head-tr">
+        
+                                        <th  class="col-8 wrap-text">Attribute&nbsp;
+                                            <div class="select-cur" (click)="sortMin('key')">
+                                                <mat-icon *ngIf="!(keyP == 'key' && reverseP)" aria-hidden="false" class="arrow_mat align-middle" aria-label="down icon">arrow_drop_down</mat-icon>
+                                                <mat-icon *ngIf="keyP == 'key' && reverseP" aria-hidden="false" class="arrow_mat align-middle" aria-label="up icon">arrow_drop_up</mat-icon>
+                                            </div>
+        
+                                        </th>
+                                        <!-- <input autocomplete="off" type="checkbox" class="check-tick" [(ngModel)]="anmdModel.checkboxdata" (click)="sample(forecast,input)" id="{{anmdModel.dataId}}" name="checkboxdata"/> -->
+                                       
+                                        <th class="col-4 wrap-text">Value
+                                            <div class="select-cur" (click)="sortMin('value')">
+                                                <mat-icon *ngIf="!(keyP == 'value' && reverseP)" aria-hidden="false" class="arrow_mat align-middle" aria-label="down icon">arrow_drop_down</mat-icon>
+                                                <mat-icon *ngIf="keyP == 'value' && reverseP" aria-hidden="false" class="arrow_mat align-middle" aria-label="up icon">arrow_drop_up</mat-icon>
+                                            </div>
+                                        </th>
+                                       
+                                       
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="row no-mar"
+                                        *ngFor="let anmdModel of selectedModel.predictionReason | orderBy: keyP : reverseP | searchFilter: {'key': searchFilter} | paginate: config; let i = index;">
+                                        <td class="col-8  wrap-text" >
+                                            {{anmdModel.key }}</td>
+                                        <!-- <td>
+                                            <span *ngIf="game.status" [ngClass]="{'bg-green': game.status == 'Finish','bg-blue': game.status == 'running','bg-orange': game.status == 'waiting'}" class="status">
+                                            {{game.status}}
+                                            </span>
+                                            </td> -->
+                                           
+                                        <td class="col-4 wrap-text" >{{anmdModel.value}}
+                                        </td>
+                                        
+                                    </tr>
+                                    <tr class="row no-mar"
+                                        *ngIf="(selectedModel.predictionReason | searchFilter: {'key': searchFilter} | paginate: configMinTable).length == 0">
+                                        <td *ngIf="selectedModel.reasonStatus.toLowerCase() === 'completed'" class="col-12 wrap-text no_rec_css">No records found</td>
+                                        <td *ngIf="selectedModel.reasonStatus.toLowerCase() !== 'completed'" class="col-12 wrap-text no_rec_css">Analysing the Data</td>
+                                    </tr>
+        
+                                </tbody>
+                            </table>
+                        </div>
+
+
+                       
+
+                    </div>
+                </div>
+            </div>
+
+        </div>

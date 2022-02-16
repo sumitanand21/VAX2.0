@@ -1,0 +1,450 @@
+<!-- Main Division Starts Here -->
+<div class="main_div">
+    <div *ngIf="tableLoader" class="spinner-div col-12">
+        <mat-progress-spinner color="slategrey" mode="indeterminate">
+        </mat-progress-spinner>
+    </div>
+    <!-- Left Division Starts Here -->
+    <div class="leftside_div col-12 col-xs-12 col-sm-12 col-md-2 border-r df-col f-max" *ngIf="isShown && !tableLoader">
+        <div class="f-max mod-table-scroll">
+            <div class="radio_css_view">
+                <span class="model_css_type">Model Type:</span>
+                <div class="radio_group_css">
+                    <mat-radio-group aria-label="Select an option" [(ngModel)]="selectedModelType"
+                        (ngModelChange)="modelTypeChange()">
+                        <mat-radio-button value="">
+                            <span class="rad_css_view">ALL</span>
+                        </mat-radio-button>
+                        <mat-radio-button [value]="modeltypeData" *ngFor="let modeltypeData of modelTypeArr">
+                            <span class="rad_css_view">{{modeltypeData}}</span>
+                        </mat-radio-button>
+                    </mat-radio-group>
+                </div>
+            </div>
+            <br>
+            <div class="outer_div_css">
+                <span class="model_css_type_status">Status:</span>
+                <div class="checkbox_css_view" *ngFor="let statusData of statusArr">
+                    <div class="checkbox_group_css">
+                        <label class="check_outer_css">
+                            <input autocomplete="off" type="checkbox" name="active" (change)="checkboxTypeChange($event,statusData)" />
+                            <span class="checkmark">
+                                <p class="p_class">{{statusData.toLowerCase()}}</p>
+                            </span>
+                        </label>
+                    </div>
+                    <br>
+                </div>
+            </div>
+            &nbsp;
+            <div class="drop_css_view">
+                <p class="data_set_css">Data Set:</p>
+                <div class="data_set_wid_css">
+                    <mat-select disableOptionCentering class="form-control drop-mat mat_width_css sub_data_set_wid_css"
+                        [(ngModel)]="datasetView" (ngModelChange)="datasetChange()">
+                        <mat-option value="">All Data Sets</mat-option>
+                        <mat-option *ngFor="let dataset of datasetArr" [value]="dataset">{{dataset}}</mat-option>
+                    </mat-select>
+                </div>
+            </div>
+
+            <br>
+
+            <!-- <div class="refresh_every_css">
+                <span class="d-flex span_group_css">
+                    <mat-icon aria-hidden="false" class="refresh_mat" (click)="refreshData()" aria-label="refresh icon">refresh</mat-icon>
+                </span>
+                <mat-select disableOptionCentering [disabled]="disableSocketDrop"
+                    class="form-control drop-mat drop_css_two class_drop_view mat_css_group" (selectionChange)="scheduleSoc($event.value)"
+                    [(ngModel)]="refreshmatdata">
+                    <mat-option value="off">off</mat-option>
+                    <mat-option *ngFor="let refreshData of refreshDataset" [value]="refreshData">{{refreshData}}
+                    </mat-option>
+                </mat-select>
+            </div> -->
+
+        </div>
+    </div>
+    <!-- Left Division Ends Here -->
+
+    <!-- Right Division Starts Here -->
+    <div *ngIf="!tableLoader" class="rightside_div col-12 col-xs-12 col-sm-12"
+        [ngClass]="isShown?'col-md-10':'col-md-12'">
+
+        <div class="shadowbtn collapse-view-cont" [ngClass]="{'bg-open':!isShown}" (click)="toggleShow()">
+            <!-- <i *ngIf="!isShown" class="fa fa-chevron-right open-tab"></i> -->
+             <!-- <i *ngIf="isShown" class="fa fa-chevron-left close-tab"></i> -->
+            <mat-icon *ngIf="!isShown" class="arrow_mat open-tab" aria-hidden="false" aria-label="arrowright icon">keyboard_arrow_right</mat-icon>
+            <mat-icon *ngIf="isShown" class="arrow_mat close-tab" aria-hidden="false" aria-label="arrowleft icon">keyboard_arrow_left</mat-icon>
+        </div>
+        <div class="right-inner-div">
+            <div class="col-5 right_view_leftcss f-max df-col">
+                <div class="task_view_div">
+                    <div>
+                        <span class="task_css_view">
+                            <b>Tasks</b>
+                        </span>
+                    </div>
+                    <div class="refresh_every_css">
+                <span class="d-flex span_group_css shadowbtn">
+                    <mat-icon aria-hidden="false" class="refresh_mat" (click)="refreshData()" aria-label="refresh icon">refresh</mat-icon>
+                </span>
+                        <button type="button" (click)="openUpsertTaskDialog('Add')"
+                            class="shadowbtn btn btn-primary new_task_btn">New Task</button>
+                    </div>
+                </div>
+                <div class="row no-mar border_view_css">
+                    <div class="page_css_view">
+                        <div class="paginate_css">
+                            <span>
+                                <!-- <i class="fa fa-search search_fafa" aria-hidden="true"></i> -->
+                                <mat-icon aria-hidden="false" class="search_mat" aria-label="search icon">search</mat-icon>
+                                <input autocomplete="off" matInput class="form-control css_search" type="text"
+                                    [(ngModel)]="searchFilterTask" placeholder="Search with Name" maxlength="150"
+                                    (ngModelChange)="onsearchChange(searchFilterTask,configTask.id)">
+                            </span>
+                        </div>
+                        <div class="d-flex paginate-align">
+                            <pagination-template #pT="paginationApi" [id]="configTask.id" class="d-flex"
+                                (pageChange)="changepage($event,configTask.id)">
+                                <div class="d-flex process_rows_css">
+                                    <span class="mar-r-8 paginate-text">Rows:</span>
+                                    <mat-select disableOptionCentering class="select-page" [(ngModel)]="itemPerPageTask"
+                                        (selectionChange)="setNewPageSize(itemPerPageTask,configTask.id)">
+                                        <mat-option *ngFor="let pgrec of pageArr" [value]="pgrec">{{pgrec}}</mat-option>
+                                    </mat-select>
+                                </div>
+                                <div class="pagination-previous" [class.disabled]="pT.isFirstPage()">
+                                    <button type="button" class="pagination-btn" (click)="pT.previous()"
+                                        [disabled]="pT.isFirstPage()">
+                                        < </button>
+                                </div>
+
+                                <div class="d-flex process_matselect">
+                                    <span class="paginate-text"> Page</span>
+                                    <input autocomplete="off" matInput [appAlphaNumeric]="'num'" class="currpage-input" type="text"
+                                        [(ngModel)]="inputCurrentpageTask"
+                                        (change)="changepageinp(inputCurrentpageTask,pT.getLastPage(),configTask.id)">
+
+                                    <span class="paginate-text"> of {{pT.getLastPage()}}</span>
+                                </div>
+                                <div class="pagination-next" [class.disabled]="pT.isLastPage()">
+                                    <button type="button" class="pagination-btn" (click)="pT.next()"
+                                        [disabled]="pT.isLastPage()"> > </button>
+                                </div>
+                            </pagination-template>
+
+                        </div>
+                    </div>
+
+                </div>
+                <div class="f-max out-table mod-table-scroll">
+                    <table class="df-col task_table">
+                        <thead class="sticky-head">
+                            <tr class="row no-mar head-tr">
+                                <th  class="col-3 wrap-text">Name
+                                    <div class="select-cur" (click)="sortTask('schedule_name')">
+                                        <mat-icon *ngIf="!(keyTask == 'schedule_name' && reverseTask)" aria-hidden="false" class="arrow_mat align-middle" aria-label="down icon">arrow_drop_down</mat-icon>
+                                        <mat-icon *ngIf="keyTask == 'schedule_name' && reverseTask" aria-hidden="false" class="arrow_mat align-middle" aria-label="up icon">arrow_drop_up</mat-icon>
+                                    </div>
+                                </th>
+                                <th class="col-3 wrap-text">Status
+                                    <div class="select-cur" (click)="sortTask('schedule_status')">
+                                        <mat-icon *ngIf="!(keyTask == 'schedule_status' && reverseTask)" aria-hidden="false" class="arrow_mat align-middle" aria-label="down icon">arrow_drop_down</mat-icon>
+                                        <mat-icon *ngIf="keyTask == 'schedule_status' && reverseTask" aria-hidden="false" class="arrow_mat align-middle" aria-label="up icon">arrow_drop_up</mat-icon>
+                                    </div>
+                                </th>
+                                <th  class="col-3 wrap-text">Model Type
+                                    <div class="select-cur" (click)="sortTask('modelType')">
+                                        <mat-icon *ngIf="!(keyTask == 'modelType' && reverseTask)" aria-hidden="false" class="arrow_mat align-middle" aria-label="down icon">arrow_drop_down</mat-icon>
+                                        <mat-icon *ngIf="keyTask == 'modelType' && reverseTask" aria-hidden="false" class="arrow_mat align-middle" aria-label="up icon">arrow_drop_up</mat-icon>
+                                    </div>
+                                </th>
+                                <th class="col-3 wrap-text">Data Sets
+                                    <div class="select-cur" (click)="sortTask('dataSetName')">
+                                        <mat-icon *ngIf="!(keyTask == 'dataSetName' && reverseTask)" aria-hidden="false" class="arrow_mat align-middle" aria-label="down icon">arrow_drop_down</mat-icon>
+                                        <mat-icon *ngIf="keyTask == 'dataSetName' && reverseTask" aria-hidden="false" class="arrow_mat align-middle" aria-label="up icon">arrow_drop_up</mat-icon>
+                                    </div>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let alltasksTable of alltasksData | orderBy: keyTask : reverseTask | filterBy :AlltasksFilter | exactFilter : {'modelType':  selectedModelType,'dataSetName': datasetView }  | paginate: configTask; let i = index"
+                                role="row" class="row no-mar body-tr selectTask" [class.active]="selectedTask && alltasksTable.schedule_id === selectedTask.schedule_id"
+                                (click)="getTaskDetails(alltasksTable,i, true)" id="trdata{{i}}">
+                                <td class="wrap-text col-3">{{alltasksTable.schedule_name}}</td>
+                                <td class="wrap-text col-3 btn_status_css">
+                                    <span *ngIf="alltasksTable.schedule_status"
+                                        [ngClass]="{'bg-blue': (alltasksTable.schedule_status.toLowerCase() === 'active' || alltasksTable.schedule_status.toLowerCase() === 'training'), 'bg-yellow' : (alltasksTable.schedule_status.toLowerCase() === 'scheduled' || alltasksTable.schedule_status.toLowerCase() === 'waiting' || alltasksTable.schedule_status.toLowerCase() === 'queued' || alltasksTable.schedule_status.toLowerCase() === 'initiated')}"
+                                        class="status">
+                                        {{alltasksTable.schedule_status.toLowerCase() == 'suspended' ? 'paused' : alltasksTable.schedule_status.toLowerCase() }}
+                                    </span>
+                                </td>
+                                <td class="wrap-text col-3">{{alltasksTable.modelType}}</td>
+                                <td class="wrap-text col-3">
+                                    {{alltasksTable.dataSetName ? alltasksTable.dataSetName : ''}}</td>
+                            </tr>
+                            <tr class="row no-mar border_bot_css"
+                                *ngIf="(alltasksData | filterBy :AlltasksFilter | exactFilter : {'modelType':  selectedModelType,'dataSetName': datasetView }).length == 0">
+                                <td class="col-12 wrap-text no_rec_css">No records found</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="col-7 right_most_css f-max cont-scrl">
+                <div *ngIf="scheduleLoader || statusLoader || modelLoader" class="spinner-div col-12">
+                    <mat-progress-spinner color="slategrey" mode="indeterminate">
+                    </mat-progress-spinner>
+                </div>
+                <div *ngIf="!selectedTask && !scheduleLoader && !statusLoader && !modelLoader">Select at least one task to show the details</div>
+                <div class="sub-cont-scrl" *ngIf="selectedTask && !scheduleLoader && !statusLoader && !modelLoader">
+                    <div class="row">
+                        <div class="col-6 right_div_head">
+                            <span class="headerFont scheduleName"
+                                title="{{selectedTask.schedule_name}}">{{selectedTask.schedule_name}}</span>
+                            <span class="ae1_css textFont" title="{{selectedTask.modelType}}"
+                                *ngIf="selectedTask.modelType">{{selectedTask.modelType}}</span>
+                        </div>
+                        <div class="col-4">
+                            <span class="dataSet-font">Data Set:</span>
+                            <span class="data_css_set textFont" title="{{selectedTask.dataSetName}}"
+                                *ngIf="selectedTask.dataSetName">{{selectedTask.dataSetName}}</span>
+                        </div>
+                        <div class="col-2 delete-btn-wrap">
+                            <button type="button" class="shadowbtn brn btn-danger delete_css"
+                                (click)="deleteTask('DELETE')">Delete</button>
+                        </div>
+                    </div>
+                    <br>
+
+                    <div class="Schedule_view_css">
+                        <div class="sch_sub_css">
+                            <div class="sch_css_dat ">
+                                <span class="font_sch_span">Schedule:</span>
+                            </div>
+                            <div class="sch_btn_css">
+                                <button type="button" *ngIf="taskScheDetails.job_status == 'ACTIVE'" class="shadowbtn btn btn-default pause_css_btn"
+                                (click)="pauseTask('SUSPENDED')">Pause</button>
+                                <button type="button" *ngIf="taskScheDetails.job_status == 'SUSPENDED'" class="shadowbtn btn btn-default pause_css_btn"
+                                (click)="activateTask('ACTIVE')">Activate</button>
+                                <button type="button" class="shadowbtn btn btn-default edit_css_btn"
+                                    (click)="openUpsertTaskDialog('Update', taskScheDetails.task)">Edit</button>
+                            </div>
+                        </div>
+                        <div class="sch_border_css">
+                            <div class="sub_border_css">
+                                <div class="css_sub_border">
+                                    <div class="col-4 grid_css_view">
+                                        <span class="next_run_title">Next Run Time</span>
+                                        <span
+                                            class="next_run_value"> {{taskScheDetails.next_run_time |  date:'yyyy-MM-dd HH:mm' : 'UTC' | emptyvaluecheck}} </span>
+                                    </div>
+                                    <div class="col-4 grid_css_view">
+                                        <span class="model_config_title">Model Configuration</span>
+                                        <span
+                                            class="model_config_value">{{taskScheDetails.modelConfigName | emptyvaluecheck}}</span>
+                                    </div>
+                                    <div class="col-4 grid_css_view">
+                                        <span class="data_range_title">Data Range</span>
+                                        <span
+                                            class="data_range_value">{{taskScheDetails.data_range | emptyvaluecheck}}</span>
+                                    </div>
+                                </div>
+                                <div class="css_sub_border_nex">
+                                    <div class="col-4 grid_css_view">
+                                        <span class="frequency_title">Frequency:</span>
+                                        <span
+                                            class="frequency_value">{{taskScheDetails.frequency | emptyvaluecheck}}</span>
+                                    </div>
+                                    <div class="col-4 grid_css_view">
+                                        <span class="sche_started_title">Schedule Start</span>
+                                        <span
+                                            class="sche_started_value">{{taskScheDetails.schedule_start_time | emptyvaluecheck}}</span>
+                                    </div>
+                                    <div class="col-4 grid_css_view">
+                                        <span class="sche_end_title">Schedule End:</span>
+                                        <span
+                                            class="sche_end_value">{{taskScheDetails.schedule_end_time | emptyvaluecheck}}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="Training_status_css">
+                        <div class="sch_sub_css">
+                            <span class="font_sch_span">Training Status:</span>
+                        </div>
+                        <div *ngFor="let entry of trainingStatusDetails" class="sch_border_css">
+                            <div class="sub_border_css"
+                                [ngClass]="{'train_border_css': (entry.jobStatus.toLowerCase() === 'active' || entry.jobStatus.toLowerCase() === 'training'  || entry.jobStatus.toLowerCase() === 'running' ), 'waiting_border_css':(entry.jobStatus.toLowerCase() === 'waiting' || entry.jobStatus.toLowerCase() === 'queued' || entry.jobStatus.toLowerCase() === 'initiated'), 'comp_border_css': (entry.jobStatus.toLowerCase() !== 'waiting' && entry.jobStatus.toLowerCase() !== 'queued' && entry.jobStatus.toLowerCase() !== 'initiated' && entry.jobStatus.toLowerCase() !== 'active' && entry.jobStatus.toLowerCase() !== 'training' && entry.jobStatus.toLowerCase() !== 'running' )} ">
+                                <div class="train_sub_css">
+                                    <div class="css_sub_border">
+                                        <div class="camel-case"
+                                            [ngClass]="{'training_css': (entry.jobStatus.toLowerCase() === 'active' || entry.jobStatus.toLowerCase() === 'training' || entry.jobStatus.toLowerCase() === 'running'), 'waiting_css':(entry.jobStatus.toLowerCase() === 'waiting' || entry.jobStatus.toLowerCase() === 'queued' || entry.jobStatus.toLowerCase() === 'initiated'), 'completed_css': (entry.jobStatus.toLowerCase() !== 'waiting' && entry.jobStatus.toLowerCase() !== 'queued' && entry.jobStatus.toLowerCase() !== 'initiated' && entry.jobStatus.toLowerCase() !== 'active' && entry.jobStatus.toLowerCase() !== 'training' && entry.jobStatus.toLowerCase() !== 'running' )}">
+                                            <span>{{entry.jobStatus ? entry.jobStatus.toLowerCase() : ''}}</span>
+                                        </div>
+                                        <div  class="start_view_css">
+                                            <span class="font_sch_css sta_sch">Started:</span>
+                                            <span *ngIf="entry.startTime" class="sta_sch span_css_view">{{entry.startTime}}</span>
+                                            <span *ngIf="!entry.startTime" class="sta_sch span_css_view">NA</span>
+                                        </div>
+                                        <div class="prog-process" *ngIf="(entry.jobStatus.toLowerCase() === 'training' || entry.jobStatus.toLowerCase() === 'running' || entry.jobStatus.toLowerCase() === 'active')">
+                                            <mat-progress-bar class="no-padd prog-process-progress-bar"
+                                                mode="determinate" [value]="(entry.progress)"></mat-progress-bar>
+                                            <span class="prog-val">{{entry.progressPer}}%</span>
+                                        </div>
+                                    </div>
+                                    <div class="view_prog_css" *ngIf="(entry.jobStatus.toLowerCase() === 'training' || entry.jobStatus.toLowerCase() === 'running' || entry.jobStatus.toLowerCase() === 'active' || entry.jobStatus.toLowerCase() === 'initiated' || entry.jobStatus.toLowerCase() === 'waiting' || entry.jobStatus.toLowerCase() === 'queued')">
+                                        <span class="sub_view_prog_css" (click)="setTask(entry)">View Progress ></span>
+                                    </div>
+                                </div>
+                                <div class="css_sub_border_nex">
+                                    <div class="col-4 grid_css_view">
+                                        <span class="font_sch_css">Model Config:</span>
+                                        <span *ngIf="entry.modelConfigName" class="span_css_view">{{entry.modelConfigName}}</span>
+                                        <span *ngIf="!entry.modelConfigName" class="span_css_view">NA</span>
+                                    </div>
+                                    <div class="col-4 grid_css_view">
+                                        <span class="font_sch_css">Loss Function:</span>
+                                        <span *ngIf="entry.lossFunction" class="span_css_view">{{entry.lossFunction}}</span>
+                                        <span *ngIf="!entry.lossFunction" class="span_css_view">NA</span>
+                                    </div>
+                                    <div class="col-4 grid_css_view">
+                                        <span class="font_sch_css">Accuracy:</span>
+                                        <span *ngIf="entry.accuracyDisp" class="span_css_view">{{entry.accuracyDisp}}</span>
+                                        <span *ngIf="!entry.accuracyDisp" class="span_css_view">NA</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div *ngIf="trainingStatusDetails.length === 0" class="sub_border_css no-data-er">
+                            <div class="col-12">No training status available</div>
+                        </div>
+                    </div>
+
+                    <div class="training_modal_css">
+                        <div class="sch_sub_css">
+                            <span class="font_sch_span">Trained Models:</span>
+                        </div>
+                        <div class="training_table_css sub_border_css df-col-dummy">
+                            <div class="row no-mar">
+                                <div class="page_css_view">
+                                    <div class="delete_icon">
+                                        <span class="trash_icon" (click)="deleteTrainedModels()">
+                                            <!-- <i class="fa fa-trash" aria-hidden="true"></i> -->
+                                            <mat-icon aria-hidden="false" class="delete_forever_mat" aria-label="delete icon">delete_forever</mat-icon>
+                                        </span>
+                                    </div>
+                                    <div class="paginate_css">
+                                        <span>
+                                            <!-- <i class="fa fa-search search_fafa" aria-hidden="true"></i> -->
+                                            <mat-icon aria-hidden="false" class="search_mat" aria-label="search icon">search</mat-icon>
+                                            <input autocomplete="off" matInput class="form-control css_search" type="text"
+                                                [(ngModel)]="searchFilter" placeholder="Search with Model Name"
+                                                (ngModelChange)="onsearchChange(searchFilter,config.id)">
+                                        </span>
+                                    </div>
+                                    <div class="d-flex paginate-align">
+                                        <pagination-template #pT="paginationApi" [id]="config.id" class="d-flex"
+                                            (pageChange)="changepage($event,config.id)">
+                                            <div class="d-flex process_rows_css">
+                                                <span class="mar-r-8 paginate-text">Rows:</span>
+                                                <mat-select disableOptionCentering class="select-page"
+                                                    [(ngModel)]="itemPerPage"
+                                                    (selectionChange)="setNewPageSize(itemPerPage,config.id)">
+                                                    <mat-option *ngFor="let pgrec of pageArr" [value]="pgrec">{{pgrec}}
+                                                    </mat-option>
+                                                </mat-select>
+                                            </div>
+                                            <div class="pagination-previous" [class.disabled]="pT.isFirstPage()">
+                                                <button type="button" class="pagination-btn" (click)="pT.previous()"
+                                                    [disabled]="pT.isFirstPage()">
+                                                    < </button>
+                                            </div>
+
+                                            <div class="d-flex process_matselect">
+                                                <span class="paginate-text"> Page</span>
+                                                <input autocomplete="off" matInput [appAlphaNumeric]="'num'" class="currpage-input"
+                                                    type="text" [(ngModel)]="inputCurrentpage"
+                                                    (change)="changepageinp(inputCurrentpage,pT.getLastPage(),config.id)">
+
+                                                <span class="paginate-text"> of {{pT.getLastPage()}}</span>
+                                            </div>
+                                            <div class="pagination-next" [class.disabled]="pT.isLastPage()">
+                                                <button type="button" class="pagination-btn" (click)="pT.next()"
+                                                    [disabled]="pT.isLastPage()"> > </button>
+                                            </div>
+                                        </pagination-template>
+
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="f-max out-table mod-table-scroll_sec">
+                                <table class="df-col">
+                                    <thead class="sticky-head">
+                                        <tr class="row no-mar head-tr">
+                                            <th class="width-check checkbox_col_one"></th>
+                                            <th  class="width-name wrap-text">Model Name
+                                                <div class="select-cur" (click)="sortModel('modelNameDisp')">
+                                                    <mat-icon *ngIf="!(key == 'modelNameDisp' && reverse)" aria-hidden="false" class="arrow_mat align-middle" aria-label="down icon">arrow_drop_down</mat-icon>
+                                                    <mat-icon *ngIf="key == 'modelNameDisp' && reverse" aria-hidden="false" class="arrow_mat align-middle" aria-label="up icon">arrow_drop_up</mat-icon>
+                                                </div>
+                                            </th>
+                                            <th  class="width-config wrap-text">Model
+                                                Config
+                                                <div class="select-cur" (click)="sortModel('modelConfigName')">
+                                                    <mat-icon *ngIf="!(key == 'modelConfigName' && reverse)" aria-hidden="false" class="arrow_mat align-middle" aria-label="down icon">arrow_drop_down</mat-icon>
+                                                    <mat-icon *ngIf="key == 'modelConfigName' && reverse" aria-hidden="false" class="arrow_mat align-middle" aria-label="up icon">arrow_drop_up</mat-icon>
+                                                </div></th>
+                                            <th class="width-range wrap-text">Data Range
+                                                <div class="select-cur" (click)="sortModel('dataRange')">
+                                                    <mat-icon *ngIf="!(key == 'dataRange' && reverse)" aria-hidden="false" class="arrow_mat align-middle" aria-label="down icon">arrow_drop_down</mat-icon>
+                                                    <mat-icon *ngIf="key == 'dataRange' && reverse" aria-hidden="false" class="arrow_mat align-middle" aria-label="up icon">arrow_drop_up</mat-icon>
+                                                </div>
+                                            </th>
+                                            <th class="width-acc wrap-text">Accuracy
+                                                <div class="select-cur" (click)="sortModel('accuracyDisp')">
+                                                    <mat-icon *ngIf="!(key == 'accuracyDisp' && reverse)" aria-hidden="false" class="arrow_mat align-middle" aria-label="down icon">arrow_drop_down</mat-icon>
+                                                    <mat-icon *ngIf="key == 'accuracyDisp' && reverse" aria-hidden="false" class="arrow_mat align-middle" aria-label="up icon">arrow_drop_up</mat-icon>
+                                                </div>
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let trainedMod of trainedModels | orderBy: key : reverse | searchFilter: {'modelNameDisp': searchFilter} | paginate: config; let i = index"
+                                            role="row" class="row no-mar body-tr"
+                                            [class.active]="trainedMod.checkboxdata == true" id="trdata{{i}}">
+                                            <td class="width-check checkbox_col_one">
+                                                <label class="check-outer">
+                                                    <input autocomplete="off" type="checkbox" [(ngModel)]="trainedMod.checkboxdata"
+                                                        id="{{trainedMod.id}}" name="{{trainedMod.id}}" />
+                                                    <span class="checkmark"></span>
+                                                </label>
+                                            </td>
+                                            <td class="width-name wrap-text wrap-text-md table-link" [title]="trainedMod.modelNameDisp"
+                                                (click)="setTask(trainedMod)">{{trainedMod.modelNameDisp}}</td>
+                                            <td class="width-config wrap-text">{{trainedMod.modelConfigName}}</td>
+                                            <td class="width-range wrap-text wrap-text-md" [title]="trainedMod.dataRange">{{trainedMod.dataRange}}</td>
+                                            <td class="width-acc wrap-text">{{trainedMod.accuracyDisp}}</td>
+                                        </tr>
+                                        <tr class="row no-mar no-rec-tr"
+                                            *ngIf="(trainedModels | searchFilter: {'modelNameDisp': searchFilter}).length == 0">
+                                            <td class="col-1 wrap-text"></td>
+                                            <td class="col-11 wrap-text">No Trained Models available</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Right Division Ends Here -->
+
+</div>
+<!-- Main Division Ends Here -->

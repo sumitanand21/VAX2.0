@@ -1,0 +1,19 @@
+<div class="parent-content df-col">
+    <div class="corr-header">
+	<app-correlation-header [activeView]="'HeatMap'" [disableAll]="setDisable" [allDetails]="allCorrelationDetails" (emitOut)="provideInputsToMap($event)"></app-correlation-header>
+    </div>
+    <div class="wrap-cont f-max">
+        <div class="heat-map">
+            <div *ngIf="isLoading" class="spinner-div col-12">
+                <mat-progress-spinner color="slategrey" mode="indeterminate">
+                </mat-progress-spinner>
+            </div>
+            <div class="no-data" *ngIf="!isLoading && chartArray.length == 0">No Data Available</div>
+
+        <div  *ngIf="!isLoading && chartArray.length > 0" class="graph-height">
+            <app-amchartsheatmap [chartData]="chartArray"></app-amchartsheatmap>
+        </div>
+        </div>
+
+    </div>
+        </div>

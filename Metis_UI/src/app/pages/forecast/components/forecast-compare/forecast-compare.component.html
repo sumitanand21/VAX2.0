@@ -1,0 +1,159 @@
+<div class="parent-content df-col">
+    <div *ngIf="isLoading" class="spinner-div" >
+        <mat-progress-spinner color="slategrey" mode="indeterminate">
+        </mat-progress-spinner>
+    </div>
+    <div *ngIf="!isLoading" class="wrap-cont f-max">
+        <div class="d-flex btn-head">
+            <span class="view-text">View : </span>
+            <button class="shadowbtn view-btn" [ngClass]="!stackView? 'active-btn' : ''" type="button" (click)="toggleView(false)">
+                <span class="btn-icon">
+                    <span class="line-v"></span>
+                  <!-- <span class="line-h"></span> -->
+                    <!-- <i class="fa fa-square" aria-hidden="true"></i> -->
+                    <mat-icon aria-hidden="false" class="view_agenda_mat" aria-label="view_agenda icon">view_agenda</mat-icon>
+               </span>
+                <span>Compact</span>
+            </button>
+
+            <button class="shadowbtn view-btn" [ngClass]="stackView? 'active-btn' : ''" type="button" (click)="toggleView(true)">
+                <span class="btn-icon">
+                    <!-- <span class="line-h"></span>
+                    <i class="fa fa-square" aria-hidden="true"></i> -->
+                    <mat-icon aria-hidden="false" class="view_agenda_mat" aria-label="view_agenda icon">view_agenda</mat-icon>
+                </span>
+                <span>Stack</span>
+            </button>
+        </div>
+
+        <div class="d-flex btn-head" *ngIf="displayError || displayNoRecord">
+            <span class="view-text" *ngIf="displayError">Error occured, Please try again later </span>
+            <span class="view-text" *ngIf="displayNoRecord">No Data Available </span>
+        </div>
+
+        <div class="row outer-row">
+            <div class="compareSet no-padd" [ngClass]="!stackView ? 'col-md-6 mar-b-60' : 'col-md-12 mar-b-30'"
+                *ngFor="let compare of compareProcess;let i=index">
+
+
+                <div class="row out-main-row"  [ngClass]="{'d-flex-end': !stackView && (i%2 != 0)}">
+                    <div class="compare-main no-padd pull-right"
+                        [ngClass]="!stackView ? 'col-md-11' : 'col-md-12'">
+
+                        <div class="compare-head d-flex">
+                            <div class="col-11 no-padd comp-name"> {{compare.dataId}}</div>
+                            <div class="col-1 no-padd">
+                                <button type="button" class="btn-close" (click)="removeCompareProcess(compare)"><mat-icon aria-hidden="false" aria-label="clear">clear</mat-icon></button>
+                                
+                            </div>
+                        </div>
+                        <div class="compare-body">
+                            <mat-tab-group class="compare-tab" mat-align-tabs="start">
+                                <mat-tab label="Graph">
+                                    <div class="graph-tab">
+                                        <div class="outer-graph-frame">
+                                        <iframe id="myFrame{{i}}" class="graph-frame" [src]="compare.graphUrl" ></iframe>
+                                    </div>
+                                        <div class="row graph-row">
+                                            <div class="col-6 box-body" [ngClass]="!stackView ? 'col-md-6' : 'col-md-3'">
+                                                <label class="body-label">Model Configuration</label>
+                                                <div class="data-label">{{compare.modelConfigName}}</div>
+                                            </div>
+                                            <div  class="col-6 box-body" [ngClass]="!stackView ? 'col-md-6' : 'col-md-3'">
+                                                <label class="body-label">Loss Function</label>
+                                                <div class="data-label">{{compare.lossFunction}}</div>
+                                            </div>
+                                            <div  class="col-6 box-body" [ngClass]="!stackView ? 'col-md-6' : 'col-md-3'">
+                                                <label class="body-label">Time Series Type</label>
+                                                <div class="data-label">{{compare.timeseriesType}} </div>
+                                            </div>
+                                            <div  class="col-6 box-body" [ngClass]="!stackView ? 'col-md-6' : 'col-md-3'">
+                                                <label class="body-label">Loss Value</label>
+                                                <div class="data-label">{{compare.lossValue}}</div>
+                                            </div>
+                                        </div>
+                                </div>
+                                </mat-tab>
+                                <mat-tab label="Detail Specs">
+                                        <div class="detail-tab">
+                                            <div class="row detail-tab-body">
+                                                <div class="mar-b-12 col-6 box-body" [ngClass]="!stackView ? 'col-md-6' : 'col-md-3'">
+                                                    <label class="body-label">Data Sets</label>
+                                                    <div class="data-label">{{compare.dataSetName}}</div>
+                                                </div>
+
+                                                <div class="mar-b-12 col-6 box-body" [ngClass]="!stackView ? 'col-md-6' : 'col-md-3'">
+                                                    <label class="body-label">Sample Time</label>
+                                                    <div class="data-label">{{compare.sampleTime}}</div>
+                                                </div>
+
+                                                <div class="mar-b-12 col-6 box-body" [ngClass]="!stackView ? 'col-md-6' : 'col-md-3'">
+                                                    <label class="body-label">Data Range</label>
+                                                    <div class="data-label">Min: {{compare.minDataRange }}  &nbsp;&nbsp;  Max: {{compare.maxDataRange}} </div>
+                                                </div>
+
+                                                <div class="mar-b-12 col-6 box-body" [ngClass]="!stackView ? 'col-md-6' : 'col-md-3'">
+                                                    <label class="body-label">Number of Forward Steps</label>
+                                                    <div class="data-label">{{compare.timeForForwardPrediction}}</div>
+                                                </div>
+                                                <div class="mar-b-12 col-6 box-body" [ngClass]="!stackView ? 'col-md-6' : 'col-md-3'">
+                                                    <label class="body-label">CPU usage</label>
+                                                    <div class="data-label">
+                                                        <mat-progress-bar class="col-9 no-padd specs-progress-bar"
+                                                            mode="determinate" [value]="(compare.cpuUsage * 100)"></mat-progress-bar>
+                                                    </div>
+                                                </div>
+                                                <div class="mar-b-12 col-6 box-body" [ngClass]="!stackView ? 'col-md-6' : 'col-md-3'">
+                                                    <label class="body-label">Memory Usage</label>
+                                                    <div class="data-label">
+                                                        <mat-progress-bar class="col-9 no-padd specs-progress-bar"
+                                                            mode="determinate"  [value]="(compare.memoryUsage * 100)"></mat-progress-bar>
+                                                    </div>
+                                                </div>
+                                                <div class="mar-b-12 col-6 box-body" [ngClass]="!stackView ? 'col-md-6' : 'col-md-3'">
+                                                    <label class="body-label">GPU Usage</label>
+                                                    <div class="data-label">
+                                                        <mat-progress-bar class="col-9 no-padd specs-progress-bar"
+                                                            mode="determinate"  [value]="(compare.gpuUsage * 100)"></mat-progress-bar>
+                                                    </div>
+                                                </div>
+                                                <div class="mar-b-12 col-6 box-body" [ngClass]="!stackView ? 'col-md-6' : 'col-md-3'">
+                                                    <label class="body-label">GPU Memory Usage</label>
+                                                    <div class="data-label">
+                                                        <mat-progress-bar class="col-9 no-padd specs-progress-bar"
+                                                            mode="determinate"  [value]="(compare.gpuMemoryUsage * 100)"></mat-progress-bar>
+                                                    </div>
+                                                </div>
+                                                <div class="mar-b-12 col-6 box-body" [ngClass]="!stackView ? 'col-md-6' : 'col-md-3'">
+                                                    <label class="body-label">Speed</label>
+                                                    <div class="data-label">{{compare.speed}}</div>
+                                                </div>
+                                                <div class="mar-b-12 col-6 box-body" [ngClass]="!stackView ? 'col-md-6' : 'col-md-3'">
+                                                    <label class="body-label">Number of job Running</label>
+                                                    <div class="data-label">{{compare.numberOfJobRunning}}</div>
+                                                </div>
+                                                <div class="mar-b-12 col-6 box-body" [ngClass]="!stackView ? 'col-md-6' : 'col-md-3'">
+                                                    <label class="body-label">Time of Running</label>
+                                                    <div class="data-label">{{compare.timeOfRunning}} </div>
+                                                </div>
+                                                <div class="mar-b-12 col-6 box-body" [ngClass]="!stackView ? 'col-md-6' : 'col-md-3'">
+                                                    <label class="body-label">Number of record processed</label>
+                                                    <div class="data-label">{{compare.numberofRecordsProcessed}}</div>
+                                                </div>
+    
+                                            </div>
+                                     
+                                    </div>
+                                    
+                                </mat-tab>
+                            </mat-tab-group>
+                        </div>
+
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,418 @@
+.save-mod{
+    border:1.5px solid #3B73B7;
+    background-color: #3B73B7;
+    width: 56px;
+    padding: 0px;
+}
+
+.s1-label-model_css{
+    position: absolute;
+    margin-top: 5px;
+}
+.delete-mod{
+    border:1.5px solid #ff0000;
+    background-color: #ff0000;
+    width:66px;
+    padding: 0px;
+}
+.input-feild-model {
+    border: 1px solid lightgray;
+    border-radius: 4px;
+    width: 200px;
+    height: 32px;
+    margin: 10px 10px 10px 45px;
+    padding: 5px;
+}
+.s2-input-feild-model{
+    border: 1px solid lightgray;
+    margin-right: 10px;
+    border-radius: 4px;
+    width: 80px;
+    height: 32px;
+    padding: 5px;
+}
+.s3-input-feild-model{
+    border: 1px solid lightgray;
+    width: 43px;
+    height: 24px;
+    margin-top: 0px;
+    text-align: center;
+}
+.s4-input-feild-model {
+    border: 1px solid lightgray;
+    width: 340px;
+    height: 32px;
+    border-radius: 4px;
+    margin-top: 5px;
+    padding-left: 20px;
+}
+.radio-feild-model{
+    margin-left: 10px;
+    margin-right: 10px;
+}
+.s2-radio-feild-model {
+    padding-right: 100px;
+    display: grid;
+}
+.s1-label-model {
+    color: gray;
+    margin-top: 15px;
+}
+.s2-label-model {
+    color: gray;
+    margin-bottom: 10px !important;
+    margin-left: 15px !important;
+}
+.s3-label-model {
+    color: gray;
+    margin-bottom: 0 !important;
+}
+.model-header-section {
+    margin: 8px 8px 8px 0;
+}
+.s2-model-header-section {
+    margin: 8px 8px 8px 0;
+    margin: 16px 15px 16px 15px;
+    border: 0.3px solid lightgrey;
+}
+.s3-model-header-section {
+    margin: 0px 0px 0px 0px; 
+}
+.s4-model-header-section {
+    margin: 15px 0px 15px 0px; 
+    max-height: 250px;
+    overflow-x: hidden;
+}
+.mat-rd-btn-s2 {
+    /* width: 100px; */
+    margin-bottom: 5px;
+}
+.col-sm-2, .col-sm-3, .col-sm-4 , .row{
+    font-size: small;
+}
+.nd-btn-right:focus{
+    border: 1px solid lightgray;
+}
+.nd-btn-left:focus{
+    border: 1px solid lightgray;
+}
+.plus_minus_css, .plus_minus {
+    display: flex;
+}
+.plus_minus{
+    margin-top: 5px;
+}
+.node_css{
+    margin-left: 15px;
+}
+.nd-btn-right {
+    width: 32px;
+    height: 24px;
+    padding: 3px;
+    font-size: x-large;
+    font-weight: bolder;
+    line-height: 10px;
+    border: 1px solid lightgray;
+    display: grid;
+    border-radius: 6px 0 0 6px;
+    margin-left: 10px;
+}
+.nd-btn-left {
+    width: 32px;
+    height: 24px;
+    padding: 3px;
+    font-size: x-large;
+    font-weight: bolder;
+    line-height: 10px;
+    border: 1px solid lightgray;
+    display: grid;
+    border-radius: 0 6px 6px 0;
+    margin-right: 10px;
+}
+.nd-btn-lower {
+    background-color: white;
+    border: 1px solid var(--mtsclr-border);
+    border-radius: 4px;
+    margin-right: 10px;
+    width: 25px;
+    height: 25px;
+    text-align: center;
+}
+.s1-dropdown {
+    height: 32px;
+    width: 140px;
+    font-size: 14px;
+}
+.feature-tab { 
+    height:100%;
+    width:100%;
+    display: block !important;
+    color: #232323;
+}
+.checkmark {
+    margin-left: 5px;
+    font-size: small;
+}
+.s2-col {
+    padding-right: 0px !important;
+    padding-left: 5px !important;
+margin-top:  0px;
+}
+.serach-icon{
+    position: absolute;
+    margin: 14px 7px;
+    font-size: 13px;
+    color: #707070; 
+}
+.pagination-previous{
+    margin-left: 24px;
+  }
+  .pagination-btn{
+    cursor: pointer;
+    font-weight: 600;
+    border:none;
+    color: grey;
+    background-color: transparent;
+  }
+  .paginate-text{
+    font-size: 12px;
+  }
+  
+  .paginate-align{
+    width: 65%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+.mar-r-8{
+    margin-right: 8px;
+}
+  .d-flex{
+    display:flex;
+    align-items: center;
+  }
+  .select-page{
+    border-bottom: 2px solid #d8d8d8 !important;
+    width: 45px;
+    height: 25px;
+    font-size: 12px;
+    padding: 5px 0px 0px 5px;
+    margin-right: 12px;
+}
+.currpage-input{
+    text-align: center;
+    border-top: none;
+    border-right: none;
+    border-left: none;
+    border-bottom: 2px solid #d8d8d8 !important;
+    width: 45px;
+    font-size: 12px;
+    outline: none;
+    margin-top: 0px;
+    /* margin-right: 5px; */
+}
+  .input-chkbox{
+      color: grey;
+  }
+  span {
+      line-height: 32px !important;
+      color: #707070;
+  }
+  .cont-scrl{
+    overflow-x: hidden;
+    overflow-y: auto;
+    display: flex;
+    font: normal normal normal 14px/13px Segoe UI;
+  }
+  .s2-div {
+      margin-top: 25px;
+  }
+.container {
+    margin-bottom: 0px !important;
+    position: relative;
+    padding-left: 30px;
+    padding-right: 0px;
+    cursor: pointer;
+    font-size: 16px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+  
+.upsert-page-css {
+    height: 0 !important;
+}
+.s3-input-feild-model[type=number]::-webkit-inner-spin-button, 
+.s3-input-feild-model[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.nd-btn-lower[type=number]::-webkit-inner-spin-button, 
+.nd-btn-lower[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+
+.check-outer {
+    margin: 10px 5px;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+  /* Hide the browser's default checkbox */
+.check-outer input {
+/* position: absolute; */
+opacity: 0;
+cursor: pointer;
+height: 0;
+width: 0;
+}
+
+/* On mouse-over, add a grey background color */
+.check-outer:hover input ~ .checkmark {
+    background-color: #ffffff;
+  }
+  
+  /* When the checkbox is checked, add a blue background */
+  .check-outer input:checked ~ .checkmark {
+    background-color: #ffffff;
+      border: 2px solid #3B73B7;
+  }
+    /* Show the checkmark when checked */
+.check-outer input:checked ~ .checkmark:after {
+display: block;
+}
+
+/* Style the checkmark/indicator */
+.check-outer .checkmark:after {
+top: 0;
+left: 4px;
+width: 5px;
+height: 10px;
+border: solid white;
+border: 1px solid #3B73B7;
+border-width: 0 2px 2px 0;
+-webkit-transform: rotate(45deg);
+-ms-transform: rotate(45deg);
+transform: rotate(45deg);
+}
+.checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 16px;
+    width: 16px;
+    background-color: transparent;
+    border: 2px solid #CBCBCB;
+    border-radius: 2px;
+  }
+ /* When the checkbox is checked, add a blue background */
+ .container input:checked ~ .checkmark {
+    border: 2px solid #3B73B7;
+    border-radius: 4px;
+  }
+  
+  /* Create the checkmark/indicator (hidden when not checked) */
+  .checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+  }
+  
+  /* Show the checkmark when checked */
+  .container input:checked ~ .checkmark:after {
+    display: block;
+  }
+  
+  /* Style the checkmark/indicator */
+  .container .checkmark:after {
+    left: 4px;
+    top: 1px;
+    width: 7px;
+    height: 10px;
+    border: 1px solid #3B73B7;
+    border-width: 0 2px 2px 0;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+  }
+  .p_class{
+    margin: -4px 0% 0% 200%;
+    font: normal normal normal 14px Segoe UI;
+    width: max-content;
+  }
+  .sele_css{
+      margin-left: 100px;
+  }
+  .mat-stroked-button{
+    line-height: 30px !important;
+}
+.wrap-text{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-left: 0;
+    width: 300px;
+  }
+  .data-label{
+    color: #232323;
+    font: normal normal normal 14px Segoe UI;
+    word-break: break-word;
+    margin-top: 12px;
+}
+.select_all{
+    margin: 18px 0px 0px 5px;
+}
+/* Media Queries starts here */
+@media (min-width: 1598px) and (max-width: 1928px){
+    .s4-input-feild-model,.input-feild-model,.plus_minus_css,.span-label-model,.s2-input-feild-model,.s1-label-model_css,.s1-label-model,.s2-label-model,.s1-dropdown{
+        font-size: 18px;
+    }
+    .data-label{
+        margin-top: 10px;
+    }
+    .mts-right-btn{
+        width: 100px;
+    }
+    .cont-scrl,.data-label,.mts-right-btn{
+        font: normal normal normal 18px Segoe UI;
+    }
+    .p_class{
+        margin: -6px 0% 0% 200%;
+        font: normal normal normal 18px Segoe UI;
+    }
+    .mts-basic-btn{
+        margin: 10px !important;
+        font-size: 18px;
+    }
+    .s4-input-feild-model,.s1-label-model{
+        margin-top: 10px;
+    }
+    .search_mat_icon{
+        margin: 18px 7px 7px 4px;
+        font-size: 18px;
+    }
+    .select-page{
+        height: 32px;
+    }
+    .input-feild-model{
+        margin: 5px 10px 10px 65px;
+    }
+    .css_search{
+        width: 250px;
+    }
+
+}
+
+  /* Mozila Css Starts Here */
+  @-moz-document url-prefix() {
+    @media (min-width: 1598px) and (max-width: 1928px){
+        .cont-scrl,.data-label,.mts-right-btn,.p_class{
+            font: normal normal normal 18px Segoe ui regular !important;
+        }
+    }
+}

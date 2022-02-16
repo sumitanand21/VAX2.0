@@ -1,0 +1,33 @@
+---
+# Source: warrior/templates/02-persistent-volume-claims.yaml
+
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: {{ $.Values.volume.pv_katana_db }}-claim
+  namespace: {{ $.Values.namespace }}
+  creationTimestamp: null
+spec:
+  storageClassName: manual
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+  volumeName: {{ $.Values.volume.pv_katana_db }}
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: {{ $.Values.volume.pv_katana_configs }}-claim
+  namespace: {{ $.Values.namespace }}
+  creationTimestamp: null
+spec:
+  storageClassName: manual
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+  volumeName: {{ $.Values.volume.pv_katana_configs }}
+---

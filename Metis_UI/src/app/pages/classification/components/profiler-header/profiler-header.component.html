@@ -1,0 +1,172 @@
+<div class="container-fluid tab-selector-bar df-col">
+    <div class="row classification-header-row">
+        <div class="col-2 wrap-text">
+            <span class="classification-title">Data set:</span>
+            <span class="classification-value" title="{{dataSetValue}}"> &nbsp;&nbsp;
+                {{dataSetValue ? dataSetValue : 'None'}} </span>
+        </div>
+        <div class="col-8 wrap-text">
+            <span class="classification-title"> Feature Group:</span>
+            <span class="classification-value" title="{{selectedFeaturegroup}}"> &nbsp;&nbsp;
+                {{selectedFeaturegroup ? selectedFeaturegroup : 'None'}} </span>
+        </div>
+        <div class="col-2">
+            <button type="button" class="shadowbtn btn btn-default change-selection-btn move-right" (click)="backToFeature()"><span class="wrap-text">Back to Feature Selection</span></button>
+        </div>
+
+    </div>
+    <div class="row classification-view-bar">
+        <!-- <div class="col-4 classification-title">  -->
+        <div class="col-3 wrap-text">
+            <span class="classification-title">Profile Result with Feature:</span>
+            <span class="classification-value-h2" title="{{profResultWithFeature}}">&nbsp;
+                {{profResultWithFeature ? profResultWithFeature : 'None'}} </span>
+        </div>
+        <div class="col-6 time_feature">
+            <div>
+                <span class="classification-title">Time Filter Feature:</span>
+                <span class="classification-value"
+                    title="{{timeFilterValue}}">&nbsp;&nbsp;{{timeFilterValue ? timeFilterValue : 'None'}}</span>
+                <span class="classification-value time-css" *ngIf="timeFilterValue"> {{classificationFromTimePeriod}} To
+                    {{classificationToTimePeriod}} </span>
+                <span class="menu-div">
+                    <!-- <i class="fa fa-pen edit_icon" [matMenuTriggerFor]="editmenu" #clickMenuTrigger="matMenuTrigger"
+                        aria-hidden="true" (click)="openTimeEditMenu()"></i> -->
+                        <mat-icon aria-hidden="false" class="edit_mat edit_icon" *ngIf="!disableAll && (!statusProfiler || (statusProfiler && (statusProfiler.toLowerCase() === 'completed' || statusProfiler.toLowerCase() === '')))" aria-label="edit icon" [matMenuTriggerFor]="editmenu" #clickMenuTrigger="matMenuTrigger"
+                         (click)="openTimeEditMenu()">edit</mat-icon>
+                    <mat-menu #editmenu="matMenu" class="edit_menu" xPosition="before" hasBackdrop="false">
+                        <div class="menu-main" (click)="$event.stopPropagation();"
+                            (keydown.tab)="$event.stopPropagation()">
+                            <div class="menu_edit_item">
+                                <div class="mar-label menu_label prof_text">Profile Result with Feature:</div>
+                                <div>
+                                    <mat-select disableOptionCentering 
+                                    name="filfeature" [(ngModel)]="profResultWithFeature"
+                                    class="form-control drop-mat drop_css_one">
+                                    <mat-option disabled hidden value="">Select</mat-option>
+                                    <mat-option *ngFor="let filterDet of labelDD"
+                                        [value]="filterDet">{{filterDet}}</mat-option>
+                                </mat-select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-5">
+                                    <div class="menu_edit_item">
+                                        <div>
+                                            <label class="check-outer">
+                                                <input autocomplete="off" type="checkbox" [(ngModel)]="timeFilterDetails.enableFilter"
+                                                    (change)="OnTimeFilterCheckBox(timeFilterDetails.enableFilter)"
+                                                    id="timefilter" name="timefilter" />
+                                                <span class="checkmark"></span>
+                                            </label>
+                                        </div>
+                                       
+                                        <div class="mar-label menu_label time_fil_text">Time Filter Feature:</div>
+                                        <div>
+                                            <mat-select disableOptionCentering [disabled]="!timeFilterDetails.enableFilter"
+                                                name="filfeature" [(ngModel)]="timeFilterDetails.filterFeature"
+                                                class="form-control drop-mat drop_css_one">
+                                                <mat-option disabled hidden value="">Select</mat-option>
+                                                <mat-option *ngFor="let filterDet of timeFilterDD"
+                                                    [value]="filterDet.time_column">{{filterDet.time_column}}</mat-option>
+                                            </mat-select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-7">
+                                    <form #menuDateRange="ngForm">
+                                        <fieldset
+                                            [disabled]="!timeFilterDetails.enableFilter || !timeFilterDetails.filterFeature">
+                                            <div class="menu_edit_item">
+                                                <div>
+                                                    <div class="date_time">
+                                                        <div class="date-label">From:</div>
+                                                        <div class="main-date-div">
+                                                            <input autocomplete="off" matInput class="inputfeild form-control" name="fromDate"  [(ngModel)]="timeFilterDetails.fromDate"
+                                                                placeholder="Select Date" (dateChange)="onFromDateChange()"
+                                                                [matDatepicker]="pickerFrom" readonly required />
+                                                            <mat-datepicker-toggle class="dat-pixk" matSuffix
+                                                                [for]="pickerFrom"></mat-datepicker-toggle>
+                                                            <mat-datepicker #pickerFrom></mat-datepicker>
+                                                        </div>
+                                                        <div class="input-time-div">
+                                                            <input autocomplete="off" matInput class="input-feild-time form-control"
+                                                                [(ngModel)]="timeFilterDetails.fromTimeHr" name="fromTimeHr"
+                                                                [appAlphaNumeric]="'num'" maxlength="2" placeholder="00"
+                                                                type="text" name="timeHrFrom" [appAlphaNumeric]="'num'"
+                                                                required>
+                                                        </div>
+                                                        <div class="input-time-div">
+                                                            <input autocomplete="off" matInput class="input-feild-time form-control"
+                                                                [(ngModel)]="timeFilterDetails.fromTimeMin" name="fromTimeMin"
+                                                                [appAlphaNumeric]="'num'" maxlength="2" placeholder="00"
+                                                                type="text" name="timeMinFrom" [appAlphaNumeric]="'num'"
+                                                                required>
+                                                        </div>
+                                                        <div class="time-stamp">
+                                                            (HH-MM)
+                                                        </div>
+                                                    </div>
+                                                    <div class="date_time">
+                                                        <div class="date-label">To:</div>
+                                                        <div class="main-date-div">
+                                                            <input autocomplete="off" matInput class="inputfeild form-control"
+                                                                [(ngModel)]="timeFilterDetails.toDate" name="toDate"
+                                                                placeholder="Select Date" [matDatepicker]="pickerTo"
+                                                                [min]="timeFilterDetails.minToDate" readonly required />
+                                                            <mat-datepicker-toggle class="dat-pixk" matSuffix [for]="pickerTo">
+                                                            </mat-datepicker-toggle>
+                                                            <mat-datepicker #pickerTo></mat-datepicker>
+                                                        </div>
+                                                        <div class="input-time-div">
+                                                            <input autocomplete="off" matInput class="input-feild-time form-control"
+                                                                [(ngModel)]="timeFilterDetails.toTimeHr" name="toTimeHr"
+                                                                [appAlphaNumeric]="'num'" maxlength="2" placeholder="00"
+                                                                type="text" name="timeHrFrom" [appAlphaNumeric]="'num'"
+                                                                required>
+                                                        </div>
+                                                        <div class="input-time-div">
+                                                            <input autocomplete="off" matInput class="input-feild-time form-control"
+                                                                [(ngModel)]="timeFilterDetails.toTimeMin" name="toTimeMin"
+                                                                [appAlphaNumeric]="'num'" maxlength="2" placeholder="00"
+                                                                type="text" name="timeMinFrom" [appAlphaNumeric]="'num'"
+                                                                required>
+                                                        </div>
+                                                        <div class="time-stamp">
+                                                            (HH-MM)
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </fieldset>
+                                    </form>
+                                </div>
+                            </div>
+                            
+                            
+                            <div class="menu-action">
+                                <button type="button" class="shadowbtn btn btn-default cancel-mod"
+                                    (click)="someMethod()">Cancel</button>
+                                <button type="button" class="shadowbtn btn-primary run-cor-btn"
+                                    (click)="onRunCorr()">Run Profiling</button>
+                            </div>
+                        </div>
+                    </mat-menu>
+                </span>
+            </div>
+
+        </div>
+        <div class="col-3" >
+          
+            <button type="button" class="shadowbtn btn btn-default edit-btn move-right"
+            [matMenuTriggerFor]="editmenu" #clickMenuTrigger="matMenuTrigger" [disabled]="disableAll || !(!statusProfiler || (statusProfiler && (statusProfiler.toLowerCase() === 'completed' || statusProfiler.toLowerCase() === '')))"
+            aria-hidden="true" (click)="openTimeEditMenu()" ><span class="wrap-text">Edit</span></button>
+            <span *ngIf="statusProfiler"
+            [ngClass]="{'bg-blue': (statusProfiler.toLowerCase() === 'active'  || statusProfiler.toLowerCase() === 'running' || statusProfiler.toLowerCase() === 'training'), 'bg-yellow' : (statusProfiler.toLowerCase() === 'waiting' || statusProfiler.toLowerCase() === 'queued' || statusProfiler.toLowerCase() === 'initiated' || statusProfiler.toLowerCase() === 'scheduled')}"
+            class="status move-right col-4">
+            {{statusProfiler.toLowerCase() == 'suspended' ? 'paused' : statusProfiler.toLowerCase() }}
+        </span>
+        </div>
+        <!-- </div> -->
+
+    </div>

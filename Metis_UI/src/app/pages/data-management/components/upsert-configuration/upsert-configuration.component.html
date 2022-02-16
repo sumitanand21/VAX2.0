@@ -1,0 +1,116 @@
+<div class="dm_main_div_css">
+    <div class="right_most_css f-max cont-scrl">
+        <div class="sub-cont-scrl">
+        <form #modeledit="ngForm">
+            <div class="data_view_css">
+                <div class="sch_border_css">
+                    <div class="sub_border_css">
+                        <div class="radio_flex_css">
+                            <div class="radio_css col-6">
+                            </div>
+                            <div class="css_sub_border_div sub_border col-6" *ngIf="options !=='add'">
+                                <div class="grid_css_view view_css">
+                                    <button type="button" class="shadowbtn btn btn-default pause_css_btn" routerLink="/datamanagement/configuration" (click)="cancelFormData()">Cancel</button>
+                                    <button type="button" class="shadowbtn brn btn-default submit_css" (click)="addNewConfiguration()" *ngIf="actiontypeVal !== 'update'">Submit</button>
+                                    <button type="button" class="shadowbtn brn btn-default submit_css" (click)="updateNewConfiguration()" *ngIf="actiontypeVal === 'update'">Submit</button>
+                                    
+                                </div>
+                            </div>
+
+                            <div class="css_sub_border_div sub_border col-6 db_type_css" *ngIf="options ==='add'">
+                                <div class="grid_css_view view_css">
+                                    <button type="button" class="shadowbtn btn btn-default pause_css_btn" (click)="cancelFormData()">Cancel</button>
+                                    <button type="button" class="shadowbtn brn btn-default submit_css span_submit" (click)="addNewDBtype()"  *ngIf="actiontypeVal !== 'update'">Add</button>
+                                    <button type="button" class="shadowbtn brn btn-default submit_css span_submit" (click)="updateNewDBtype()" *ngIf="actiontypeVal === 'update'">Update</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="customize_css">
+                            <div class="css_sub_border_nex" *ngIf="options !=='add'">
+                                <div class="col-6 grid_css_view">
+                                    <span class="next_run_title">Configuration Name</span>
+                                    <input autocomplete="off" class="name_input_css form-control" maxlength = "30" type="text" [(ngModel)]="ConfigName" name="ConfigName" *ngIf="actiontypeVal !== 'update'" required>
+                                    <input autocomplete="off" class="name_input_css form-control" maxlength = "30" type="text" [(ngModel)]="ConfigName" name="ConfigName" *ngIf="actiontypeVal === 'update'" required disabled>
+                                    <div class="col-2 add_css_view">
+                                        <mat-icon class="mat-icon-add">
+                                            <span (click)="addForm()" class="add_form_css">add_circle_outline</span>
+                                        </mat-icon>                                    
+                                    </div>
+                                </div>
+                                <div class="col-6 grid_css_view">
+                                    <span class="next_run_title">Host Name</span>
+                                    <input autocomplete="off" class="name_input_css form-control" type="text" [(ngModel)]="HostName" name="HostName" required>
+                                </div>
+                            </div>
+                            <div class="css_sub_border_nex">
+                                <div class="col-6 grid_css_view">
+                                    <span class="next_run_title">DB Type</span>
+                                    <div class="data_set_wid_css" *ngIf="options !== 'add'">
+                                        <mat-select disableOptionCentering class="form-control drop-mat mat_width_css sub_data_set_wid_css"
+                                            [(ngModel)]="options" name="dropdownValue" (ngModelChange)="datasetChange()" required>
+                                            <mat-option value="">Select</mat-option>
+                                            <mat-option *ngFor="let dataset of datasetArr" [value]="dataset">{{dataset}}</mat-option>
+                                            <mat-option value="add" class="add_new_default" (click)="addnewVal()">Add New</mat-option>
+                                        </mat-select>
+                                    </div>
+                                    <input autocomplete="off" maxlength="30" *ngIf="options === 'add'" [(ngModel)]="customDataName" placeholder="Name" name="custName" class="name_input_css form-control" type="text" required>
+                                    <div *ngIf="options === 'add'" class="col-2 add_css_view">
+                                        <mat-icon class="mat-icon-add">
+                                            <span (click)="removeInp()" class="add_form_css pad_Css">clear</span>
+                                        </mat-icon>
+                                    </div>
+                                 </div>
+                                <div class="col-6 grid_css_view" *ngIf="options !=='add'">
+                                    <span class="next_run_title">Description</span>
+                                    <textarea class="form-control desc_input_css" name="Description" [(ngModel)]="description" cols="40" rows="5" required></textarea>
+                                </div>
+                            </div>
+
+                            <div class="css_sub_border_nex" *ngIf="options !=='add'">
+                                <div class="col-6 grid_css_view">
+                                    <span class="next_run_title">URL</span>
+                                    <input autocomplete="off" class="name_input_css form-control" type="text" [(ngModel)]="UrlVal" name="urlvalue" required>
+                                </div>
+                                <div class="col-6 grid_css_view">
+                                    <span class="next_run_title">Port Number</span>
+                                    <input autocomplete="off" class="name_input_css form-control" type="text" maxlength = "5" [appAlphaNumeric]="'num'" [(ngModel)]="portNumber" name="portNum" required>
+                                </div>
+                            </div>
+                            
+                            <div class="" *ngIf="options !== 'add'">
+                                <div class="css_sub_border_nex" *ngFor="let objVal of dataArray; let i=index">
+                                    <div class="col-6 grid_css_view">
+                                        <span class="next_run_title">Key</span>
+                                        <input autocomplete="off" class="name_input_css form-control" type="text" name="key{{i}}" [(ngModel)]="objVal.key">
+                                    </div>
+                                    <div class="col-6 grid_css_view">
+                                        <span class="next_run_title">Value</span>
+                                        <input autocomplete="off" class="name_input_css form-control" type="text" name="value{{i}}" [(ngModel)]="objVal.value">
+                                        <div class="col_one_css">
+                                            <mat-icon class="mat-icon-remove">
+                                                <span (click)="removeForm(i)" class="remove_css">remove_circle_outline</span>
+                                            </mat-icon>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="" *ngIf="options ==='add'">
+                            <div class="css_sub_border_nex">
+                                <div class="col-6 grid_css_view">
+                                    <span class="next_run_title">Step</span>
+                                    <input autocomplete="off" class="name_input_css form-control" type="number" [(ngModel)]="stepValue" [ngModelOptions]="{standalone: true}" required>
+                                </div>
+                            </div>
+                        </div>
+                        </div>
+                        
+                    </div>
+                </div>
+                <br>
+            </div>
+        </form>
+        </div>
+    </div>
+</div>

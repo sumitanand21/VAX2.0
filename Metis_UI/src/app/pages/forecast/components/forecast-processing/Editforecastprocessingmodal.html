@@ -1,0 +1,121 @@
+<div class="modal-header">
+        <h4 mat-dialog-title id="dialogTitle"class="modal-title pull-left new_sch">Modal Configuration </h4>
+        <button mat-dialog-close  type="button" class="close pull-right" aria-label="Close" id="editModalClose" (click)="modalEditRef.hide()">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div *ngIf="isLoading" class="spinner-div">
+        <mat-progress-spinner color="slategrey" mode="indeterminate">
+        </mat-progress-spinner>
+    </div>
+    <article  *ngIf="!isLoading" class="modal_article_css">
+        <div class="container flex_contian_css">
+            <div class="display_flex_css col-md-3">
+                <label class="date_label_css">Name</label>
+                <p class="edit_forecast_css" id="sampleTime">{{selectedModelObject.modelConfigName}}</p>
+            </div>
+            <div class="display_flex_css col-md-3">
+                <label class="date_label_css">Input Shape</label>
+                <p class="edit_forecast_css">{{selectedModelObject.inputShape}}</p>
+            </div>
+            <div class="display_flex_css col-md-3">
+                <label class="date_label_css">Output Shape</label>
+                <p class="edit_forecast_css">{{selectedModelObject.outputShape}}</p>
+            </div>
+            <div class="display_flex_css col-md-3">
+                <label class="date_label_css">Test Size</label>
+                <p class="edit_forecast_css">{{selectedModelObject.testSize}}</p>
+            </div>
+        </div>
+        <div class="container flex_contian_css">
+            <div class="display_flex_css col-md-3">
+                <label class="date_label_css">Layer</label>
+                <p class="edit_forecast_css">{{selectedModelObject.layers}}</p>
+            </div>
+            <div class="display_flex_css col-md-3">
+                <label class="date_label_css">Encoder</label>
+                <p class="edit_forecast_css">{{selectedModelObject.encoderType}}</p>
+            </div>
+            <div class="display_flex_css col-md-3">
+                <label class="date_label_css">Scaler</label>
+                <p class="edit_forecast_css">{{selectedModelObject.scalerType}}</p>
+            </div>
+            <div class="display_flex_css col-md-3">
+                <label class="date_label_css">Inner Activation</label>
+                <p class="edit_forecast_css">{{selectedModelObject.innerActivation}}</p>
+            </div>
+        </div>
+        <div class="container flex_contian_css">
+            <div class="display_flex_css col-md-3">
+                <label class="date_label_css">nlags</label>
+                <p class="edit_forecast_css">{{selectedModelObject.nlags}}</p>
+            </div>
+            <div class="display_flex_css col-md-3">
+                <label class="date_label_css">L1</label>
+                <p class="edit_forecast_css">{{selectedModelObject.L1}}</p>
+            </div>
+            <div class="display_flex_css col-md-3">
+                <label class="date_label_css">L2</label>
+                <p class="edit_forecast_css">{{selectedModelObject.L2}}</p>
+            </div>
+            <div class="display_flex_css col-md-3">
+                <label class="date_label_css">Batch size</label>
+                <p class="edit_forecast_css">{{selectedModelObject.batchSize}}</p>
+            </div>
+        </div>
+        <div class="container flex_contian_css">
+            <div class="display_flex_css col-md-3">
+                <label class="date_label_css">Epochs</label>
+                <p class="edit_forecast_css">{{selectedModelObject.epochs}}</p>
+            </div>
+            <div class="display_flex_css col-md-3">
+                <label class="date_label_css">Dropout</label>
+                <p class="edit_forecast_css">{{selectedModelObject.dropout}}</p>
+            </div>
+            <div class="display_flex_css col-md-3">
+                <label class="date_label_css">Block Unit</label>
+                <p class="edit_forecast_css">{{selectedModelObject.blockUnits}}</p>
+            </div>
+            <div class="display_flex_css col-md-3">
+                <label class="date_label_css">nleads</label>
+                <p class="edit_forecast_css">{{selectedModelObject.nleads}}</p>
+            </div>
+        </div>
+        <div class="container flex_contian_css">
+            <div class="display_flex_css col-md-3">
+                <label class="date_label_css">Exclude</label>
+                <p class="edit_forecast_css">{{selectedModelObject.exclude}}</p>
+            </div>
+            <div class="display_flex_css col-md-3">
+                <label class="date_label_css">GroupBy</label>
+                <p class="edit_forecast_css">{{selectedModelObject.groupBy}}</p>
+            </div>
+            <div class="display_flex_css col-md-3">
+                <label class="date_label_css">Activation</label>
+                <p class="edit_forecast_css">{{selectedModelObject.activation}}</p>
+            </div>
+            <div class="display_flex_css col-md-3">
+                <label class="date_label_css">Loss</label>
+                <p class="edit_forecast_css">{{selectedModelObject.loss}}</p>
+            </div>
+        </div>
+        <div class="container flex_contian_css">
+            <div class="display_flex_css col-md-3">
+                <label class="date_label_css">Metrics</label>
+                <p class="edit_forecast_css">{{selectedModelObject.metrics}}</p>
+            </div>
+            <div class="display_flex_css col-md-3">
+                <label class="date_label_css">Optimizer</label>
+                <p class="edit_forecast_css">{{selectedModelObject.optimizer}}</p>
+            </div>
+            <div class="display_flex_css col-md-3">
+                <label class="date_label_css">Stateful</label>
+                <p class="edit_forecast_css">{{selectedModelObject.stateful}}</p>
+            </div>
+        </div>
+    </article>
+    <div class="modal-footer">
+        <div class="down_Button">
+            <button  id="dialogDoneBtn" type="button" class="shadowbtn btn Css_butn cancel_btn done_btn" aria-label="Close" mat-dialog-close>Done</button>
+        </div>
+    </div>

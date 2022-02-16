@@ -1,0 +1,34 @@
+---
+# Source: warrior/templates/01-persistent-volume-pds.yaml
+
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: {{ $.Values.volume.pv_katana_db }}
+  namespace: {{ $.Values.namespace }}
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 2Gi
+  persistentVolumeReclaimPolicy: Retain
+  accessModes:
+  - ReadWriteMany
+  nfs:
+    path: {{ $.Values.path.katana_db_mnt_path }}
+    server: {{ $.Values.nfs.server_ip }}
+---
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: {{ $.Values.volume.pv_katana_configs }}
+  namespace: {{ $.Values.namespace }}
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 2Gi
+  persistentVolumeReclaimPolicy: Retain
+  accessModes:
+  - ReadWriteMany
+  nfs:
+    path: {{ $.Values.path.katana_configs_mnt_path }}
+    server: {{ $.Values.nfs.server_ip }}

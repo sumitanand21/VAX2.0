@@ -1,0 +1,32 @@
+---
+# Source: warrior/templates/03-services.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: warrior
+  creationTimestamp: null
+spec:
+  selector:
+    app: warrior
+  type: NodePort
+  ports:
+  - nodePort: 30298
+    port: 8443
+    protocol: TCP
+    targetPort: 8443
+status:
+  loadBalancer: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: katana-db
+spec:
+  type: ClusterIP
+  selector:
+    app: katana-db
+  ports:
+    - port: 5432
+      targetPort: 5432
+      protocol: TCP
+---

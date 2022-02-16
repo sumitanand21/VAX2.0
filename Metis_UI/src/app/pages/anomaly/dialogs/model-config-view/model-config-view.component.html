@@ -1,0 +1,211 @@
+<div class="df-col">
+    <div class="model-head">
+    <div>{{data.modelName}}
+    </div>
+    <button mat-dialog-close  type="button" class="disp-close" aria-label="Close" id="ModalClose">
+        &times;
+     </button>
+    </div>
+        
+        <div class="col-12 model-body f-max">
+    
+            <div *ngIf="detailLoader" class="spinner-div" >
+                <mat-progress-spinner color="slategrey" mode="indeterminate">
+                </mat-progress-spinner>
+            </div>
+
+            <div class="row no-mar" *ngIf="checkifObjectExist() == false && !detailLoader">
+                <div class="no-padd col-md-6 col-sm-6 col-xs-12 mar-b-25">
+                    <label class="head-label">Model configuration not available</label>
+                  </div>
+    
+            </div>
+            
+            <div *ngIf="checkifObjectExist() == true && !detailLoader">
+                 <div class="row no-mar data-set">
+                    <div class="col-md-3 col-sm-4 col-xs-12 mar-b-25">
+                        <label class="body-label">Configuration Name</label>
+                        <div class="data-label">{{selectedModelObject.modelConfigName}}</div>
+                    </div>
+              
+                        <div class="col-md-3 col-sm-4 col-xs-12 mar-b-25">
+                        <label class="body-label">Model Type</label>
+                        <div class="data-label">{{selectedModelObject.modelType}}</div>
+                        </div>
+              
+                        <div class="col-md-3 col-sm-4 col-xs-12 mar-b-25">
+                            <label class="body-label">Encoder</label>
+                            <div class="data-label">{{selectedModelObject.encoder}}</div>
+                        </div>
+
+                        <div class="col-md-3 col-sm-4 col-xs-12 mar-b-25" *ngIf="checkkeyExist(['optimizer'],selectedModelObject)">
+                            <label class="body-label">Optimizer</label>
+                            <div class="data-label">{{selectedModelObject.optimizer}}</div>
+                        </div>
+
+                        <div class="col-md-3 col-sm-4 col-xs-12 mar-b-25" *ngIf="checkkeyExist(['activation'],selectedModelObject)">
+                            <label class="body-label">Activation</label>
+                            <div class="data-label">{{selectedModelObject.activation}}</div>
+                        </div>
+
+                        <div class="col-md-3 col-sm-4 col-xs-12 mar-b-25" *ngIf="checkkeyExist(['decoder_activation'],selectedModelObject)">
+                            <label class="body-label">Decoder_activation</label>
+                            <div class="data-label">{{selectedModelObject.decoder_activation}}</div>
+                        </div>
+
+                        <div class="col-md-3 col-sm-4 col-xs-12 mar-b-25" *ngIf="checkkeyExist(['loss'],selectedModelObject)">
+                            <label class="body-label">Loss</label>
+                            <div class="data-label">{{selectedModelObject.loss}}</div>
+                        </div>
+
+                        <div class="col-md-3 col-sm-4 col-xs-12 mar-b-25" *ngIf="checkkeyExist(['metrics'],selectedModelObject)">
+                            <label class="body-label">Metrics</label>
+                            <div class="data-label">{{selectedModelObject.metrics}}</div>
+                        </div>
+
+                        <div class="col-md-3 col-sm-4 col-xs-12 mar-b-25" *ngIf="checkkeyExist(['epochs'],selectedModelObject)">
+                            <label class="body-label">Epochs</label>
+                            <div class="data-label">{{selectedModelObject.epochs}}</div>
+                        </div>
+
+                        <div class="col-md-3 col-sm-4 col-xs-12 mar-b-25" *ngIf="checkkeyExist(['dropout'],selectedModelObject)">
+                            <label class="body-label">Dropout</label>
+                            <div class="data-label">{{selectedModelObject.dropout}}</div>
+                        </div>
+
+                        <div class="col-md-3 col-sm-4 col-xs-12 mar-b-25" *ngIf="checkkeyExist(['l1L2'],selectedModelObject)">
+                            <label class="body-label">L1, L2</label>
+                            <div class="data-label">{{selectedModelObject.l1L2}}</div>
+                        </div>
+
+                        <div class="col-md-3 col-sm-4 col-xs-12 mar-b-25" *ngIf="checkkeyExist(['batchSize'],selectedModelObject)">
+                            <label class="body-label">Batch Size</label>
+                            <div class="data-label">{{selectedModelObject.batchSize}}</div>
+                        </div>
+
+                        <div class="col-md-3 col-sm-4 col-xs-12 mar-b-25">
+                            <label class="body-label">Scalar</label>
+                            <div class="data-label">{{selectedModelObject.scaler}}</div>
+                        </div>
+
+                        <div class="col-md-3 col-sm-4 col-xs-12 mar-b-25" *ngIf="checkkeyExist(['nodes'],selectedModelObject)">
+                            <label class="body-label">Node List</label>
+                            <div class="data-label">{{selectedModelObject.nodes}}</div>
+                        </div>
+
+                        <div class="col-md-3 col-sm-4 col-xs-12 mar-b-25" *ngIf="checkkeyExist(['p_components'],selectedModelObject)">
+                            <label class="body-label">p_components</label>
+                            <div class="data-label">{{selectedModelObject.p_components}}</div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="data-set-border"></div>
+                         </div>
+              
+                    </div>
+    
+    <div class="row no-mar">
+        <div class="col-md-3 col-sm-4 col-xs-12 mar-b-25">
+            <label class="body-label">Data Set</label>
+            <div class="data-label">{{selectedModelObject.dataSetName}}</div>
+        </div>
+    
+        <div class="col-md-3 col-sm-4 col-xs-12 mar-b-25">
+           <label class="body-label">Training Filter</label>
+           <div class="data-label">{{selectedModelObject.uniqueFeature}}</div>
+        </div>
+        <div class="col-12 mar-b-25">
+        <div class="outer-row">
+                    <mat-tab-group class="feature-tab" (selectedTabChange)="onFeatureTabChanged($event);" mat-align-tabs="start">
+                        <mat-tab label="Xfeature List ({{selectedModelObject.xFeatureList.length}})">
+                        <div class="col-12 no-padd">
+                                <span>
+                                    <!-- <i class="fa fa-search search-tab" aria-hidden="true"></i>  -->
+                                    <mat-icon aria-hidden="false" class="search_mat" aria-label="search icon">search</mat-icon>
+                                    <input autocomplete="off" matInput class="input-feild-search form-control" placeholder="Search" type="text" [(ngModel)]="xFeatureSearch">
+                                </span>
+                        </div>
+                            <div class="feature-tab-list col-12 no-padd">
+                                <div class="row no-mar">
+                            
+                                    <div class="col-12 col-md-6" *ngFor="let xfeature of selectedModelObject.xFeatureList | filter:xFeatureSearch">
+                                   <ul class="tab-ul">
+                                        <li class="tab-li">
+                                        <span class="tab-data-label">{{xfeature.name}}</span>
+                                    </li>
+                                </ul>
+                                   
+                                    </div>
+                               
+                                </div>
+                        </div>
+                        </mat-tab>
+    
+                        <mat-tab label="Unique Feature ({{selectedModelObject.trainingFilter.length}})">
+                            <div class="col-12 no-padd">
+                                    <span>
+                                        <!-- <i class="fa fa-search search-tab" aria-hidden="true"></i>  -->
+                                        <mat-icon aria-hidden="false" class="search_mat" aria-label="search icon">search</mat-icon>
+                                        <input autocomplete="off" matInput class="input-feild-search form-control" placeholder="Search" type="text" [(ngModel)]="trainFilterSearch">
+                                    </span>
+                            </div>
+                                <div class="feature-tab-list col-12 no-padd">
+                                    <div class="row no-mar">
+                                
+                                        <div class="col-12 col-md-6" *ngFor="let trainFilter of selectedModelObject.trainingFilter | filter:trainFilterSearch">
+                                       <ul class="tab-ul">
+                                            <li class="tab-li">
+                                            <span class="tab-data-label">{{trainFilter.name}}</span>
+                                        </li>
+                                    </ul>
+                                       
+                                        </div>
+                                   
+                                    </div>
+                            </div>
+                            </mat-tab>
+    
+                            <mat-tab label="String Feature ({{selectedModelObject.stringFeatures.length}})">
+                                <div class="col-12 no-padd">
+                                        <span>
+                                            <!-- <i class="fa fa-search search-tab" aria-hidden="true"></i>  -->
+                                            <mat-icon aria-hidden="false" class="search_mat" aria-label="search icon">search</mat-icon>
+                                            <input autocomplete="off" matInput class="input-feild-search form-control" placeholder="Search" type="text" [(ngModel)]="strFeatureSearch">
+                                        </span>
+                                </div>
+                                    <div class="feature-tab-list col-12 no-padd">
+                                        <div class="row no-mar">
+                                    
+                                            <div class="col-12 col-md-6" *ngFor="let strfeature of selectedModelObject.stringFeatures | filter:strFeatureSearch">
+                                           <ul class="tab-ul">
+                                                <li class="tab-li">
+                                                <span class="tab-data-label">{{strfeature.name}}</span>
+                                            </li>
+                                        </ul>
+                                           
+                                            </div>
+                                       
+                                        </div>
+                                </div>
+                                </mat-tab>
+                     
+                    </mat-tab-group>
+             
+    
+    
+           
+        </div>
+    
+    </div>
+    
+    
+    </div>
+    
+                </div>
+        </div>
+    
+    <div class="model-foot">
+        <button type="button" class="shadowbtn done-btn" mat-dialog-close>Done</button>
+    </div>
+    </div>
+    

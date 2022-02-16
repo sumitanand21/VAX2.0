@@ -1,0 +1,392 @@
+<div *ngIf="masterDataLoadingSuccess" class="df-col cont-scrl ">
+    <div class="container-fluid  upsert-page-css f-max">
+        <form [formGroup]="upsertAnmModel" >
+            <div class="row model-header-section">
+                <div *ngIf="action !== 'Update'"  class="col-sm-3">
+                    <span class="s1-label-model_css">Name: </span>
+                    <input autocomplete="off" formControlName="modelConfigName" type="text" matInput class="input-feild-model " placeholder="Enter model name....">
+                </div>
+                <div *ngIf="action === 'Update'"   class="col-sm-3">
+                    <div class="row">
+                        <div class="col-2">
+                            <span class="s1-label-model_css">Name: </span>
+                        </div>
+                        <div class="col-10">
+                            <label class="data-label">{{anomalyService.AnomalymodelName}}</label>
+                        </div>
+                    </div>
+                    
+                
+                </div>
+                <div *ngIf="action !== 'Update'" class="col-sm-4">
+                    <label class="s1-label-model">Model Type: </label>
+                    <mat-radio-group formControlName="modelType" class="radio-feild-model" aria-label="Select an option">
+                        <mat-radio-button (change)="setFormControls($event, 1)" [disabled]="action === 'Update'"  *ngFor="let item of modelTypes;let i = index" class="mat-rd-btn-s2" color="primary" [value]="item"
+                            [checked]="i === 0">{{item}}
+                        </mat-radio-button>
+                    </mat-radio-group>
+                </div>
+                <div *ngIf="action === 'Update'" class="col-sm-4">
+                    <div class="row">
+                        <div class="col-3">
+                            <label class="s1-label-model">Model Type: </label>
+                    
+                        </div>
+                        <div class="col-9">
+                            <label class="data-label">{{anomalyService.AnomalymodelType}}</label>
+                    
+                        </div>
+                    </div>
+                
+                </div>
+                <div class="col-sm-2">
+                </div>
+                <div class="col-sm-3">
+                    <button type="button" mat-stroked-button (click)="saveAnmModelData()" class="shadowbtn mts-right-btn mts-btn-save">{{action}}</button>
+                    <button type="button" mat-stroked-button *ngIf="anomalyService.activatedPath.includes('alltask')" class="shadowbtn mts-right-btn mts-btn" (click)="anomalyNavigation('/anomaly/alltask/anomalymodelconfig')">Cancel</button>
+                    <button type="button" mat-stroked-button *ngIf="anomalyService.activatedPath.includes('anomalydetection')" class="shadowbtn mts-right-btn mts-btn" (click)="anomalyNavigation('/anomaly/anomalydetection/anomalymodelconfig')">Cancel</button>
+                    <button type="button" mat-stroked-button *ngIf="anomalyService.activatedPath.includes('anomalyview')" class="shadowbtn mts-right-btn mts-btn" (click)="anomalyNavigation('/anomaly/anomalyview/anomalymodelconfig')">Cancel</button>
+                    <!-- <button type="button" mat-stroked-button class="mts-right-btn mts-btn-cancel">Primary</button> -->
+                </div>
+            </div>
+            <mat-divider></mat-divider>
+            <div class="row model-header-section s2-div">
+                <div class="col-sm-2">
+                    <div class="row">
+                        <label class="s2-label-model">Encoders: </label>
+                    </div>
+                    <mat-radio-group formControlName="encoder" class="s2-radio-feild-model" aria-label="Select an option">
+                        <mat-radio-button color="primary" *ngFor="let item of encoders;let i = index" class="mat-rd-btn-s2"
+                            [value]="item" [checked]="i === 0">
+                            {{item}}</mat-radio-button>
+                    </mat-radio-group>
+                </div>
+                <div class="col-sm-2">
+                    <div class="row">
+                        <label class="s2-label-model">Scalers: </label>
+                    </div>
+                    <mat-radio-group formControlName="scaler" class="s2-radio-feild-model" aria-label="Select an option">
+                        <mat-radio-button color="primary" *ngFor="let item of scalers;let i = index" class="mat-rd-btn-s2"
+                            [value]="item" [checked]="i === 0">
+                            {{item}}</mat-radio-button>
+                    </mat-radio-group>
+                </div>
+                <div *ngIf="upsertAnmModel.controls['modelType'].value === 'MODELI'" class="col-sm-2">
+                    <div class="row">
+                        <label class="s2-label-model">Optimizer: </label>
+                    </div>
+                    <mat-radio-group formControlName="optimizer" class="s2-radio-feild-model" aria-label="Select an option">
+                        <mat-radio-button color="primary" *ngFor="let item of optimizers;let i = index" class="mat-rd-btn-s2"
+                            [value]="item" >
+                            {{item}}</mat-radio-button>
+                    </mat-radio-group>
+                </div>
+                <div *ngIf="upsertAnmModel.controls['modelType'].value === 'MODELI'" class="col-sm-2">
+                    <div class="row">
+                        <label class="s2-label-model">Activation: </label>
+                    </div>
+                    <mat-radio-group formControlName="activation" class="s2-radio-feild-model" aria-label="Select an option">
+                        <mat-radio-button color="primary" *ngFor="let item of activations;let i = index" class="mat-rd-btn-s2"
+                            [value]="item" >
+                            {{item}}</mat-radio-button>
+                    </mat-radio-group>
+                </div>
+                <div *ngIf="upsertAnmModel.controls['modelType'].value === 'MODELI'" class="col-sm-2">
+                    <div class="row">
+                        <label class="s2-label-model">decoder_Activation: </label>
+                    </div>
+                    <mat-radio-group formControlName="decoder_activation" class="s2-radio-feild-model" aria-label="Select an option">
+                        <mat-radio-button color="primary" *ngFor="let item of decoder_Activations;let i = index"
+                            class="mat-rd-btn-s2" [value]="item" >{{item}}</mat-radio-button>
+                    </mat-radio-group>
+                </div>
+                <div class="col-sm-2" >
+                    <div class="row">
+                        <label class="s2-label-model">Loss: </label>
+                    </div>
+                    <mat-radio-group formControlName="loss" class="s2-radio-feild-model" aria-label="Select an option">
+                        <mat-radio-button color="primary" *ngFor="let item of losses;let i = index" class="mat-rd-btn-s2"
+                            [value]="item" [checked]="i === 0">
+                            {{item}}</mat-radio-button>
+                    </mat-radio-group>
+                </div>
+            </div>
+            <div class="row model-header-section s2-div">
+                <div *ngIf="upsertAnmModel.controls['modelType'].value === 'MODELI'" class="col-sm-2">
+                    <div class="row">
+                        <label class="s2-label-model">Epochs: </label>
+                    </div>
+                    <input autocomplete="off" formControlName="epochs" [appAlphaNumeric]="'num'" placeholder="0" class="s2-input-feild-model" type="text" maxlength = "10" matInput>
+                </div>
+                <div  *ngIf="upsertAnmModel.controls['modelType'].value === 'MODELII'" class="col-sm-2">
+                    <div class="row">
+                        <label class="s2-label-model">p_components: </label>
+                    </div>
+                    <input autocomplete="off" formControlName="p_components" [appAlphaNumeric]="'num'" placeholder="0" class="s2-input-feild-model"  type="text" maxlength = "5" matInput>
+                </div>
+                <div *ngIf="upsertAnmModel.controls['modelType'].value === 'MODELI'" class="col-sm-2">
+                    <div class="row">
+                        <label class="s2-label-model">Dropout: </label>
+                    </div>
+                    <input autocomplete="off" formControlName="dropout" min="0" max="1" step="0.01" [appAlphaNumeric]="'positivefloat'" placeholder="0" class="s2-input-feild-model" type="number" matInput>
+                </div>
+                <div *ngIf="upsertAnmModel.controls['modelType'].value === 'MODELI'" class="col-sm-2">
+                    <div class="row">
+                        <label class="s2-label-model">L1L2: </label>
+                    </div>
+                    <input autocomplete="off" formControlName="l1L2" placeholder="0,0" [appAlphaNumeric]="'maskNumDecimal'" class="s2-input-feild-model"  matInput>
+                </div>
+                <div *ngIf="upsertAnmModel.controls['modelType'].value === 'MODELI'" class="col-sm-2">
+                    <div class="row">
+                        <label class="s2-label-model">Batch Size: </label>
+                    </div>
+                    <input autocomplete="off" formControlName="batchSize" [appAlphaNumeric]="'num'" placeholder="0" class="s2-input-feild-model" type="text" maxlength = "5" matInput>
+                </div>
+            <div *ngIf="upsertAnmModel.controls['modelType'].value === 'MODELI'" class="col-sm-2">
+                    <div class="row">
+                        <label class="s2-label-model">Metrics: </label>
+                    </div>
+                    <mat-radio-group formControlName="metrics" class="s2-radio-feild-model" aria-label="Select an option">
+                        <mat-radio-button color="primary" *ngFor="let item of metrics;let i = index" class="mat-rd-btn-s2"
+                            [value]="item" >
+                            {{item}}</mat-radio-button>
+                    </mat-radio-group>
+                </div>
+            </div>
+            <div *ngIf="upsertAnmModel.controls['modelType'].value === 'MODELI'" class="row model-header-section s2-div node_css">
+                <div class="col-sm-1">
+                    <div class="row">
+                        <span class="span-label-model">Nodes: </span>
+                    </div>
+                </div>
+                <div class="plus_minus_css"> 
+                <span>Total:</span>
+                <span class="plus_minus">
+                    <button type="button" class="nd-btn-right" (click)="removeNodes()"> -</button>
+                    <input autocomplete="off" class="s3-input-feild-model" [value]="nodeListLength"  type="text" maxlength = "5" [appAlphaNumeric]="'num'" matInput readonly>
+                    <button type="button" class="nd-btn-left" (click)="addNodes()">+</button>
+                </span>
+                </div>
+            </div>
+            <div *ngIf="upsertAnmModel.controls['modelType'].value === 'MODELI'"  class="row model-header-section">
+                <div *ngIf="!isNodeValueChanged" class="col">
+                    <input autocomplete="off"   [appAlphaNumeric]="'num'" *ngFor="let item of nodeList;let i = index;" [value]="item"  (change)="setValue($event, i)"  class="nd-btn-lower"  min="1" max="5000" onchange="if(parseInt(this.value,10)>5000 || parseInt(this.value,10)<0 )this.value='0';"  type="text" maxlength = "5" matInput> 
+                </div>
+            </div>
+            <mat-divider></mat-divider>
+            <div class="row model-header-section s2-div">
+                <div class="col-sm-2">
+                    <div class="row">
+                        <label class="s2-label-model">Data set: </label>
+                    </div>
+                    <mat-select (selectionChange)="setDataSetUniqueFeatures($event.value)" disableOptionCentering formControlName="dataSetName" class="form-control s1-dropdown" >
+                        <mat-option *ngFor="let item of datasets" [value]="item">{{item}}</mat-option>
+                    </mat-select>
+                </div>
+                <div class="col-sm-2">
+                    <div class="row">
+                        <label class="s2-label-model">Unique Features: </label>
+                    </div>
+                    <mat-select disableOptionCentering formControlName="uniqueFeature" class="form-control s1-dropdown">
+                        <mat-option *ngFor="let item of uniqueFeatures" [value]="item">{{item}}</mat-option>
+                    </mat-select>
+                </div>
+            </div>
+            <div class="row s2-model-header-section ">
+                <mat-tab-group class="feature-tab feature-tab-upsert-page compare-tab" mat-align-tabs="start" (selectedTabChange)="onFeatureTabChanged($event);">
+                    <mat-tab label="Xfeature List({{xfeatures.length}})">
+                        <div class="row s3-model-header-section">
+                            <div class="col-sm-4  s2-col">
+                                <label class="check-outer sele_css">
+                                    <input autocomplete="off" class="input-chkbox" type="checkbox" [(ngModel)]="selectAll"  [ngModelOptions]="{standalone: true}" (change)="checkAlls(selectAll)" />
+                                    <span class="checkmark select_all">  
+                                        <p class="p_class">Select All</p>
+                                    </span>
+                                </label>
+                                <button type="button" mat-stroked-button (click)="clearAllSelection(1)" class="shadowbtn mts-basic-btn mts-btn">Clear Selections</button>
+
+                            </div>
+                            <div class="col-md-4 s2-col">
+                                <!-- <i class="fa fa-search serach-icon" aria-hidden="true"></i> -->
+                                <mat-icon aria-hidden="false" class="search_mat_icon" aria-label="search icon">search</mat-icon>
+                                <input autocomplete="off" matInput class="s4-input-feild-model" [(ngModel)]="searchFilterX" (ngModelChange)="onsearchChange(searchFilterX, 1)" maxlength="150" [ngModelOptions]="{standalone: true}" placeholder="Search Feature" type="text">
+                            </div>
+                            <div class="col-md-4 s2-col">
+                                <pagination-template #pT="paginationApi" [id]="config.id"
+                                    class="d-flex float-md-right float-sm-right" (pageChange)="changepage($event)">
+                                    <div class="d-flex">
+                                        <span class="mar-r-8 paginate-text">Rows:</span>
+                                        <mat-form-field>
+                                            <mat-select disableOptionCentering  class="select-page" [(ngModel)]="itemPerPage"  [ngModelOptions]="{standalone: true}"
+                                                (selectionChange)="setNewPageSize(itemPerPage)">
+                                                <mat-option *ngFor="let pgrec of pageArr" [value]="pgrec">{{pgrec}}</mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+                                    </div>
+                                    <div class="pagination-previous" [class.disabled]="pT.isFirstPage()">
+                                        <button type="button" class="pagination-btn" (click)="pT.previous()"
+                                            [disabled]="pT.isFirstPage()">
+                                            < </button>
+                                    </div>
+                                    <div class="d-flex">
+                                        <span class="paginate-text mar-r-6"> Page</span>
+                                        <mat-form-field >
+                                            <input autocomplete="off" matInput class="currpage-input select-page" [appAlphaNumeric]="'num'"  [(ngModel)]="inputCurrentpage"  [ngModelOptions]="{standalone: true}"
+                                                (change)="changepageinp(inputCurrentpage,pT.getLastPage())">
+                                        </mat-form-field>
+                                        <span class="paginate-text"> of {{pT.getLastPage()}}</span>
+                                    </div>
+                                    <div class="pagination-next" [class.disabled]="pT.isLastPage()">
+                                        <button type="button" class="pagination-btn" (click)="pT.next()"
+                                            [disabled]="pT.isLastPage()"> > </button>
+                                    </div>
+                                </pagination-template>
+                            </div>
+                        </div>
+                        <mat-divider></mat-divider>
+                        <div class="row s4-model-header-section">
+                            <div class="col-md-4 s2-col"
+                                *ngFor="let item of xfeatures | orderBy: key : reverse | searchFilter: {'name': searchFilterX}  | paginate: config; let i = index"
+                                role="row" (click)="getCallData(item.id,i)" id="trdata{{i}}">
+                                <label class="check-outer">
+                                    <input autocomplete="off" type="checkbox" [(ngModel)]="item.checkXData" id="item{{i}}" [ngModelOptions]="{standalone: true}" (change)="isAllChecked()" name="item"/>
+                                    <span class="checkmark">  
+                                        <p class="p_class wrap-text">{{item.name}}</p>
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+                    </mat-tab>
+                    <mat-tab label="Training Filters({{tfeatures.length}})">
+                        <div class="row s3-model-header-section">
+                            <div class="col-sm-4  s2-col">
+                                <label class="check-outer sele_css">
+                                    <input autocomplete="off" class="input-chkbox" type="checkbox"  [(ngModel)]="uniqueselectAll"  [ngModelOptions]="{standalone: true}" (change)="checkAllunique(uniqueselectAll)"  />
+                                    <span class="checkmark select_all">
+                                        <p class="p_class">Select All</p>
+                                    </span>
+                                </label>
+                                <button type="button" mat-stroked-button (click)="clearAllSelection(2)" class="shadowbtn mts-basic-btn mts-btn">Clear Selections</button>
+
+                            </div>
+                            <div class="col-md-4 s2-col">
+                                <!-- <i class="fa fa-search serach-icon" aria-hidden="true"></i> -->
+                                <mat-icon aria-hidden="false" class="search_mat_icon" aria-label="search icon">search</mat-icon>
+                                <input autocomplete="off" matInput class="s4-input-feild-model" [(ngModel)]="searchFilterT" (ngModelChange)="onsearchChange(searchFilterT, 2)" maxlength="150" [ngModelOptions]="{standalone: true}" placeholder="Search Feature" type="text">
+                            </div>
+                            <div class="col-md-4 s2-col">
+                                <pagination-template #pT="paginationApi" [id]="config.id"
+                                    class="d-flex float-md-right float-sm-right" (pageChange)="changepage($event)">
+                                    <div class="d-flex">
+                                        <span class="mar-r-8 paginate-text">Rows:</span>
+                                        <mat-form-field>
+                                            <mat-select disableOptionCentering  class="select-page" [(ngModel)]="itemPerPage"  [ngModelOptions]="{standalone: true}"
+                                                (selectionChange)="setNewPageSize(itemPerPage)">
+                                                <mat-option *ngFor="let pgrec of pageArr" [value]="pgrec">{{pgrec}}</mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+                                    </div>
+                                    <div class="pagination-previous" [class.disabled]="pT.isFirstPage()">
+                                        <button type="button" class="pagination-btn" (click)="pT.previous()"
+                                            [disabled]="pT.isFirstPage()">
+                                            < </button>
+                                    </div>
+                                    <div class="d-flex">
+                                        <span class="paginate-text mar-r-6"> Page</span>
+                                        <mat-form-field >
+                                            <input autocomplete="off" matInput [appAlphaNumeric]="'num'" class="currpage-input select-page"  [(ngModel)]="inputCurrentpage"  [ngModelOptions]="{standalone: true}"
+                                                (change)="changepageinp(inputCurrentpage,pT.getLastPage())">
+                                        </mat-form-field>
+                                        <span class="paginate-text"> of {{pT.getLastPage()}}</span>
+                                    </div>
+                                    <div class="pagination-next" [class.disabled]="pT.isLastPage()">
+                                        <button type="button" class="pagination-btn" (click)="pT.next()"
+                                            [disabled]="pT.isLastPage()"> > </button>
+                                    </div>
+                                </pagination-template>
+                            </div>
+                        </div>
+                        <mat-divider></mat-divider>
+                        <div class="row s4-model-header-section">
+                            <div class="col-md-4 s2-col"
+                                *ngFor="let item of tfeatures | orderBy: key : reverse | searchFilter: {'name': searchFilterT} | paginate: config; let i = index"
+                                role="row" (click)="getCallData(item.id,i)" id="trdata{{i}}">
+                                <label class="check-outer">
+                                    <input autocomplete="off" type="checkbox" [(ngModel)]="item.checkTrainData" id="item{{i}}" [ngModelOptions]="{standalone: true}" (change)="uniqueisAllChecked()" name="item"/>
+                                    <span class="checkmark">
+                                        <p class="p_class wrap-text">{{item.name}}</p>
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+
+                    </mat-tab>
+                    <mat-tab label="String Features({{sfeatures.length}})">
+                        <div class="row s3-model-header-section">
+                            <div class="col-sm-4  s2-col">
+                                <label class="check-outer sele_css">
+                                    <input autocomplete="off" class="input-chkbox" type="checkbox"  [(ngModel)]="stringselectAll"  [ngModelOptions]="{standalone: true}" (change)="checkAllselected(stringselectAll)" />
+                                    <span class="checkmark select_all">
+                                        <p class="p_class">Select All</p>
+                                    </span>
+                                </label>
+                                <button type="button" mat-stroked-button (click)="clearAllSelection(3)" class="shadowbtn mts-basic-btn mts-btn">Clear Selections</button>
+
+                            </div>
+                            <div class="col-md-4 s2-col">
+                                <!-- <i class="fa fa-search serach-icon" aria-hidden="true"></i> -->
+                                <mat-icon aria-hidden="false" class="search_mat_icon" aria-label="search icon">search</mat-icon>
+                                <input autocomplete="off" matInput class="s4-input-feild-model" [(ngModel)]="searchFilterS" [ngModelOptions]="{standalone: true}" maxlength="150" (ngModelChange)="onsearchChange(searchFilterS, 3)" placeholder="Search Feature" type="text">
+                            </div>
+                            <div class="col-md-4 s2-col">
+                                <pagination-template #pT="paginationApi" [id]="config.id"
+                                class="d-flex float-md-right float-sm-right" (pageChange)="changepage($event)">
+                                <div class="d-flex">
+                                    <span class="mar-r-8 paginate-text">Rows:</span>
+                                    <mat-form-field>
+                                        <mat-select disableOptionCentering  class="select-page" [(ngModel)]="itemPerPage"  [ngModelOptions]="{standalone: true}"
+                                            (selectionChange)="setNewPageSize(itemPerPage)">
+                                            <mat-option *ngFor="let pgrec of pageArr" [value]="pgrec">{{pgrec}}</mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                </div>
+                                <div class="pagination-previous" [class.disabled]="pT.isFirstPage()">
+                                    <button type="button" class="pagination-btn" (click)="pT.previous()"
+                                        [disabled]="pT.isFirstPage()">
+                                        < </button>
+                                </div>
+                                <div class="d-flex">
+                                    <span class="paginate-text mar-r-6"> Page</span>
+                                    <mat-form-field >
+                                        <input autocomplete="off" matInput [appAlphaNumeric]="'num'" class="currpage-input select-page" [(ngModel)]="inputCurrentpage"  [ngModelOptions]="{standalone: true}"
+                                            (change)="changepageinp(inputCurrentpage,pT.getLastPage())">
+                                    </mat-form-field>
+                                    <span class="paginate-text"> of {{pT.getLastPage()}}</span>
+                                </div>
+                                <div class="pagination-next" [class.disabled]="pT.isLastPage()">
+                                    <button type="button" class="pagination-btn" (click)="pT.next()"
+                                        [disabled]="pT.isLastPage()"> > </button>
+                                </div>
+                            </pagination-template>
+                            </div>
+                        </div>
+                        <mat-divider></mat-divider>
+                        <div class="row s4-model-header-section">
+                            <div class="col-md-4 s2-col"
+                                *ngFor="let item of sfeatures | orderBy: key : reverse | searchFilter: {'name': searchFilterS} | paginate: config; let i = index"
+                                role="row" (click)="getCallData(item.id,i)" id="trdata{{i}}">
+                                <label class="check-outer">
+                                    <input autocomplete="off" type="checkbox" [(ngModel)]="item.checkStringData" id="item{{i}}" [ngModelOptions]="{standalone: true}" (change)="isAllCheckedstring()" name="item"/>
+                                    <span class="checkmark">
+                                        <p class="p_class wrap-text">{{item.name}}</p>
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+
+                    </mat-tab>
+                </mat-tab-group>
+            </div>
+        </form>
+    </div>
+</div>

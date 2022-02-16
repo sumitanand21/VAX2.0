@@ -1,0 +1,15 @@
+<div class="df-col">
+    <div class="summary_main_css">
+        <div class="data_set_wid_css">
+            <mat-select disableOptionCentering class="form-control drop-mat mat_width_css sub_data_set_wid_css"
+                [(ngModel)]="options" name="dropdownValue" (ngModelChange)="getIframeDetails(options)" placeholder="Select Dataset"   required>
+                <mat-option *ngFor="let dataset of datasetDropdown" [value]="dataset">{{dataset}}</mat-option>
+            </mat-select> 
+       </div>
+    </div>
+    <div class="f-max scroll-view">
+    <iframe class="kibanaFrame" *ngIf="selectedUrl" [src]="selectedUrl">
+    </iframe>
+    <div *ngIf="!selectedUrl" class="no-data-text">No data available</div>
+</div>
+</div>

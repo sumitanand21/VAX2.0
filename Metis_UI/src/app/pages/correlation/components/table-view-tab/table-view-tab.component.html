@@ -1,0 +1,154 @@
+<div class="parent-content df-col">
+    <div class="corr-header">
+	<app-correlation-header [activeView]="'Tableview'"  [disableAll]="setDisable" [allDetails]="allCorrelationDetails" (emitOut)="provideInputsToMap($event)"></app-correlation-header>
+        
+    </div>
+    <div class="main_div_css f-max">
+        <div class="left_view col-6 df-col" *ngIf="isShown">
+            <div class="row no-mar">
+                <div class="page_css_view">
+                    <div class="paginate_css">
+                        <span>
+                            <!-- <i class="fa fa-search search_fafa" aria-hidden="true"></i> -->
+                            <mat-icon aria-hidden="false" class="search_mat" aria-label="search icon">search</mat-icon>
+                            <input autocomplete="off" maxlength="150" matInput class="form-control css_search" type="text" placeholder="Search" [(ngModel)]="searchFilter"
+                                (ngModelChange)="onsearchChange(searchFilter)">
+                        </span>
+                    </div>
+                    <div class="d-flex paginate-align">
+                        <pagination-template #pT="paginationApi" [id]="config.id" class="d-flex"
+                            (pageChange)="changepage($event)">
+                            <div class="d-flex process_rows_css">
+                                <span class="mar-r-8 paginate-text">Rows:</span>
+                                <mat-select disableOptionCentering class="select-page" [(ngModel)]="itemPerPage"
+                                    (selectionChange)="setNewPageSize(itemPerPage)">
+                                    <mat-option *ngFor="let pgrec of pageArr" [value]="pgrec">{{pgrec}}</mat-option>
+                                </mat-select>
+                            </div>
+                            <div class="pagination-previous" [class.disabled]="pT.isFirstPage()">
+                                <button type="button" class="pagination-btn" (click)="pT.previous()"
+                                    [disabled]="pT.isFirstPage()">
+                                    < </button>
+                            </div>
+
+                            <div class="d-flex process_matselect">
+                                <span class="paginate-text"> Page</span>
+                                <input autocomplete="off" matInput class="currpage-input" type="text" [(ngModel)]="inputCurrentpage"
+                                    (change)="changepageinp(inputCurrentpage,pT.getLastPage())">
+
+                                <span class="paginate-text"> of {{pT.getLastPage()}}</span>
+                            </div>
+                            <div class="pagination-next" [class.disabled]="pT.isLastPage()">
+                                <button type="button" class="pagination-btn" (click)="pT.next()"
+                                    [disabled]="pT.isLastPage()"> > </button>
+                            </div>
+                        </pagination-template>
+
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="f-max out-table mod-table-scroll">
+                <table class="df-col">
+                    <thead class="sticky-head">
+                        <tr class="row no-mar head-tr">
+                            <th class="wrap-text col-4">
+                                <div class="dc-flex">
+                                    <div class="mean-corr">Feature 1</div>
+                                    <div class="select-cur" (click)="sort('featureone')">
+                                        <mat-icon *ngIf="!(key == 'featureone' && reverse)" aria-hidden="false" class="arrow_mat align-middle" aria-label="down icon">arrow_drop_down</mat-icon>
+                                        <mat-icon *ngIf="key == 'featureone' && reverse" aria-hidden="false" class="arrow_mat align-middle" aria-label="up icon">arrow_drop_up</mat-icon>
+                                    </div>
+                                </div>
+                            </th>
+                            <th class="wrap-text col-4">
+                                <div class="dc-flex">
+                                    <div class="mean-corr">Feature 2</div>
+                                    <div class="select-cur" (click)="sort('featuretwo')">
+                                        <mat-icon *ngIf="!(key == 'featuretwo' && reverse)" aria-hidden="false" class="arrow_mat align-middle" aria-label="down icon">arrow_drop_down</mat-icon>
+                                        <mat-icon *ngIf="key == 'featuretwo' && reverse" aria-hidden="false" class="arrow_mat align-middle" aria-label="up icon">arrow_drop_up</mat-icon>
+                                    </div>
+                                </div>
+                            </th>
+                            <th class="wrap-text col-4">
+                                <div class="dc-flex">
+                                    <div class="mean-corr">Correlation</div>
+                                    <div class="select-cur" (click)="sort('correlation')">
+                                        <mat-icon *ngIf="!(key == 'correlation' && reverse)" aria-hidden="false" class="arrow_mat align-middle" aria-label="down icon">arrow_drop_down</mat-icon>
+                                        <mat-icon *ngIf="key == 'correlation' && reverse" aria-hidden="false" class="arrow_mat align-middle" aria-label="up icon">arrow_drop_up</mat-icon>
+                                    </div>
+                                </div>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let tableview of tableData | orderBy: key : reverse | filter:searchFilter | paginate: config; let i = index" role="row" class="row no-mar body-tr row-selection" [class.active]="i == selectedRow" (click)="setClickedRow(i,tableview)" id="trdata{{i}}">
+                            <td class="wrap-text col-4">{{tableview.featureone}}</td>
+                            <td class="wrap-text col-4">{{tableview.featuretwo}}</td>
+                            <td class="wrap-text col-4" *ngIf="tableview.correlation == 0.0">0.000</td>
+                            <td class="wrap-text col-4" *ngIf="tableview.correlation != null && tableview.correlation != 0.0">{{numberFormat(tableview.correlation)}}</td>
+                            <td class="wrap-text col-4" *ngIf="tableview.correlation == null">NAN</td>
+                        </tr>
+                        <tr class="row no-mar body-tr" *ngIf="(tableData | filter:searchFilter).length == 0">
+                            <td class="col-12 wrap-text no_rec_css">No records found</td>
+                        </tr>
+                    <br/>
+                    </tbody>
+                </table>
+        </div>
+        </div>
+        <div class="right_view col-6 df-col" [ngClass]="isShown?'col-md-6':'col-md-12'">
+            <div class="f-max no-height">
+                    <div class="shadowbtn collapse-view-cont" [ngClass]="{'bg-open':!isShown}" (click)="toggleShow()">
+                        <!-- <i *ngIf="!isShown" class="fa fa-chevron-right open-tab"></i>
+                    <i *ngIf="isShown" class="fa fa-chevron-left close-tab"></i> -->
+                        <mat-icon *ngIf="!isShown" class="arrow_mat open-tab" aria-hidden="false"
+                            aria-label="arrowright icon">keyboard_arrow_right</mat-icon>
+                        <mat-icon *ngIf="isShown" class="arrow_mat close-tab" aria-hidden="false"
+                            aria-label="arrowleft icon">keyboard_arrow_left</mat-icon>
+                    </div>
+                    <div *ngIf="isLoading" class="spinner-div col-12">
+                        <mat-progress-spinner color="slategrey" mode="indeterminate">
+                        </mat-progress-spinner>
+                    </div>
+            <div *ngIf="!selectedData && !isLoading && ScatterchartArray.length === 0" class="no_cor_select">Select at least one table view correlation to show the details</div>
+           <div *ngIf="selectedcorrelatedType === 'categorical'">
+            <div *ngIf="selectedData && !isLoading && ScatterchartArray.length >= 0"  class="graph-height">
+                <div class="f-max no-height">
+                    <div>No Data Available for Categorical VS Categorical</div>
+                </div>
+            </div>
+           </div>
+
+            <div *ngIf="selectedcorrelatedType !== 'categorical'">
+                <div *ngIf="!isLoading"  class="graph-height">
+                    <div class="f-max no-height" [ngClass]="{'hide-block':!selectedData || isLoading}">
+                        <div class="graph_label">
+                            {{selectedData ? selectedData.featureone : ''}}
+                        </div>
+                        <div *ngIf="chartData1.length == 0 && selectedcorrelatedType !== 'continuous_categorical'" class="no-data">No Data Available</div>
+                        <div *ngIf="chartData1.length == 0 && selectedcorrelatedType === 'continuous_categorical'" class="no-data">No Graph view for Categorical data</div>
+                        <div class="graph_one" *ngIf="chartData1.length > 0">
+                        
+                            <app-datelinechart [chartId]="'dateID1'" [chartData]="chartData1"></app-datelinechart>
+                        </div>
+                        <div class="graph_label">
+                            {{selectedData ? selectedData.featuretwo : ''}}
+                        </div>
+                        <div *ngIf="chartData2.length == 0 && selectedcorrelatedType !== 'continuous_categorical'" class="no-data">No Data Available</div>
+                        <div *ngIf="chartData2.length == 0 && selectedcorrelatedType === 'continuous_categorical'" class="no-data">No Graph view for Categorical data</div>
+                        <div class="graph_two" *ngIf="chartData2.length > 0">
+                        
+                            <app-datelinechart2 [chartId]="'dateID2'" [colorCode]="'#3B73B7'" [chartData]="chartData2"></app-datelinechart2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+        </div>
+
+
+

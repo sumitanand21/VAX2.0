@@ -1,0 +1,77 @@
+
+    <div class="modal-header">
+        <h4 class="modal-title pull-left new_sch">Edit </h4>
+        <button mat-dialog-close  type="button" class="close pull-right" aria-label="Close" id="editModalClose" (click)="modalEditRef.hide()">
+            <span aria-hidden="true" class="close_btn_css">&times;</span>
+        </button>
+    </div>
+    <article class="modal_article_css">
+          <div>
+            <div class="display_flex_css name_css_flex">
+                <label class="date_label_css">Name: </label>
+                <input autocomplete="off" type="text" class="form-control edit_forecast_css name_in_css" [(ngModel)]="editforecastName" disabled>
+            </div>        
+          
+            <div class="display_flex_css sample_time_css">
+                <label class="date_label_css">Sample Time Found: </label>
+                <input autocomplete="off" type="text" class="form-control edit_samp_css name_in_css" [(ngModel)]="editSampletime" disabled>
+            </div>
+
+            <div class="display_flex_css data_range_css">
+                <span class="date_label_css">Data Range: </span>
+                <div class="data_range">
+                    <div class="min_time">
+                        <label class="min_label">Min</label>
+                        <input autocomplete="off" type="text" [appAlphaNumeric]="'num'" class="form-control min_css" [(ngModel)]="mintime">
+                    </div>
+                    <div class="max_time">
+                        <label class="max_label">Max</label>
+                        <input autocomplete="off" type="text" [appAlphaNumeric]="'num'" class="form-control max_css" [(ngModel)]="maxtime">
+                    </div>
+                </div>
+            </div>
+
+            <div class="display_flex_css frwrd_prediction_css">
+                <label class="date_label_css">Time for Forward Prediction: </label>
+                <div class="time_pred_css">
+                    <div class="frwrd_css_time">
+                        <input autocomplete="off" type="number" class="form-control frwrd_pred" [(ngModel)]="frwrdPredict" oninput="validity.valid||(value='');" min="1">
+                    </div>
+                    <div class="radio_css">
+                        <label class="container"><span class="edit_seconds">Seconds</span>
+                            <input autocomplete="off" type="radio" id="seconds_data" class="seconds_css" [checked]="this.editSeconds" (click)="edictRadio('SECONDS')" name="oneradio">
+                            <span class="radiomark editDisabled_input"></span>
+                        </label>
+                        <label class="container"><span class="edit_minutes">Minutes</span>
+                            <input autocomplete="off" type="radio" id="minute_data" class="minutes_css" [checked]="this.editMinutes" (click)="edictRadio('MINUTES')" name="oneradio">
+                            <span class="radiomark editDisabled_input"></span>
+                        </label>
+                        <label class="container"><span class="edit_hours">Hours</span>
+                            <input autocomplete="off" type="radio" id="hours_data" class="hours_css" [checked]="this.editHours" (click)="edictRadio('HOURS')" name="oneradio">
+                            <span class="radiomark editDisabled_input"></span>
+                        </label>
+                        <label class="container"><span class="edit_days">Days</span>
+                            <input autocomplete="off" type="radio" id="days_data" class="days_css" [checked]="this.editDays" (click)="edictRadio('DAYS')" name="oneradio">
+                            <span class="radiomark editDisabled_input"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="display_flex_css  model_css_flex">
+                <label class="date_label_css">Model Parameter:</label>
+                <mat-select disableOptionCentering [(ngModel)]="editForecastparam"
+                    class="form-control s1-dropdown drop-mat drop_css_one model_param_css" (ngModelChange)="checkmodelparam()">
+                    <mat-option *ngFor="let configs of ModelConfigArr" [value]="configs">
+                        {{configs}}
+                    </mat-option>
+                </mat-select>
+            </div>
+        </div>
+        </article>
+        <div class="modal-footer">
+            <div class="down_Button">
+                <button type="button" class="shadowbtn btn Css_butn cancel_btn" aria-label="Close" mat-dialog-close (click)="modalEditRef.hide();closeforecastEdit();">Cancel</button>
+                <button type="button" class="shadowbtn btn Css_butn update_btn" (click)="saveforecastAPI()">Save</button>
+            </div>
+        </div>

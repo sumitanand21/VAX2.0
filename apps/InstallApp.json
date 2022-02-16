@@ -1,0 +1,22 @@
+{
+  "katana_default_apps": "false",
+  "katana_default_apps_branch": "",
+  "app_title": "Virtuora AX",
+  "panel_color": "blue",
+  "user_custom_apps": {
+    "vax": "/apps/vax"
+  },
+  "custom_logo_path": "",
+  "apps_rely_on_postgresdb": [
+    "admin",
+    "auth",
+    "contenttypes",
+    "sessions",
+    "users",
+    "vax"
+  ],
+  "__READ_ACCESS__": "True",
+  "__userconfigured__": "True",
+  "__normal_run__": "True"
+}
+ 

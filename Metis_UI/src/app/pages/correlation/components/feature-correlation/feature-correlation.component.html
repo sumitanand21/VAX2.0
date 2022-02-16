@@ -1,0 +1,26 @@
+<div class="parent-content df-col">
+    <div class="corr-header">
+        <app-correlation-header [activeView]="'FeatureCorrelation'" [disableAll]="setDisable" [allDetails]="allCorrelationDetails" (emitOut)="provideInputsToMap($event)"></app-correlation-header>
+    </div>
+    <div class="wrap-cont f-max">
+        <div class="first_div_css">    
+            <span>
+                <b class="correlate_css">Groups Correlated with </b>
+                <mat-select disableOptionCentering  class="form-control mat_css" [(ngModel)]="selecteddata" (selectionChange)="OnGroupCorrelated()" placeholder="Select">
+                    <mat-option *ngFor="let data of groupsData" [value]="data" >{{data}}</mat-option>
+                </mat-select>
+            </span>
+        </div>
+
+        <div class="second_div_css">
+            <div *ngIf="isLoading" class="spinner-div col-12">
+                <mat-progress-spinner color="slategrey" mode="indeterminate">
+                </mat-progress-spinner>
+            </div>
+            <div class="no-data" *ngIf="!isLoading && chartArrayvalue.negValLength == 0 && chartArrayvalue.posValLength == 0">No Data Available</div>
+            <app-partionedchart *ngIf="!isLoading && !(chartArrayvalue.negValLength == 0 && chartArrayvalue.posValLength == 0)" [chartData]="chartArrayvalue"></app-partionedchart>
+
+        </div>
+
+    </div>
+        </div>

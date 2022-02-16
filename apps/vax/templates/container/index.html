@@ -1,0 +1,51 @@
+{% extends 'core/base_index_django.html' %}
+<!doctype html>
+<html lang="en">
+{% block headcontent %}
+{% load staticfiles %}
+<head>
+  <meta charset="utf-8">
+  <title>Virtuora AX</title>
+  <base href="/katana/vax">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="{% static 'css/font-awesome.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/bs-datepicker.css' %}">
+  <link rel="stylesheet" href="{% static 'css/fullcalendar.css' %}">
+  <link rel="stylesheet" href="{% static 'css/fonts.css' %}">
+  <link rel="stylesheet" href="{% static 'css/icons.css' %}">
+  <link rel="stylesheet" href="{% static 'css/font_sans.css' %}">
+
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="stylesheet" href="{% static 'styles.911d6c032a910d11e11e.css' %}">
+  <style>
+    .show{
+      margin-left: 40%;
+      display: block;
+    }
+    .hide{
+      opacity: 0;
+    }
+    </style>
+</head>
+<script type="application/javascript">
+  var global = window;
+</script>
+
+{% endblock %}
+{% block navbar_color_class %}{% endblock %}
+{% block navbar_extra_style %}background-color: rgb(163,11,26){% endblock %}
+ 
+{% block pagecontent %}
+<body>
+  <app-root></app-root>
+    <script src="{% static 'runtime-es2015.0a899b574065fcf0154b.js' %}" type="module"></script>
+    <script src="{% static 'polyfills-es2015.707fe33a73ba6b994c2b.js' %}" type="module"></script>
+    <script src="{% static 'runtime-es5.4f99040794a738c4fb1f.js' %}" nomodule defer></script>
+    <script src="{% static 'polyfills-es5.b00ebf2fb448ceddf30d.js' %}" nomodule defer></script>
+    <script src="{% static 'scripts.9684bdb7099b07b54570.js' %}" defer></script>
+    <script src="{% static 'main-es2015.f918b1c94a182b76a1b6.js' %}" type="module"></script>
+    <script src="{% static 'main-es5.8881ba74f2037c42bdcd.js' %}" nomodule defer></script>
+{% endblock %}
+</body>
+</html>

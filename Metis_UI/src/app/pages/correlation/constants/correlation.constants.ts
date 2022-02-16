@@ -1,0 +1,20 @@
+
+export const CORRELATION_URLS = {
+    GET_CORRELATION_DATASETS_API: 'getCorrelationDataSets/',
+    GET_CORRELATION_DATASET_FEATURE_GROUPS_API: 'getCorrelationGroups/',
+    GET_CORRELATION_DATASET_FEATURE_MAPPINGS_API: 'getCorrelationDataSetMappings/',
+    GET_CORRELATION_DATASET_TIME_COLUMNS_API: 'getCorrelationTimeColumns/',
+    POST_CORRELATION_DATASET_GROUP_DETAILS_API: 'getFeatureGroupDetails/',
+    PUT_CORRELATION_UPDATE_FEATURE_GROUP_API: 'updateFeatureGroup/',
+    GET_CORRELATION_TABLE_VIEW_DATA : 'getCorrelationTableViewData/',
+    POST__HEATMAP_API: 'getcorrelationheatmap/',
+    POST__SCATTERPLOTTER_API: 'getcorrelationplotdata/',
+    POST__PARTIONEDCHART_API: 'getpartionedchartdata/',
+    GET_CORRELATION_LIST_DATA: 'getcorrelationlistdata/',
+    GET_POSITIVE_GROUPS: 'getPositiveGroups/',
+    GET_NEGATIVE_GROUPS: 'getNegativeGroups/',
+    GET_GROUP_DETAILS: 'getGroupDetails/',
+    GET_DATASET_LIST: 'getDataSetForJobType/',
+    GET_DATA_SOURCE_DETAILS_API: 'getDataSource/',
+    POST_CORRELATION_DELETE_GROUP_API: 'deleteFeatureGroup/',
+};

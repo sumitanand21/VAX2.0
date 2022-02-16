@@ -1,0 +1,533 @@
+<div class="parent-content">
+    <div *ngIf="isLoading" class="spinner-div" >
+        <mat-progress-spinner color="slategrey" mode="indeterminate">
+        </mat-progress-spinner>
+    </div>
+    <div *ngIf="!isLoading" class="row no-mar wrap-cont">
+        <div class="col-12 col-xs-12 col-sm-12 col-md-6 border-r mar-b-18 border-t no-padd" *ngIf="isShown">
+            <!-- Table view Starts  -->
+            <div class="df-col">
+                <div class="row no-mar">
+
+                    <label class="page-title">Trained Models</label>
+
+                </div>
+                <div class="row no-mar">
+                    <!-- Dropdowns and refresh icon Starts here -->
+                    <div class="d-flex left_div_border">
+                        <div class="drop-wid">
+                            <div class="row">
+                                <label class="s2-label-model">Anomaly Detection Status: </label>
+                            </div>
+
+                            <mat-select disableOptionCentering [(ngModel)]="anmdStatusSelected"
+                                class="form-control s1-dropdown drop-mat drop_css_one" (ngModelChange)="statusChange()">
+                                <mat-option value="">
+                                    All</mat-option>
+                                <mat-option *ngFor="let selData of anmdStatusList" [value]="selData">
+                                    {{selData}}</mat-option>
+                            </mat-select>
+                        </div>
+                        <div class="drop-wid">
+                            <div class="row">
+                                <label class="s2-label-model"> Model Type: </label>
+                            </div>
+
+                            <mat-select disableOptionCentering [(ngModel)]="modelTypeSelected"
+                                class="form-control s1-dropdown drop-mat drop_css_one" (ngModelChange)="modeltypeChange()">
+                                <mat-option value="">
+                                    All</mat-option>
+                                <mat-option *ngFor="let selData of modelTypeList" [value]="selData">
+                                    {{selData}}</mat-option>
+                            </mat-select>
+                        </div>
+                        <div class="drop-wid">
+                            <div class="row">
+                                <label class="s2-label-model">Data Sets: </label>
+                            </div>
+
+                            <mat-select disableOptionCentering [(ngModel)]="dataSetSelected"
+                                class="form-control drop-mat s2-dropdown drop_css_one" (ngModelChange)="datasetChange()">
+                                <mat-option value="">All Data Sets
+                                </mat-option>
+                                <mat-option *ngFor="let selData of dataSetList" [value]="selData">{{selData}}
+                                </mat-option>
+                            </mat-select>
+                        </div>
+                    </div>
+                    <!-- Dropdowns and refresh icon Ends here -->
+
+                </div>
+
+                <div class="row no-mar">
+                    <div class="page_css_view">
+                        <div class="paginate_css">
+                            <span>
+                                <!-- <i class="fa fa-search search_fafa" aria-hidden="true"></i> -->
+                                <mat-icon aria-hidden="false" class="search_mat" aria-label="search icon">search</mat-icon>
+                                <input autocomplete="off" matInput class="form-control css_search" type="text" placeholder="Search with Model Name" [(ngModel)]="searchFilter"
+                                        maxlength="150" (ngModelChange)="onsearchChange(searchFilter)">
+                            </span>
+                        </div>
+                        <div class="d-flex paginate-align">
+                            <pagination-template #pT="paginationApi" [id]="config.id" class="d-flex"
+                                (pageChange)="changepage($event)">
+                                <div class="d-flex process_rows_css">
+                                    <span class="mar-r-8 paginate-text">Rows:</span>
+                                    <mat-select disableOptionCentering class="select-page" [(ngModel)]="itemPerPage"
+                                        (selectionChange)="setNewPageSize(itemPerPage)">
+                                        <mat-option *ngFor="let pgrec of pageArr" [value]="pgrec">{{pgrec}}</mat-option>
+                                    </mat-select>
+                                </div>
+                                <div class="pagination-previous" [class.disabled]="pT.isFirstPage()">
+                                    <button type="button" class="pagination-btn" (click)="pT.previous()"
+                                        [disabled]="pT.isFirstPage()">
+                                        < </button>
+                                </div>
+
+                                <div class="d-flex process_matselect">
+                                    <span class="paginate-text"> Page</span>
+                                    <input autocomplete="off" matInput class="currpage-input" type="text" [(ngModel)]="inputCurrentpage"
+                                        (change)="changepageinp(inputCurrentpage,pT.getLastPage())">
+
+                                    <span class="paginate-text"> of {{pT.getLastPage()}}</span>
+                                </div>
+                                <div class="pagination-next" [class.disabled]="pT.isLastPage()">
+                                    <button type="button" class="pagination-btn" (click)="pT.next()"
+                                        [disabled]="pT.isLastPage()"> > </button>
+                                </div>
+                            </pagination-template>
+
+                        </div>
+                    </div>
+
+                </div>
+                <div class="f-max out-table mod-table-scroll">
+                    <table class="df-col">
+                        <thead class="sticky-head">
+                            <tr class="row no-mar head-tr">
+
+                                <th  class="col-4 wrap-text">Model Name
+                                    <div class="select-cur" (click)="sort('modelNameDisp')">
+                                    <mat-icon *ngIf="!(key == 'modelNameDisp' && reverse)" aria-hidden="false" class="arrow_mat align-middle" aria-label="down icon">arrow_drop_down</mat-icon>
+                                    <mat-icon *ngIf="key == 'modelNameDisp' && reverse" aria-hidden="false" class="arrow_mat align-middle" aria-label="up icon">arrow_drop_up</mat-icon>
+                                </div>
+
+                                </th>
+                                <!-- <input autocomplete="off" type="checkbox" class="check-tick" [(ngModel)]="anmdModel.checkboxdata" (click)="sample(forecast,input)" id="{{anmdModel.dataId}}" name="checkboxdata"/> -->
+                                <th  class="col-2 wrap-text">Status
+                                    <div class="select-cur" (click)="sort('jobStatus')">
+                                        <mat-icon *ngIf="!(key == 'jobStatus' && reverse)" aria-hidden="false" class="arrow_mat align-middle" aria-label="down icon">arrow_drop_down</mat-icon>
+                                        <mat-icon *ngIf="key == 'jobStatus' && reverse" aria-hidden="false" class="arrow_mat align-middle" aria-label="up icon">arrow_drop_up</mat-icon>
+                                    </div>
+                                </th>
+                                <th  class="col-2 wrap-text">Model Type
+                                    <div class="select-cur" (click)="sort('modelType')">
+                                        <mat-icon *ngIf="!(key == 'modelType' && reverse)" aria-hidden="false" class="arrow_mat align-middle" aria-label="down icon">arrow_drop_down</mat-icon>
+                                        <mat-icon *ngIf="key == 'modelType' && reverse" aria-hidden="false" class="arrow_mat align-middle" aria-label="up icon">arrow_drop_up</mat-icon>
+                                    </div>
+                                </th>
+                                <th  class="col-2 wrap-text">Data Set
+                                    <div class="select-cur" (click)="sort('dataSetName')">
+                                        <mat-icon *ngIf="!(key == 'dataSetName' && reverse)" aria-hidden="false" class="arrow_mat align-middle" aria-label="down icon">arrow_drop_down</mat-icon>
+                                        <mat-icon *ngIf="key == 'dataSetName' && reverse" aria-hidden="false" class="arrow_mat align-middle" aria-label="up icon">arrow_drop_up</mat-icon>
+                                    </div>
+                                </th>
+                                <th  class="col-2 wrap-text">Accuracy
+                                    <div class="select-cur" (click)="sort('accuracyDisp')">
+                                        <mat-icon *ngIf="!(key == 'accuracyDisp' && reverse)" aria-hidden="false" class="arrow_mat align-middle" aria-label="down icon">arrow_drop_down</mat-icon>
+                                        <mat-icon *ngIf="key == 'accuracyDisp' && reverse" aria-hidden="false" class="arrow_mat align-middle" aria-label="up icon">arrow_drop_up</mat-icon>
+                                    </div>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="row no-mar body-tr"
+                                [ngClass]="{'table-b-r': ( selectedModel && anmdModel.uid === selectedModel.uid)}"
+                                *ngFor="let anmdModel of tempAnomalyDetections | orderBy: key : reverse | filterBy:AlltasksFilter | exactFilter : {'modelType':  modelTypeSelected,'dataSetName': dataSetSelected, 'jobStatus': anmdStatusSelected }   | paginate: config; let i = index;">
+                                <td class="col-4 r-name wrap-text" (click)="displayModel(anmdModel)">
+                                    {{anmdModel.modelNameDisp }}</td>
+                                <!-- <td>
+                                    <span *ngIf="game.status" [ngClass]="{'bg-green': game.status == 'Finish','bg-blue': game.status == 'running','bg-orange': game.status == 'waiting'}" class="status">
+                                    {{game.status}}
+                                    </span>
+                                    </td> -->
+                                <td class="col-2 wrap-text" (click)="displayModel(anmdModel)"> 
+                                    <span *ngIf="anmdModel.jobStatus"
+                                    [ngClass]="{'bg-blue': (anmdModel.jobStatus.toLowerCase() === 'active' || anmdModel.jobStatus.toLowerCase() === 'training' || anmdModel.jobStatus.toLowerCase() === 'running'), 'bg-yellow' : (anmdModel.jobStatus.toLowerCase() === 'scheduled' || anmdModel.jobStatus.toLowerCase() === 'waiting' || anmdModel.jobStatus.toLowerCase() === 'queued' || anmdModel.jobStatus.toLowerCase() === 'initiated')}"
+                                    class="status">
+                                    {{anmdModel.jobStatus.toLowerCase()}}
+                                </span>
+                                  </td>
+                                <td class="col-2 wrap-text" (click)="displayModel(anmdModel)">{{anmdModel.modelType}}
+                                </td>
+                                <td class="col-2 wrap-text" (click)="displayModel(anmdModel)">{{anmdModel.dataSetName}}</td>
+                                <td class="col-2 wrap-text" (click)="displayModel(anmdModel)">{{anmdModel.accuracyDisp}}
+                                </td>
+                            </tr>
+                            <tr class="row no-mar"
+                                *ngIf="(tempAnomalyDetections | filterBy :AlltasksFilter | exactFilter : {'modelType':  modelTypeSelected,'dataSetName': dataSetSelected, 'jobStatus': anmdStatusSelected } ).length == 0">
+                                <td class="col-12 wrap-text no_rec_css">No records found</td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Table view Ends -->
+
+        </div>
+        <div class="col-12 col-xs-12 col-sm-12 padd-22 df-col cont-scrl" [ngClass]="isShown?'col-md-6':'col-md-12'">
+            <div class="fmax sub-cont-scrl">
+
+                <div class="shadowbtn collapse-view-cont" [ngClass]="{'bg-open':!isShown}" (click)="toggleShow()">
+                    <!-- <i *ngIf="!isShown" class="fa fa-chevron-right open-tab"></i>
+                    <i *ngIf="isShown" class="fa fa-chevron-left close-tab"></i> -->
+                    <mat-icon *ngIf="!isShown" class="arrow_mat open-tab" aria-hidden="false" aria-label="arrowright icon">keyboard_arrow_right</mat-icon>
+                    <mat-icon *ngIf="isShown" class="arrow_mat close-tab" aria-hidden="false" aria-label="arrowleft icon">keyboard_arrow_left</mat-icon>
+                </div>
+                <div class="row no-mar" *ngIf="checkifObjectExist(selectedModel) == false && !(anmdDetailsLoading && anmdTrResLoading)">
+                    <div class="col-md-12 col-sm-12 col-xs-12 mar-b-25">
+                        <label class="head-label">Select at least one trained model to show the details</label>
+                    </div>
+
+                </div>
+                <div *ngIf="anmdDetailsLoading && anmdTrResLoading" class="spinner-div">
+                    <mat-progress-spinner color="slategrey" mode="indeterminate">
+                    </mat-progress-spinner>
+                </div>
+                <div *ngIf="checkifObjectExist(selectedModel) == true && !(anmdDetailsLoading && anmdTrResLoading)">
+                    <div class="row no-mar">
+                        <label class="s2-page-title">Trained Models</label><label
+                            class="s2-label-model">{{selectedModel.modelType}}</label>
+
+                    </div>
+
+                    <div class="row no-mar top-mar border-a bck-white bot-padd">
+
+                        <div class="col-6 ">
+                            <div class="row">
+                                <label class="s3-label-model">Data Set: </label>
+                            </div>
+
+                            <div *ngIf="selectedModel.dataSetName" class="data-label">{{selectedModel.dataSetName}}</div>
+                            <div  *ngIf="!selectedModel.dataSetName" class="data-label">NA</div>
+                        </div>
+                        <div class="col-6">
+                            <div class="row">
+                                <label class="s3-label-model">Loss Function: </label>
+                            </div>
+
+                            <div *ngIf="selectedModel.lossFunction" class="data-label">{{selectedModel.lossFunction}}</div>
+                            <div  *ngIf="!selectedModel.lossFunction" class="data-label">NA</div>
+                        </div>
+                        <div class="col-6">
+                            <div class="row">
+                                <label class="s3-label-model">Model Config Used: </label>
+                            </div>
+
+                            <div *ngIf="selectedModel.modelConfigName" class="data-label model-color" (click)="openModelConfigDialog(selectedModel)">{{selectedModel.modelConfigName}}</div>
+                            <div  *ngIf="!selectedModel.modelConfigName" class="data-label">NA</div>
+                        </div>
+
+                        <div class="col-6">
+                            <div class="row">
+                                <label class="s3-label-model">Accuracy: </label>
+                            </div>
+
+                            <div *ngIf="selectedModel.accuracy" class="data-label">{{selectedModel.accuracyDisp}}</div>
+                            <div  *ngIf="!selectedModel.accuracy" class="data-label">NA</div>
+                        </div>
+
+                    </div>
+                    <div class="container-fluid tab-selector-bar ">
+                    <div class="no-mar min-height-52 f-min border-b2" id="colspan_css_scroll" > 
+                        <input autocomplete="off" type="button" value="Training Results" class="tab-css" [ngClass]="{'active-tab' : trTab }" (click)="switchTab(0)" id="selection-btn" >
+                        <input autocomplete="off" type="button" value="Anomaly Detection" class="tab-css-s1" [ngClass]="{'active-tab' : !trTab }" (click)="switchTab(1)" id="forecast-btn"  > 
+                        <span *ngIf="checkifObjectExist(selectedModelAnmdDATA) == true && selectedModelAnmdDATA.jobStatus && !(anmdDetailsLoading)" class="status_css">
+                            <button type="button" mat-stroked-button class="mts-status-btn-icon bg-completed" [ngClass]="{'bg-blue': (selectedModelAnmdDATA.jobStatus.toLowerCase() === 'active' || selectedModelAnmdDATA.jobStatus.toLowerCase() === 'training' || selectedModelAnmdDATA.jobStatus.toLowerCase() === 'running'), 'bg-yellow' : (selectedModelAnmdDATA.jobStatus.toLowerCase() === 'waiting' || selectedModelAnmdDATA.jobStatus.toLowerCase() === 'queued' || selectedModelAnmdDATA.jobStatus.toLowerCase() === 'scheduled' || selectedModelAnmdDATA.jobStatus.toLowerCase() === 'initiated'), 'bg-danger': selectedModelAnmdDATA.jobStatus.toLowerCase() === 'stopped'}">{{selectedModelAnmdDATA.jobStatus.toLowerCase()}}</button>
+                        </span>
+                    </div>
+                </div>
+                <div *ngIf="trTab" class="container-fluid tab-selector-bar ">
+                    <div *ngIf="anmdTrResLoading" class="spinner-div">
+                        <mat-progress-spinner color="slategrey" mode="indeterminate">
+                        </mat-progress-spinner>
+                    </div>
+                    <div class="row no-mar" *ngIf="checkifObjectExist(selectedModelTrainingData) == false && !(anmdTrResLoading)">
+                        <div class="col-12 no-padd">
+                            <label class="head-label">No training results available for selected model name</label>
+                        </div>
+    
+                    </div>
+                <div *ngIf="checkifObjectExist(selectedModelTrainingData) == true && !(anmdTrResLoading)" class="row no-mar train_css">
+
+                    <label class="s3-page-title">Training Information</label>
+
+                    
+
+                </div>
+                
+                <div *ngIf="checkifObjectExist(selectedModelTrainingData) == true && !(anmdTrResLoading)" class="row no-mar top-mar bck-white border-a bot-padd">
+
+                    <div class="col-6 ">
+                        <div class="row">
+                            <label class="s3-label-model">Data Range: </label>
+                        </div>
+
+                        <div *ngIf="selectedModelTrainingData.dataRange" class="data-label">{{selectedModelTrainingData.dataRange}}</div>
+                        <div  *ngIf="!selectedModelTrainingData.dataRange" class="data-label">NA</div>
+                    </div>
+                    <div class="col-6">
+                        <div class="row">
+                            <label class="s3-label-model">Task Name: </label>
+                        </div>
+
+                        <div  *ngIf="selectedModelTrainingData.scheduleName" class="data-label">{{selectedModelTrainingData.scheduleName}}</div>
+                        <div  *ngIf="!selectedModelTrainingData.scheduleName" class="data-label">NA</div>
+                    </div>
+                    <div class="col-6">
+                        <div class="row">
+                            <label class="s3-label-model">Start Time: </label>
+                        </div>
+
+                        <div *ngIf="selectedModelTrainingData.startTime" class="data-label">{{selectedModelTrainingData.startTime}}</div>
+                        <div  *ngIf="!selectedModelTrainingData.startTime" class="data-label">NA</div>
+                    </div>
+                    <div class="col-6">
+                        <div class="row">
+                            <label class="s3-label-model"># of Observation </label>
+                        </div>
+
+                        <div  *ngIf="selectedModelTrainingData.numberofObservation" class="data-label">{{selectedModelTrainingData.numberofObservation}}</div>
+                        <div  *ngIf="!selectedModelTrainingData.numberofObservation" class="data-label">NA</div>
+                    </div>
+
+                    <div class="col-6">
+                        <div class="row">
+                            <label class="s3-label-model">Time Used: </label>
+                        </div>
+
+                        <div *ngIf="selectedModelTrainingData.timeUsed" class="data-label">{{selectedModelTrainingData.timeUsed}}</div>
+                        <div  *ngIf="!selectedModelTrainingData.timeUsed" class="data-label">NA</div>
+                    </div>
+
+                    <div class="col-6">
+                        <div class="row">
+                            <label class="s3-label-model">Number Of Components: </label>
+                        </div>
+
+                        <div  *ngIf="selectedModelTrainingData.numberOfComponentsDisp" class="data-label">{{selectedModelTrainingData.numberOfComponentsDisp}}</div>
+                        <div  *ngIf="!selectedModelTrainingData.numberOfComponentsDisp" class="data-label">NA</div>
+                    </div>
+                </div>
+                <div *ngIf="checkifObjectExist(selectedModelTrainingData) == true && !(anmdTrResLoading)" class="row no-mar">
+
+                    <label class="s3-page-title">Construction Error Cluster Quality Chart:</label>
+
+                    
+
+                </div>
+                <div *ngIf="checkifObjectExist(selectedModelTrainingData) == true && !(anmdTrResLoading)" class="row no-mar top-mar bck-white border-a subbot-padd">
+                    <div class="ceoc-att">
+                        <app-amchart [graphData]="selectedModelTrainingData.loss"></app-amchart>
+                    </div>
+                </div>
+
+                <div *ngIf=" checkifObjectExist(selectedModelTrainingData) == true && checkifObjectExist(selectedModelTrainingData.featureImportance)  && !(anmdTrResLoading)" class="row no-mar">
+
+                    
+                    <label class="s3-page-title">Feature Importance</label>
+                    
+
+                </div>
+                <div *ngIf=" checkifObjectExist(selectedModelTrainingData) == true && checkifObjectExist(selectedModelTrainingData.featureImportance) && !(anmdTrResLoading)" class="row no-mar border-a top-mar bck-white bot-padd mar-bot">
+                    <div class="col-12">
+                        <div *ngIf="selectedModelTrainingData.featureImportance" class="row">
+                            <label class="s4-label-model">Top 10 Fearures(out of {{selectedModelTrainingData.featureImportance.length}})</label>
+                        </div><div class="row blank-div">
+
+                        </div>
+                        <div class="row float-r">
+                            <label class="s5-label-model no-padd mar-b-12">Value</label>
+                        </div>
+                        <div class="row blank-div">
+
+                    </div>
+                        <div *ngFor="let item of selectedModelTrainingData.featureImportance | orderBy: 'displayValue' : true | slice:0:10 ; let i = index" class="no-padd mar-b-12">
+                            <label class="body-label">{{item.key}}</label>
+                             <div class="row float-r">
+                                    <label class="s6-label-model no-padd mar-b-12">{{item.displayValue}}</label>
+                                </div>
+                            <div class="data-label mar-b-12">
+                               
+                                <mat-progress-bar class="col-9 no-padd s1-specs-progress-bar"
+                                    mode="determinate" [value]="(item.barVal * 100) " [color]="item.color"></mat-progress-bar>
+                                    
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+
+
+
+            <div *ngIf="!trTab" class="container-fluid tab-selector-bar ">
+                <div *ngIf="anmdDetailsLoading" class="spinner-div">
+                    <mat-progress-spinner color="slategrey" mode="indeterminate">
+                    </mat-progress-spinner>
+                </div>
+               
+                <div *ngIf="checkifObjectExist(selectedModel) == true && !(anmdDetailsLoading)"  class="row no-mar">
+                    <div class="col-6 no-padd">
+                        <label *ngIf="selectedModel.jobStatus.toLowerCase() !== 'completed'"  class="s4-page-title">Anomaly Detection Result</label>
+                    </div>
+                    <div class="col-6">
+                        <label *ngIf="selectedModel.jobStatus.toLowerCase() === 'completed'" class="s7-label-model">Threshold: </label>
+                        <input autocomplete="off" [disabled]="selectedModelAnmdDATA && selectedModelAnmdDATA.jobStatus && (selectedModelAnmdDATA.jobStatus.toLowerCase() === 'running' || selectedModelAnmdDATA.jobStatus.toLowerCase() === 'scheduled')" *ngIf="selectedModel.jobStatus.toLowerCase() === 'completed'" type="number" [(ngModel)]="selectedModel.threshold" class="input-number-css" id="points" name="points" min="0" max="1" step="0.001">
+                        <button type="button" *ngIf="selectedModelAnmdDATA && selectedModelAnmdDATA.jobStatus && (selectedModelAnmdDATA.jobStatus.toLowerCase() === 'running')" mat-stroked-button class="shadowbtn stop-btn" (click)="stopAnomaly()">Stop</button>  
+                        <button type="button" *ngIf=" !(selectedModelAnmdDATA && selectedModelAnmdDATA.jobStatus && (selectedModelAnmdDATA.jobStatus.toLowerCase() === 'running' || selectedModelAnmdDATA.jobStatus.toLowerCase() === 'scheduled'))" [disabled]="disableDetectAnomalyBtn || getAnomalyDetectBtnStatus()" class="shadowbtn train-detect-btn" (click)="detectAnomaly()" >Detect Anomaly</button>
+                    </div>
+                </div>
+                <div class="row no-mar"*ngIf="checkifObjectExist(selectedModelAnmdDATA) == false && !(anmdDetailsLoading)" >
+                    <div class="col-12 no-padd">
+                        <label class="head-label">No anomaly detection available for selected model name</label>
+                    </div>
+
+                </div>
+                <div  *ngIf="checkifObjectExist(selectedModelAnmdDATA) == true && !(anmdDetailsLoading)"   class="row no-mar top-mar  bot-padd">
+                    <div class="col-4 border-l border-t border-b  bot-padd bck-white no-padd no-mar">
+                        <app-donut-chart [grappData]="selectedModelAnmdDATA"></app-donut-chart>
+                    </div>
+                    <div class="col-4 border-r border-t border-b bot-padd bck-white no-padd no-mar">
+                        <div class="row">
+                            <label class="s3-label-model">Total Data Processed: </label>
+                        </div>
+
+                        <div *ngIf="(selectedModelAnmdDATA.numberofNormalData && selectedModelAnmdDATA.numberOfAbnormalData)" class="data-label">{{(+selectedModelAnmdDATA.numberofNormalData) + (+ selectedModelAnmdDATA.numberOfAbnormalData)}}</div>
+                        <div  *ngIf="!(selectedModelAnmdDATA.numberofNormalData && selectedModelAnmdDATA.numberOfAbnormalData)" class="data-label">NA</div>
+                        <div class="row">
+                            <label class="s3-label-model">Normal Data: </label>
+                        </div>
+
+                        <div *ngIf="selectedModelAnmdDATA.numberofNormalData" class="data-label">{{selectedModelAnmdDATA.numberofNormalData}}</div>
+                        <div  *ngIf="!selectedModelAnmdDATA.numberofNormalData" class="data-label">NA</div>
+                        <div class="row">
+                            <label class="s3-label-model">Abnormal Data: </label>
+                        </div>
+
+                        <div *ngIf="selectedModelAnmdDATA.numberOfAbnormalData"  class="data-label">{{selectedModelAnmdDATA.numberOfAbnormalData}}</div>
+                        <div  *ngIf="!selectedModelAnmdDATA.numberOfAbnormalData" class="data-label">NA</div>
+                    </div>
+                    <div class="col-1 bot-padd  no-padd no-mar">
+                    </div>
+                    <div class="col-3 border-a bot-padd bck-white no-padd no-mar chart-rt-sec">
+                            
+                            
+                            <div class="row">
+                                <label class="s3-label-model">Time Used: </label>
+                            </div>
+    
+                            <div *ngIf="selectedModelAnmdDATA.timeUsed" class="data-label">{{selectedModelAnmdDATA.timeUsed}}</div>
+                            <div  *ngIf="!selectedModelAnmdDATA.timeUsed" class="data-label">NA</div>
+
+                            <div class="row">
+                                <label class="s3-label-model">Speed: </label>
+                            </div>
+    
+                            <div *ngIf="selectedModelAnmdDATA.speedDisp" class="data-label">{{selectedModelAnmdDATA.speedDisp}}</div>
+                            <div  *ngIf="!selectedModelAnmdDATA.speedDisp" class="data-label">NA</div>
+                            <div class="row">
+                                <label class="s3-label-model">Number of jobs Running: </label>
+                            </div>
+    
+                            <div *ngIf="selectedModelAnmdDATA.numberofJobsRunning" class="data-label">{{selectedModelAnmdDATA.numberofJobsRunning}}</div>
+                            <div  *ngIf="!selectedModelAnmdDATA.numberofJobsRunning" class="data-label">NA</div>
+                        
+                    </div>
+                </div>
+                <!-- <div  *ngIf="checkifObjectExist(selectedModelAnmdDATA) == true && !(anmdDetailsLoading)"   class="row no-mar">
+
+                    <label class="s3-page-title">Graph</label>
+
+                    
+
+                </div> -->
+                <div  *ngIf="checkifObjectExist(selectedModelAnmdDATA) == true && !(anmdDetailsLoading) && checkifObjectExist(selectedModel) == true && (selectedModel.modelUrl)"   class="row no-mar top-mar bck-white border-a bot-mar">
+                    <iframe [src]="selectedModel.modelUrl" height="300" width="100%"></iframe>
+                    <!-- <div class="ceoc-att">
+                        <app-amrangechart></app-amrangechart>
+                    </div> -->
+                </div>
+                
+                
+            <div  *ngIf="checkifObjectExist(selectedModelAnmdDATA) == true && !(anmdDetailsLoading)"   class="col-md-6 col-sm-12 no-padd mar-b-18">
+                <div class="train-cont ">
+                    <div class="train-item-head">Resource Usage:</div>
+                    <div class="train-item resused-cont f-max">
+
+                        <div class="resused-att">
+                            <div class="resused-head">CPU Usage:</div>
+                            <div class="resused-body row">
+                                <div class="col-6 no-padd-r">
+                                    <mat-progress-bar class="no-padd resused-progress-bar" mode="determinate"
+                                    [value]="(selectedModelAnmdDATA.cpuUsage * 100)"></mat-progress-bar> 
+                                </div>
+                              <div *ngIf="selectedModelAnmdDATA.cpuUsageDisp" class="data-label per-label col-6">{{selectedModelAnmdDATA.cpuUsageDisp}}%</div>
+                              <div *ngIf="!selectedModelAnmdDATA.cpuUsageDisp" class="data-label per-label col-6">NA</div>
+                            </div>
+                        </div>
+
+                        <div class="resused-att">
+                            <div class="resused-head">Memory Usage:</div>
+
+                            <div class="resused-body row">
+                                <div class="col-6 no-padd-r">
+                                    <mat-progress-bar class="no-padd resused-progress-bar" mode="determinate"
+                                    [value]="(selectedModelAnmdDATA.cpuMemoryUsage * 100)"></mat-progress-bar> 
+                                </div>
+                              <div *ngIf="selectedModelAnmdDATA.cpuMemoryUsageDisp" class="data-label per-label col-6">{{selectedModelAnmdDATA.cpuMemoryUsageDisp}}%</div>
+                              <div *ngIf="!selectedModelAnmdDATA.cpuMemoryUsageDisp" class="data-label per-label col-6">NA</div>
+                            </div>
+                        </div>
+
+                        <div class="resused-att">
+                            <div class="resused-head">GPU Usage:</div>
+                            <div class="resused-body row">
+                                <div class="col-6 no-padd-r">
+                                    <mat-progress-bar class="no-padd resused-progress-bar" mode="determinate"
+                                    [value]="(selectedModelAnmdDATA.gpuUsage * 100)"></mat-progress-bar> 
+                                </div>
+                              <div *ngIf="selectedModelAnmdDATA.gpuUsageDisp" class="data-label per-label col-6">{{selectedModelAnmdDATA.gpuUsageDisp}}%</div>
+                              <div *ngIf="!selectedModelAnmdDATA.gpuUsageDisp" class="data-label per-label col-6">NA</div>
+                            </div>
+                        </div>
+
+                        <div class="resused-att">
+                            <div class="resused-head">GPU Memory Usage:</div>
+
+
+                            <div class="resused-body row">
+                                <div class="col-6 no-padd-r">
+                                    <mat-progress-bar class="no-padd resused-progress-bar" mode="determinate"
+                                    [value]="(selectedModelAnmdDATA.gpuMemoryUsage * 100)"></mat-progress-bar> 
+                                </div>
+                              <div *ngIf="selectedModelAnmdDATA.gpuMemoryUsageDisp" class="data-label per-label col-6">{{selectedModelAnmdDATA.gpuMemoryUsageDisp}}%</div>
+                              <div *ngIf="!selectedModelAnmdDATA.gpuMemoryUsageDisp" class="data-label per-label col-6">NA</div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            </div>
+        </div>
+    </div>
+
+</div>

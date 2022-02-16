@@ -1,0 +1,225 @@
+<div *ngIf="tableLoader" class="spinner-div" >
+    <mat-progress-spinner color="slategrey" mode="indeterminate">
+    </mat-progress-spinner>
+</div>
+<div *ngIf="!tableLoader" class="dm_main_div">
+    
+    <!-- Left Side Panel Starts Here -->
+    <div   class="dm_left_div col-6 right_view_leftcss f-max df-col">
+        <div class="dm_left_sub_view">
+            <span class="table_view_css">
+                <b>Data Set List</b>
+            </span>
+            <span class="table_view_css">
+                <button class="shadowbtn btn btn-primary add_new_btn" type="button" (click)="navigateToUpsert()">Add New</button>
+            </span>
+        </div>
+
+        <div class="row no-mar border_view_css">
+            <div class="page_css_view">
+                <div class="paginate_css">
+                    <span>
+                        <mat-icon aria-hidden="false" class="search_mat" aria-label="search icon">search</mat-icon>
+                        <input autocomplete="off" maxlength="150" matInput class="form-control css_search" type="text"
+                            [(ngModel)]="searchFilter" placeholder="Search with Dataset Name"
+                            (ngModelChange)="onsearchChange(configTask.id)">
+                    </span>
+                </div>
+                <div class="d-flex paginate-align">
+                    <pagination-template #pT="paginationApi" [id]="configTask.id" class="d-flex"
+                        (pageChange)="changepage($event,configTask.id)">
+                        <div class="d-flex process_rows_css">
+                            <span class="mar-r-8 paginate-text">Rows:</span>
+                            <mat-select disableOptionCentering class="select-page" [(ngModel)]="itemPerPageTask"
+                                (selectionChange)="setNewPageSize(itemPerPageTask,configTask.id)">
+                                <mat-option *ngFor="let pgrec of pageArr" [value]="pgrec">{{pgrec}}</mat-option>
+                            </mat-select>
+                        </div>
+                        <div class="pagination-previous" [class.disabled]="pT.isFirstPage()">
+                            <button type="button" class="pagination-btn" (click)="pT.previous()"
+                                [disabled]="pT.isFirstPage()">
+                                < </button>
+                        </div>
+
+                        <div class="d-flex process_matselect">
+                            <span class="paginate-text"> Page</span>
+                            <input autocomplete="off" matInput [appAlphaNumeric]="'num'" class="currpage-input" type="text"
+                                [(ngModel)]="inputCurrentpageTask"
+                                (change)="changepageinp(inputCurrentpageTask,pT.getLastPage(),configTask.id)">
+
+                            <span class="paginate-text"> of {{pT.getLastPage()}}</span>
+                        </div>
+                        <div class="pagination-next" [class.disabled]="pT.isLastPage()">
+                            <button type="button" class="pagination-btn" (click)="pT.next()"
+                                [disabled]="pT.isLastPage()"> > </button>
+                        </div>
+                    </pagination-template>
+
+                </div>
+            </div>
+
+        </div>
+        <div class="f-max out-table mod-table-scroll">
+            <table class="df-col task_table">
+                <thead class="sticky-head">
+                    <tr class="row no-mar head-tr">
+                        <th class="col-4 wrap-text">
+                            DataSet Name
+                            <div class="select-cur" (click)="sortTask('dataSetName')">
+                                <mat-icon *ngIf="!(keyTask == 'dataSetName' && reverseTask)" aria-hidden="false" class="arrow_mat align-middle" aria-label="down icon">arrow_drop_down</mat-icon>
+                                <mat-icon *ngIf="keyTask == 'dataSetName' && reverseTask" aria-hidden="false" class="arrow_mat align-middle" aria-label="up icon">arrow_drop_up</mat-icon>
+                            </div>
+                        </th>
+                        <th class="col-4 wrap-text">
+                            DB Type
+                            <div class="select-cur" (click)="sortTask('dbType')">
+                                <mat-icon *ngIf="!(keyTask == 'dbType' && reverseTask)" aria-hidden="false" class="arrow_mat align-middle" aria-label="down icon">arrow_drop_down</mat-icon>
+                                <mat-icon *ngIf="keyTask == 'dbType' && reverseTask" aria-hidden="false" class="arrow_mat align-middle" aria-label="up icon">arrow_drop_up</mat-icon>
+                            </div>
+                        </th>
+                        <!-- <th (click)="sortTask('Streaming')" class="col-2 wrap-text">Streaming</th> -->
+                        <th class="col-4 wrap-text">
+                            Data Source Type
+                            <div class="select-cur" (click)="sortTask('dataSourceType')">
+                                <mat-icon *ngIf="!(keyTask == 'dataSourceType' && reverseTask)" aria-hidden="false" class="arrow_mat align-middle" aria-label="down icon">arrow_drop_down</mat-icon>
+                                <mat-icon *ngIf="keyTask == 'dataSourceType' && reverseTask" aria-hidden="false" class="arrow_mat align-middle" aria-label="up icon">arrow_drop_up</mat-icon>
+                            </div>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let datasource of datasourceTable | orderBy: keyTask : reverseTask | searchFilter: {'dataSetName': searchFilter} | paginate: configTask; let i = index"
+                    role="row" class="row no-mar body-tr selectTask" [class.active]="selectedDataSource && selectedDataSource.dataSetName === datasource.dataSetName"
+                    (click)="getTableDetails(datasource,i)" id="trdata{{i}}">
+                        <td class="wrap-text col-4">{{datasource.dataSetName}}</td>
+                        <td class="wrap-text col-4">{{datasource.dbType}}</td>
+                        <!-- <td class="wrap-text col-2">{{datasource.streaming}}</td> -->
+                        <td class="wrap-text col-4">{{datasource.dataSourceType}}</td>
+                    </tr>
+                    <tr class="row no-mar border_bot_css"
+                        *ngIf="(datasourceTable | searchFilter: {'dataSetName': searchFilter}).length == 0">
+                        <td class="col-12 wrap-text no_rec_css">No records found</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <!-- Left Side Panel Ends Here -->
+    <!-- Right Side Panel Starts Here -->
+    <div class="col-6 right_most_css f-max cont-scrl">
+        <div *ngIf="isLoading" class="spinner-div" >
+            <mat-progress-spinner color="slategrey" mode="indeterminate">
+            </mat-progress-spinner>
+        </div>
+        <div *ngIf="!checkifObjectExist(selectedDataSourceDetails) == true && !isLoading" class="sub-cont-scrl">
+            <label *ngIf="checkifObjectExist(selectedDataSource) == false" class="head-label">Select at least one data set to show the details</label>
+            <label *ngIf="checkifObjectExist(selectedDataSource) == true" class="head-label">No data set details available</label>
+        </div>
+        <div  *ngIf="checkifObjectExist(selectedDataSourceDetails) == true && !isLoading" class="sub-cont-scrl">
+            <div class="dm_right_sub_view">
+                <span class="table_view_css">
+                    <b>{{ selectedDataSourceDetails.dataSetName}}</b>
+                </span>
+                <span class="table_view_css">
+                    <button class="shadowbtn btn btn-default preview_btn" type="button" (click)="navigateToDataPreview(selectedDataSource.dataSetName)">Data Preview</button>
+                </span>
+            </div>
+            <div class="sch_btn_css">
+                <span class="d-flex span_group_css shadowbtn">
+                    <!-- <i class="fa fa-repeat icon_fafa" aria-hidden="true"></i>  -->
+                    <mat-icon aria-hidden="false" class="refresh_mat" (click)="refreshJobStatus()" aria-label="refresh icon">refresh</mat-icon>
+                </span>
+                <button *ngIf="showStream" class="shadowbtn btn btn-primary add_new_btn" type="button" (click)="openStreamSchedule(selectedDataSource, 'stream')">Stream</button>
+                <button type="button" *ngIf="showStopStream" class="shadowbtn btn btn-danger stop_css" (click)="openStreamSchedule(selectedDataSource, 'stop')">Stop</button>
+                <button type="button" class="shadowbtn btn btn-danger delete_css" (click)="deleteDataSource(selectedDataSource)">Delete</button>
+                <button type="button" class="shadowbtn btn btn-default pause_css_btn" (click)="navigateToUpsert(selectedDataSource.dataSetName)">Edit</button>
+            </div>
+            <div class="data_view_css">
+                <div class="sch_border_css">
+                    <div class="sub_border_css">
+                        <div class="css_sub_border row no-padd no-mar">
+                            <div class="col-6 grid_css_view">
+                                <span class="next_run_title">Name</span>
+                                <span *ngIf="selectedDataSourceDetails.dataSetName" class="next_run_value"> {{ selectedDataSourceDetails.dataSetName}} </span>
+                                <span  *ngIf="!selectedDataSourceDetails.dataSetName" class="next_run_value">NA </span>
+                            </div>
+                           
+                            <div class="col-6 grid_css_view">
+                                <span class="frequency_title">Data Source Type</span>
+                                <span *ngIf="selectedDataSourceDetails.dataSourceType" class="frequency_value">{{ selectedDataSourceDetails.dataSourceType}}</span>
+                                <span  *ngIf="!selectedDataSourceDetails.dataSourceType" class="frequency_value">NA</span>
+                            </div>
+                            <div class="col-6 grid_css_view">
+                                <span class="sche_started_title">DB Type</span>
+                                <span *ngIf="selectedDataSourceDetails.dbType" class="sche_started_value">{{ selectedDataSourceDetails.dbType}}</span>
+                                <span  *ngIf="!selectedDataSourceDetails.dbType" class="sche_started_value">NA</span>
+                            </div>
+                            <div class="col-6 grid_css_view" *ngIf="selectedDataSourceDetails.fileName || selectedDataSourceDetails.configurationName">
+                                <span class="sche_started_title">{{selectedDataSourceDetails.fileName ? 'File Name' : 'Configuration'}}</span>
+                                <span *ngIf="selectedDataSourceDetails.fileName" class="sche_started_value">{{ selectedDataSourceDetails.fileName}}</span>
+                                <span  *ngIf="selectedDataSourceDetails.configurationName" class="sche_started_value">{{selectedDataSourceDetails.configurationName}}</span>
+                            </div>
+                        </div>
+                            <div *ngIf="selectedDataSourceDetails.configuration && selectedDataSourceDetails.configuration.length && selectedDataSourceDetails.configuration.length > 0" class="css_sub_border_nex">
+                            <div  *ngFor="let item of selectedDataSourceDetails.configuration" class="col-6 grid_css_view">
+                                <span class="next_run_title">{{item.key}}</span>
+                                <span class="next_run_value"> {{ item.value}} </span>
+                            </div>
+                           
+                        </div>
+                       
+                    </div>
+                </div>
+                <br>
+                <div *ngIf="selectedDataSourceDetails.jobType.length" class="training_modal_css">
+                    <div class="sch_sub_css">
+                        <span class="font_sch_span">Job Type:</span>
+                    </div>
+                    <div class="sch_border_css">
+                        <div class="sub_border_css">
+                            <div class="css_sub_border row no-padd no-mar">
+                                <div class="col-6 jobtype-text" *ngFor="let jobTypeObj of selectedDataSourceDetails.jobType">
+                                    <!-- <span class="next_run_title">Name</span> -->
+                                    <span class="next_run_job"> {{ jobTypeObj}} </span>
+                                    <span *ngIf="checkJobStatus(jobTypeObj); let JobStatus" [ngClass]="{'stopStatus' : JobStatus.toLowerCase() == 'stopped', 'bg-active' : JobStatus.toLowerCase() == 'running', 'bg-waiting': (JobStatus.toLowerCase() === 'scheduled' || JobStatus.toLowerCase() === 'waiting' || JobStatus.toLowerCase() === 'initiated' ||  JobStatus.toLowerCase() === 'queued')}" class="status">
+                                        {{JobStatus}}
+                                    </span>
+                                </div>
+                            </div>
+                           
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <div *ngIf="selectedDataSourceDetails.featureMapping" class="training_modal_css">
+                    <div class="sch_sub_css">
+                        <span class="font_sch_span">Feature Datatypes:</span>
+                    </div>
+                    <div class="training_table_css sub_border_css df-col-dummy">
+                        <div class="f-max out-table mod-table-scroll_sec">
+                            <table class="df-col right_table_css">
+                                <thead class="sticky-head">
+                                    <tr class="row no-mar head-tr">
+                                    <td class="wrap-text col-9">Column</td>
+                                    <td class="wrap-text col-3">Type</td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="row no-mar body-tr" *ngFor="let item of selectedDataSourceDetails.featureMapping">
+                                        <td class="wrap-text col-9">{{item.feature}}</td>
+                                        <td class="wrap-text col-3">{{item.propertyType}}</td>
+                                    </tr>
+                                    <tr class="row no-mar border_bot_css"
+                        *ngIf="(selectedDataSourceDetails.featureMapping).length == 0">
+                        <td class="col-12 wrap-text">No Feature available</td>
+                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+ <!-- Right Side Panel Ends Here -->
+</div>

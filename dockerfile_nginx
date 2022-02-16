@@ -1,0 +1,7 @@
+FROM nginx:latest
+
+# Add contents
+ADD nginx.conf /etc/nginx/nginx.conf
+ADD mime.types /etc/nginx/conf/mime.types
+ADD secrets/ /secrets
+ADD uwsgi_params /config/uwsgi_params

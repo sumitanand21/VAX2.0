@@ -1,0 +1,210 @@
+<!-- Main Division Starts Here -->
+<div class="main_div">
+    <div *ngIf="tableLoader" class="spinner-div col-12">
+        <mat-progress-spinner color="slategrey" mode="indeterminate">
+        </mat-progress-spinner>
+    </div>
+
+    <!-- Right Division Starts Here -->
+    <div *ngIf="!tableLoader" class="rightside_div col-12 col-xs-12 col-sm-12 col-md-12">
+        <div class="right-inner-div">
+            <div class="col-6 right_view_leftcss f-max df-col">
+                <div class="task_view_div">
+                    <div>
+                        <span class="task_css_view">
+                            <b>Configuration</b>
+                        </span>
+                    </div>
+                    <div>
+                        <button type="button" (click)="upsertConfiguration('add')"
+                            class="shadowbtn btn btn-primary new_task_btn">Add New</button>
+                    </div>
+                </div>
+                <div class="row no-mar border_view_css">
+                    <div class="page_css_view">
+                        <div class="paginate_css">
+                            <span>
+                                <!-- <i class="fa fa-search search_fafa" aria-hidden="true"></i> -->
+                                <mat-icon aria-hidden="false" class="search_mat" aria-label="search icon">search</mat-icon>
+                                <input autocomplete="off" maxlength="150" matInput class="form-control css_search" type="text"
+                                    [(ngModel)]="searchFilter" placeholder="Search with Configuration Name"
+                                    (ngModelChange)="onsearchChange(searchFilter)">
+                            </span>
+                        </div>
+                        <div class="d-flex paginate-align">
+                            <pagination-template #pT="paginationApi" [id]="config.id" class="d-flex"
+                                (pageChange)="changepage($event)">
+                                <div class="d-flex process_rows_css">
+                                    <span class="mar-r-8 paginate-text">Rows:</span>
+                                    <mat-select disableOptionCentering class="select-page" [(ngModel)]="itemPerPage"
+                                        (selectionChange)="setNewPageSize(itemPerPage)">
+                                        <mat-option *ngFor="let pgrec of pageArr" [value]="pgrec">{{pgrec}}</mat-option>
+                                    </mat-select>
+                                </div>
+                                <div class="pagination-previous" [class.disabled]="pT.isFirstPage()">
+                                    <button type="button" class="pagination-btn" (click)="pT.previous()"
+                                        [disabled]="pT.isFirstPage()">
+                                        < </button>
+                                </div>
+
+                                <div class="d-flex process_matselect">
+                                    <span class="paginate-text"> Page</span>
+                                    <input autocomplete="off" matInput [appAlphaNumeric]="'num'" class="currpage-input" type="text"
+                                        [(ngModel)]="inputCurrentpage"
+                                        (change)="changepageinp(inputCurrentpage,pT.getLastPage())">
+
+                                    <span class="paginate-text"> of {{pT.getLastPage()}}</span>
+                                </div>
+                                <div class="pagination-next" [class.disabled]="pT.isLastPage()">
+                                    <button type="button" class="pagination-btn" (click)="pT.next()"
+                                        [disabled]="pT.isLastPage()"> > </button>
+                                </div>
+                            </pagination-template>
+
+                        </div>
+                    </div>
+
+                </div>
+                <div class="f-max out-table mod-table-scroll">
+                    <table class="df-col task_table">
+                        <thead class="sticky-head">
+                            <tr class="row no-mar head-tr">
+                                <th class="col-4 wrap-text">
+                                    Configuration Name
+                                    <div class="select-cur" (click)="sort('configurationName')">
+                                        <mat-icon *ngIf="!(key == 'configurationName' && reverse)" aria-hidden="false" class="arrow_mat align-middle" aria-label="down icon">arrow_drop_down</mat-icon>
+                                        <mat-icon *ngIf="key == 'configurationName' && reverse" aria-hidden="false" class="arrow_mat align-middle" aria-label="up icon">arrow_drop_up</mat-icon>
+                                    </div>
+                                </th>
+                                <th class="col-4 wrap-text">
+                                    DB Type
+                                    <div class="select-cur" (click)="sort('dbType')">
+                                        <mat-icon *ngIf="!(key == 'dbType' && reverse)" aria-hidden="false" class="arrow_mat align-middle" aria-label="down icon">arrow_drop_down</mat-icon>
+                                        <mat-icon *ngIf="key == 'dbType' && reverse" aria-hidden="false" class="arrow_mat align-middle" aria-label="up icon">arrow_drop_up</mat-icon>
+                                    </div>
+                                </th>
+                                <th class="col-4 wrap-text">
+                                    Description
+                                    <div class="select-cur" (click)="sort('description')">
+                                        <mat-icon *ngIf="!(key == 'description' && reverse)" aria-hidden="false" class="arrow_mat align-middle" aria-label="down icon">arrow_drop_down</mat-icon>
+                                        <mat-icon *ngIf="key == 'description' && reverse" aria-hidden="false" class="arrow_mat align-middle" aria-label="up icon">arrow_drop_up</mat-icon>
+                                    </div>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let configObj of congigurationTableData | orderBy: key : reverse | searchFilter: {'configurationName': searchFilter} | paginate: config; let i = index"
+                                 class="row no-mar body-tr selectTask" [class.active]="selectedConfiguration && selectedConfiguration.configurationName === configObj.configurationName"
+                                (click)="getConfigDetailsOnRow(configObj,i)" id="trdata{{i}}">
+                                <td class="wrap-text col-4">{{configObj.configurationName}}</td>
+                                <td class="wrap-text col-4">{{configObj.dbType}}</td>
+                                <td class="wrap-text col-4">{{configObj.description}}</td>
+     
+                            </tr>
+                            <tr class="row no-mar border_bot_css"
+                                *ngIf="(congigurationTableData | searchFilter: {'configurationName': searchFilter}).length == 0">
+                                <td class="col-12 wrap-text no_rec_css">No records found</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="col-6 right_most_css f-max df-col">
+                <div class="det-wrap cont-scrl f-max">
+                <div class="no-config" *ngIf="!selectedConfiguration || !ConfigDetails || detailsLoader">
+                    <div *ngIf="!selectedConfiguration">Select at least one configuration to show the details</div>
+                    <div *ngIf="selectedConfiguration">No configuration details available</div>
+                </div>
+                <div *ngIf="detailsLoader" class="spinner-div col-12">
+                    <mat-progress-spinner color="slategrey" mode="indeterminate">
+                    </mat-progress-spinner>
+                </div>
+                <div class="sub-cont-scrl df-col " *ngIf="selectedConfiguration && ConfigDetails && !detailsLoader">
+                    <div class="row no-mar action-div">
+                        <div class="col-8 right_div_head">
+                            <span class="headerFont scheduleName"
+                                title="{{selectedConfiguration.configurationName}}">{{selectedConfiguration.configurationName}}</span>
+                        </div>
+                        <div class="col-4 delete-btn-wrap">
+                            <button type="button" class="shadowbtn brn btn-default edit_css_btn"
+                            (click)="upsertConfiguration('update')">Edit</button>
+
+                            <button type="button" class="shadowbtn brn btn-danger delete_css"
+                            (click)="deleteConfiguration('DELETE')">Delete</button>
+                      
+                       
+                        </div>
+                    </div>
+                    <div class="Schedule_view_css f-max">
+                            <div class="sub_border_css">
+                                <!-- <div class="row no-mar css_sub_border">
+                                    <div class="col-6 grid_css_view" *ngFor="let configdet of configurationDetails">
+                                        <div class="next_run_title">{{configdet.key}}</div>
+                                        <div
+                                            class="next_run_value"> {{configdet.value}} </div>
+                                    </div>
+                                    <div class="col-12 grid_css_view" *ngIf="configurationDetails.length == 0">
+                                        <div class="next_run_value">No configuration details available</div>
+                                    </div>
+                                </div> -->
+                                <div class="row no-mar css_sub_border">
+                                    <div class="col-12 div_seperation">
+                                        <div class="col-6 grid_css_view">
+                                            <div class="next_run_title">configurationName</div>
+                                            <div class="next_run_value">{{ConfigDetails.configurationName}}</div>
+                                        </div>
+                                        <div class="col-6 grid_css_view">
+                                            <div class="next_run_title">Description</div>
+                                            <div class="next_run_value">{{ConfigDetails.description}}</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 div_seperation">
+                                        <div class="col-6 grid_css_view">
+                                            <div class="next_run_title">DB Type</div>
+                                            <div class="next_run_value">{{ConfigDetails.dbType}}</div>
+                                        </div>
+                                        <div class="col-6 grid_css_view">
+                                            <div class="next_run_title">URL</div>
+                                            <div class="next_run_value">{{ConfigDetails.url}}</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 div_seperation">
+                                        <div class="col-6 grid_css_view">
+                                            <div class="next_run_title">Host Name</div>
+                                            <div class="next_run_value">{{ConfigDetails.hostName}}</div>
+                                        </div>
+                                        <div class="col-6 grid_css_view">
+                                            <div class="next_run_title">PortNumber</div>
+                                            <div class="next_run_value">{{ConfigDetails.portNumber}}</div>
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <div class="deatils_css col-6 div_seperation" *ngIf="DetailsViewData.length != 0">
+                                        <div class="next_run_title css_detail">Details</div>
+                                    </div>
+                                    <br>
+                                    <div *ngFor="let detailsViewdata of DetailsViewData" class="col-12 div_seperation">
+                                        <div class="col-6 grid_css_view">
+                                            <div class="next_run_title">Key</div>
+                                            <div class="next_run_value">{{detailsViewdata.key}}</div>
+                                        </div>
+                                        <div class="col-6 grid_css_view">
+                                            <div class="next_run_title">Value</div>
+                                            <div class="next_run_value">{{detailsViewdata.value}}</div>
+                                        </div>
+                                    </div>
+                                    <!-- <div class="col-12 grid_css_view" *ngIf="!selectedConfiguration && !detailsLoader">
+                                        <div class="next_run_value">No configuration details available</div>
+                                    </div> -->
+                                </div>
+                            </div>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+    <!-- Right Division Ends Here -->
+
+</div>
+<!-- Main Division Ends Here -->

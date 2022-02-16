@@ -1,0 +1,193 @@
+<div class="df-col">
+    <div *ngIf="anmdTrResLoading" class="spinner-div" >
+        <mat-progress-spinner color="slategrey" mode="indeterminate">
+        </mat-progress-spinner>
+    </div>
+    <div  *ngIf="!anmdTrResLoading" class="train-head">
+        <div > 
+            <div class="text-head">Model Name:</div>
+            <div class="model-text" *ngIf="(modelTrainingData.modelNameDisp)" [title]="modelTrainingData.modelNameDisp">{{modelTrainingData.modelNameDisp}}</div>
+             <div class="genrate-comp" *ngIf="!(modelTrainingData.modelNameDisp)">Generating</div>
+        </div>
+        <div >
+            <div class="text-head">Progress:</div>
+            <div>
+                    <div class="prog-comp" *ngIf="(modelTrainingData.jobStatus.toLowerCase() === 'completed')">Completed</div>
+
+                    <div class="prog-process" *ngIf="!(modelTrainingData.jobStatus.toLowerCase() === 'completed')">
+                        <mat-progress-bar class="no-padd prog-process-progress-bar" mode="determinate"
+                        [value]="(modelTrainingData.progress)"></mat-progress-bar>
+                        <span class="prog-val">{{modelTrainingData.progressPer}}%</span>
+                    </div>
+             
+
+            </div>
+        </div>
+        <div >
+            <div class="text-head">Loss Function:</div>
+            <div *ngIf="modelTrainingData.lossFunction" class="text-body">{{modelTrainingData.lossFunction}}</div>
+            <div *ngIf="!modelTrainingData.lossFunction" class="text-body">NA</div>
+        </div>
+        <div >
+            <div class="text-head">Value:</div>
+            <div *ngIf="modelTrainingData.accuracyDisp" class="text-body">{{modelTrainingData.accuracyDisp}}</div>
+            <div *ngIf="!modelTrainingData.accuracyDisp" class="text-body">NA</div>
+        </div>
+        <div class="action-sec " >
+             <label *ngIf="(modelTrainingData.jobStatus.toLowerCase() === 'completed')" class="text-head thr-label">Threshold: </label>
+            <input autocomplete="off" type="number" *ngIf="(modelTrainingData.jobStatus.toLowerCase() === 'completed')" [(ngModel)]="modelTrainingData.threshold" class="input-number-css" id="points" name="points" min="0" max="1" step="0.001">
+            <button type="button" class="shadowbtn train-stop-btn" (click)="deleteModel()" *ngIf="(modelTrainingData.jobStatus.toLowerCase() === 'completed')">Delete</button>
+            <button type="button" class="shadowbtn train-stop-btn" (click)="stopTraining()" *ngIf="(modelTrainingData.jobStatus.toLowerCase() === 'running')">Stop</button>
+            <button type="button" class="shadowbtn train-detect-btn" (click)="detectAnomaly()" [disabled]="!(modelTrainingData.jobStatus.toLowerCase() === 'completed') || disableDetectAnomalyBtn">Detect Anomaly</button>
+        </div>
+    </div>
+    <div *ngIf="!anmdTrResLoading" class="f-max train-body">
+
+        <div class="row no-mar">
+            <div class="col-md-3 col-sm-12 no-padd mar-b-18">
+                <div class="train-cont df-col">
+                    <div class="train-item-head">General Attributes:</div>
+                    <div class="train-item gen-cont f-max">
+                        <div class="gen-att">
+                            <div class="gen-head">Task Name:</div>
+                            <div *ngIf="modelTrainingData.scheduleName" class="gen-body">{{modelTrainingData.scheduleName}}</div>
+                            <div *ngIf="!modelTrainingData.scheduleName" class="gen-body">NA</div>
+                        </div>
+                        <div class="gen-att">
+                            <div class="gen-head">Model Config Used:</div>
+                            <div *ngIf="modelTrainingData.modelConfigName" class="gen-body model-color" (click)="openModelConfigDialog(modelTrainingData)">{{modelTrainingData.modelConfigName}}</div>
+                            <div *ngIf="!modelTrainingData.modelConfigName" class="gen-body">NA</div>
+                        </div>
+                        <div class="gen-att">
+                            <div class="gen-head">Dataset Name:</div>
+                            <div  *ngIf="modelTrainingData.dataSetName" class="gen-body">{{modelTrainingData.dataSetName}}</div>
+                            <div *ngIf="!modelTrainingData.dataSetName" class="gen-body">NA</div>
+                        </div>
+                        <div class="gen-att">
+                            <div class="gen-head">Number Of Components:</div>
+                            <div *ngIf="modelTrainingData.numberOfComponentsDisp" class="gen-body">{{modelTrainingData.numberOfComponentsDisp}}</div>
+                            <div *ngIf="!modelTrainingData.numberOfComponentsDisp" class="gen-body">NA</div>
+                        </div>
+                        <div class="gen-att">
+                            <div class="gen-head">Start Time:</div>
+                            <div *ngIf="modelTrainingData.startTime" class="gen-body">{{modelTrainingData.startTime}}</div>
+                            <div *ngIf="!modelTrainingData.startTime" class="gen-body">NA</div>
+                        </div>
+                        <div class="gen-att">
+                            <div class="gen-head">Time Used:</div>
+                            <div *ngIf="modelTrainingData.timeUsed" class="gen-body">{{modelTrainingData.timeUsed}}</div>
+                            <div *ngIf="!modelTrainingData.timeUsed" class="gen-body">NA</div>
+                        </div>
+                        <div class="gen-att">
+                            <div class="gen-head"># of Observation:</div>
+                            <div *ngIf="modelTrainingData.numberofObservation" class="gen-body">{{modelTrainingData.numberofObservation}}</div>
+                            <div *ngIf="!modelTrainingData.numberofObservation" class="gen-body">NA</div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-md-6 col-sm-12 no-padd mar-b-18">
+                <div class="train-cont df-col">
+                    <div class="train-item-head">Construction Error Cluster Quality Chart:</div>
+                    <div class="train-item ceoc-cont f-max">
+                        <div class="ceoc-att">
+                            <app-amchart [graphData]="modelTrainingData.loss"></app-amchart>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-12 no-padd mar-b-18">
+                <div class="train-cont df-col">
+                    <div class="train-item-head feature-item">
+                        <span>Features Importance:</span>
+                        <button type="button" class="shadowbtn data-prev" (click)="openDataPreviewDialog()">Data Preview</button>
+                    </div>
+                    <div class="train-item feature-cont f-max">
+                        <div *ngIf="modelTrainingData.featureImportance" class="feature-att-title">
+                            <div class="feature-name">Top 10 Features ({{modelTrainingData.featureImportance.length}})</div>
+                            <div class="feature-count move-r">Value</div>
+                        </div>
+
+                        <div class="feature-att" *ngFor="let featuresImp of modelTrainingData.featureImportance | orderBy: 'displayValue' : true | slice:0:10">
+                            <div class="feature-head">Feature {{featuresImp.key}}:</div>
+                            <div class="feature-body">
+                                <mat-progress-bar class="col-8 no-padd feature-imp-progress-bar" mode="determinate"
+                                [value]="(featuresImp.barVal * 100) " [color]="featuresImp.color"></mat-progress-bar>
+                                <div>{{featuresImp.displayValue}}</div>
+                            </div>
+                        </div>
+
+
+
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-12 no-padd mar-b-18">
+                <div class="train-cont df-col">
+                    <div class="train-item-head">Resource Usage:</div>
+                    <div class="train-item resused-cont f-max">
+
+                        <div class="resused-att">
+                            <div class="resused-head">CPU Usage:</div>
+                            <div class="resused-body row">
+                                <div class="col-6 no-padd-r">
+                                    <mat-progress-bar class="no-padd resused-progress-bar" mode="determinate"
+                                    [value]="(modelTrainingData.cpuUsage * 100)"></mat-progress-bar> 
+                                </div>
+                              <div *ngIf="modelTrainingData.cpuUsageDisp" class="data-label per-label col-6">{{modelTrainingData.cpuUsageDisp}}%</div>
+                              <div *ngIf="!modelTrainingData.cpuUsageDisp" class="data-label per-label col-6">NA</div>
+                            </div>
+                        </div>
+
+                        <div class="resused-att">
+                            <div class="resused-head">Memory Usage:</div>
+
+                            <div class="resused-body row">
+                                <div class="col-6 no-padd-r">
+                                    <mat-progress-bar class="no-padd resused-progress-bar" mode="determinate"
+                                    [value]="(modelTrainingData.cpuMemoryUsage * 100)"></mat-progress-bar> 
+                                </div>
+                              <div *ngIf="modelTrainingData.cpuMemoryUsageDisp" class="data-label per-label col-6">{{modelTrainingData.cpuMemoryUsageDisp}}%</div>
+                              <div *ngIf="!modelTrainingData.cpuMemoryUsageDisp" class="data-label per-label col-6">NA</div>
+                            </div>
+                        </div>
+
+                        <div class="resused-att">
+                            <div class="resused-head">GPU Usage:</div>
+                            <div class="resused-body row">
+                                <div class="col-6 no-padd-r">
+                                    <mat-progress-bar class="no-padd resused-progress-bar" mode="determinate"
+                                    [value]="(modelTrainingData.gpuUsage * 100)"></mat-progress-bar> 
+                                </div>
+                              <div *ngIf="modelTrainingData.gpuUsageDisp" class="data-label per-label col-6">{{modelTrainingData.gpuUsageDisp}}%</div>
+                              <div *ngIf="!modelTrainingData.gpuUsageDisp" class="data-label per-label col-6">NA</div>
+                            </div>
+                        </div>
+
+                        <div class="resused-att">
+                            <div class="resused-head">GPU Memory Usage:</div>
+
+
+                            <div class="resused-body row">
+                                <div class="col-6 no-padd-r">
+                                    <mat-progress-bar class="no-padd resused-progress-bar" mode="determinate"
+                                    [value]="(modelTrainingData.gpuMemoryUsage * 100)"></mat-progress-bar> 
+                                </div>
+                              <div *ngIf="modelTrainingData.gpuMemoryUsageDisp" class="data-label per-label col-6">{{modelTrainingData.gpuMemoryUsageDisp}}%</div>
+                              <div *ngIf="!modelTrainingData.gpuMemoryUsageDisp" class="data-label per-label col-6">NA</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+
+</div>

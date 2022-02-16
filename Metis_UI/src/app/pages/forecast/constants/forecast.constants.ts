@@ -1,0 +1,20 @@
+export const FORECAST_URLS = {
+    GET_ALL_MODELCONFIGS_API: 'getAllModelConfigs/',
+    GET_MODELCONFIG_DETAILS_API: 'getModelConfigDetails/',
+    PUT_UPDATE_FORECASTSELECTION_API: 'updateForecastSelection/',
+    POST_SAVE_FORECASTSELECTION_API: 'saveForecastSelection/',
+    PUT_HANDLE_FORECASTPROCESSING_API: 'handleForecastProcessing/',
+    GET_FORECASTPROCESSING_MODELCONFIG_DETAILS_API: 'forecastProcessingModelDetails/',
+    POST_CREATE_FORECASTMODELCONFIG_API: 'createModelConfiguration',
+    PUT_UPDATE_FORECASTMODELCONFIG_API: 'updateModelConfiguration',
+    DELETE_REMOVE_FORECASTMODELCONFIG_API: 'forecastdeleteModelConfig',
+    GET_FORECAST_SELECTION_API: 'ForecastSelectiontable/',
+    GET_FORECAST_PROCESSING_API: 'forecastProcessingtable/',
+    UPDATE_FORECAST_SELECTION_TABLE_API: 'ForecastSelectionUpdatetable',
+    GET_CONFIGURATION_FORECASTMODELCONFIG_API: 'forecastProcessingModelDetails',
+    GET_DATASETNAMES: 'Datasetname',
+    GET_DROPDOWN_FORECASTMODELCONFIG_API: 'configurationModelConfig',
+    PUT_SCHEDULE_FORECASTSELECTION_API: 'scheduleForecastSelection',
+    POST_FETCH_FORECASTCOMPARE_API: 'getForecastCompare',
+    GET_DATASET_LIST: 'getDataSetForJobType/'
+};

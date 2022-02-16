@@ -1,0 +1,136 @@
+---
+# Source: warrior/templates/04-deployments.yaml
+
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: {{ .Chart.Name }}-katana-db
+  namespace: {{ $.Values.namespace }}
+  creationTimestamp: null
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: katana-db
+      creationTimestamp: null
+    spec:
+      containers:
+      - name: katana-db
+        image: postgres:10.4
+        imagePullPolicy: IfNotPresent
+        envFrom:
+        - configMapRef:
+            name: katana-db-config
+        volumeMounts:
+        - mountPath: /var/lib/postgresql/data
+          name: katana-db
+        resources:
+          limits:
+            cpu: 300m
+            memory: 300M
+          requests:
+            cpu: 100m
+            memory: 100M
+      volumes:
+      - name: katana-db
+        persistentVolumeClaim:
+          claimName: {{ $.Values.volume.pv_katana_db }}-claim
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: {{ .Chart.Name }}-warrior
+  namespace: {{ $.Values.namespace }}
+  creationTimestamp: null
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: warrior
+      creationTimestamp: null
+    spec:
+      hostAliases:
+      - ip: "127.0.0.1"
+        hostnames:
+        - "backend"
+        - "frontend"
+      initContainers:
+        - name: init-backend
+          imagePullPolicy: IfNotPresent
+          image: docker-registry.default.svc:5000/ml/backend:{{ $.Values.image.tag }}
+          command: ["sh", "-c"]
+          args: ["cp -n -r /katana/katana_configs/* /tmp/katana/katana_configs; sleep 1"]
+          volumeMounts:
+            - mountPath: /tmp/katana/katana_configs
+              name: katana-configs
+      containers:
+      - name: backend
+        imagePullPolicy: IfNotPresent
+        image: docker-registry.default.svc:5000/ml/backend:{{ $.Values.image.tag }}
+        command: ["sh", "-c"]
+        args: [
+            '
+            appmanage.py appconfig /apps/InstallApp.json || true ;
+            manage.py collectstatic --noinput;
+            manage.py makemigrations;
+            manage.py migrate --database postgresql;
+            echo "from django.contrib.auth import get_user_model; User = get_user_model(); x = User.objects.create_superuser(''admin'', '''', ''admin'') if not User.objects.filter(username=''admin'').exists() else User.objects.get(username=''admin''); x.set_password(''admin''); x.save()" | manage.py shell;
+            uwsgi -b 65535 --socket :4000 --workers 100 --cpu-affinity 1 --module katana.wui.wsgi --py-autoreload 1 --static-map /static=/usr/local/lib/python3.7/site-packages/static;
+            ',
+          ]
+
+        env:
+          - name: DB_HOST
+            value: "katana-db"
+          - name: DB_NAME
+            value: "warrior"
+          - name: DB_PASSWORD
+            value: "qwerty"
+          - name: DB_USER
+            value: "warrior"
+          - name: pipmode
+            value: "True"
+          - name: KATANA_CRYPTO_KEY
+            value: ""
+        resources:
+          limits:
+            cpu: '4'
+            memory: 8Gi
+          requests:
+            cpu: '2'
+            memory: 3Gi
+        volumeMounts:
+        - mountPath: /katana/katana_configs
+          name: katana-configs
+        - mountPath: "/etc/config"
+          name: config
+
+      - name: frontend
+        imagePullPolicy: IfNotPresent
+        image: docker-registry.default.svc:5000/ml/frontend:{{ $.Values.image.tag }}
+        ports:
+        - containerPort: 8443
+        resources: 
+          limits:
+            cpu: '4'
+            memory: 8Gi
+          requests:
+            cpu: '2'
+            memory: 3Gi
+      restartPolicy: Always
+      nodeSelector:
+        node-app: ui-warrior
+      volumes:
+      - name: katana-configs
+        persistentVolumeClaim:
+          claimName: {{ $.Values.volume.pv_katana_configs }}-claim
+      - name: config
+        configMap:
+          name: war-config
+status: {}

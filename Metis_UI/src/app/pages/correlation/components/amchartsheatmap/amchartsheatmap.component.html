@@ -1,0 +1,92 @@
+<div class="main_graph_div">
+    <!-- <div *ngFor="let a of chart.data | paginate: config">asd</div> -->
+    <div class="d-flex paginate-align">
+        <div class="d-flex">
+            <div class="d-flex process_rows_css">
+                <span class="mar-r-8 paginate-text">Features per page:</span>
+                <mat-select disableOptionCentering class="select-page" [(ngModel)]="numberOfFeaturesPerPage"
+                    (selectionChange)="setNewPageSize(numberOfFeaturesPerPage)">
+                    <mat-option *ngFor="let pgrec of pageArr" [value]="pgrec">{{pgrec}}</mat-option>
+                </mat-select>
+            </div>
+            <div class="pagination-previous" [class.disabled]="inputCurrentpage <= 1">
+                <button type="button" class="pagination-btn" (click)="changePage(inputCurrentpage - 1)"
+                    [disabled]="inputCurrentpage <= 1">
+                    < </button>
+            </div>
+
+            <div class="d-flex process_matselect">
+                <span class="paginate-text"> Page</span>
+                <input autocomplete="off" matInput class="currpage-input" type="text" [(ngModel)]="inputCurrentpage"
+                    (change)="changepageinp(inputCurrentpage)">
+
+                <span class="paginate-text"> of {{totalPages}}</span>
+            </div>
+            <div class="pagination-next" [class.disabled]="inputCurrentpage >= totalPages">
+                <button type="button" class="pagination-btn" (click)="changePage(inputCurrentpage + 1)"
+                    [disabled]="inputCurrentpage >= totalPages"> > </button>
+            </div>
+        </div>
+
+        <div class="filter-div">
+
+            <div class="wrap-mat xfetaure-div">
+                <div class="feature-label">X Axis Features</div>
+                <mat-select  #mdx disableOptionCentering name="XAxisfeature" (closed)="onDropDownClose('X')" [(ngModel)]="xAxisFilter" placeholder="Select" class="form-control drop-mat mat_width_css x_axis_css" multiple required>
+                    <mat-select-trigger class="d-flex">
+                      <span [ngClass]="{'textselect': xAxisFilter.length > 1}">{{xAxisFilter ? xAxisFilter[0] : ''}}</span>
+                      <span *ngIf="xAxisFilter.length > 1" class="example-additional-selection">
+                        (+{{xAxisFilter.length - 1}} {{xAxisFilter.length === 2 ? 'other' : 'others'}})
+                      </span>
+                    </mat-select-trigger>
+                    <div class="paginate_css">
+                        <span>
+                            <!-- <i class="fa fa-search search_fafa" aria-hidden="true"></i> -->
+                            <mat-icon aria-hidden="false" class="search_mat" aria-label="search icon">search</mat-icon>
+                            <input autocomplete="off" maxlength="150" matInput class="css_search" type="text" placeholder="Search" [(ngModel)]="searchXFeature">
+                        </span>
+                    </div>
+                    <mat-option *ngFor="let xFeature of featuresx | filterBy: searchXFeature" [title]="xFeature" [value]="xFeature">
+                        {{xFeature}}</mat-option>
+                        <div *ngIf="(featuresx | filterBy: searchXFeature).length == 0" class="no-rec">No feature available</div>
+                        <div class="mat-drop-footer">
+                            <button type="button" class="shadowbtn btn-default cancel-mod" (click)="onDropDownClose('X','clear');mdx.close()">Clear All</button>
+                            <button type="button" class="shadowbtn btn-primary run-cor-btn" (click)="onDropDownClose('X','apply');mdx.close()">Apply</button>
+                        </div>
+    
+                  </mat-select>
+            </div>
+
+        <div class="wrap-mat">
+            <div class="feature-label">Y Axis Features</div>
+            <mat-select  #mdy disableOptionCentering name="YAxisfeature" (closed)="onDropDownClose('Y')" [(ngModel)]="yAxisFilter" placeholder="Select" class="form-control drop-mat mat_width_css y_axis_css" multiple required>
+                <mat-select-trigger class="d-flex">
+                  <span [ngClass]="{'textselect': yAxisFilter.length > 1}">{{yAxisFilter ? yAxisFilter[0] : ''}}</span>
+                  <span *ngIf="yAxisFilter.length > 1" class="example-additional-selection">
+                    (+{{yAxisFilter.length - 1}} {{yAxisFilter.length === 2 ? 'other' : 'others'}})
+                  </span>
+                </mat-select-trigger>
+                <div class="paginate_css">
+                    <span>
+                        <!-- <i class="fa fa-search search_fafa" aria-hidden="true"></i> -->
+                        <mat-icon aria-hidden="false" class="search_mat" aria-label="search icon">search</mat-icon>
+                        <input autocomplete="off" maxlength="150" matInput class="css_search" type="text" placeholder="Search" [(ngModel)]="searchYFeature">
+                    </span>
+                </div>
+                <mat-option *ngFor="let yFeature of featuresy | filterBy: searchYFeature" [title]="yFeature" [value]="yFeature">
+                    {{yFeature}}</mat-option>
+                    <div *ngIf="(featuresy | filterBy: searchYFeature).length == 0" class="no-rec">No feature available</div>
+                    <div class="mat-drop-footer">
+                        <button type="button" class="shadowbtn btn-default cancel-mod" (click)="onDropDownClose('Y','clear');mdy.close()">Clear All</button>
+                        <button type="button" class="shadowbtn btn-primary run-cor-btn" (click)="onDropDownClose('Y','apply');mdy.close()">Apply</button>
+                    </div>
+
+              </mat-select>
+        </div>
+
+    </div>
+
+    </div>
+<div id="chartdiv"></div>
+<!-- <div class="amchart_hide_logo"></div> -->
+</div>

@@ -1,0 +1,302 @@
+<div class="parent-main">
+    <div class="feature-head">
+        <div class="no-height">
+            <div class="header-pad">
+                <div class="mar-b-header">
+                    <div class="action-label data-set mar-b-label">Data Set:</div>
+                    <div class="wrap-mat">
+                        <mat-select disableOptionCentering class="form-control drop-mat mat_width_css"
+                            [(ngModel)]="selectedDataSet" (selectionChange)="OnDDChangeAction('dataSet')">
+                            <mat-option hidden disabled value="">Select</mat-option>
+                            <mat-option *ngFor="let dataSetObj of dataSetDD" [value]="dataSetObj">{{dataSetObj}}
+                            </mat-option>
+                        </mat-select>
+                    </div>
+                </div>
+                <div class="mar-b-header">
+                    <div class="dc-flex mar-b-label">
+                        <div>
+                            <label class="check-outer">
+                                <input autocomplete="off" type="checkbox" [(ngModel)]="enableFeatureGroup" [disabled]="disableGroupCheck()"
+                                    (change)="OnFeatureGrpCheckBox(enableFeatureGroup)" id="featuregroup"
+                                    name="featuregroup" />
+                                <span class="checkmark"></span>
+                            </label>
+                        </div>
+                        <div class="feature-set action-label">
+                            Feature Group:
+                        </div>
+                    </div>
+                    <div class="wrap-mat">
+                        <mat-select disableOptionCentering [disabled]="!enableFeatureGroup"
+                            class="form-control drop-mat mat_width_css" [(ngModel)]="selectedFeaturegroup"
+                            (selectionChange)="OnDDChangeAction('featureGrp')">
+                            <mat-option hidden disabled value="">Select</mat-option>
+                            <mat-option [title]="featureGroupObj" *ngFor="let featureGroupObj of featureGroup" [value]="featureGroupObj">
+                                {{featureGroupObj}}</mat-option>
+                        </mat-select>
+                    </div>
+                    <div class="group-action">
+                    <div class="save-link" [ngClass]="{'disable-control': !selectedFeaturegroup || (selectorType == 'profiler' && !selectedFeatureId)}"
+                        (click)="groupUpdate()">Save Selections</div>
+                        <div *ngIf="selectedFeaturegroup" class="trash_icon" (click)="deleteFeatureGroup()">
+                            <!-- <i class="fa fa-trash" aria-hidden="true"></i> -->
+                            <mat-icon aria-hidden="false" class="delete_forever_mat" aria-label="delete icon">delete_forever</mat-icon>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mar-b-header bdr-seperator">
+
+                    <div class="mar-b-header" *ngIf="selectorType == 'profiler'">
+                        <div class="dc-flex mar-b-label">
+                            <div class="action-label">
+                                Label:
+                            </div>
+                        </div>
+                        <div class="wrap-mat">
+                            <mat-select disableOptionCentering [disabled]="disableLabelCheck()"
+                            class="form-control drop-mat mat_width_css" [(ngModel)]="selectedLabel">
+                            <mat-option hidden disabled value="">Select</mat-option>
+                            <mat-option *ngFor="let labelObj of labelDD"
+                                [value]="labelObj">
+                                {{labelObj}}</mat-option>
+                        </mat-select>
+                        </div>
+                    </div>
+
+                    <div class="dc-flex mar-b-label">
+                        <div>
+                            <label class="check-outer">
+                                <input autocomplete="off" type="checkbox" [(ngModel)]="enableTimeFilter" [disabled]="disableTimeFilterFeature()"
+                                    (change)="OnTimeFilterCheckBox(enableTimeFilter)" id="timefilter"
+                                    name="timefilter" />
+                                <span class="checkmark"></span>
+                            </label>
+                        </div>
+
+                        <div *ngIf="selectorType !== 'profiler'" class="time-filter-set action-label">
+                            Time Filter Feature:
+                        </div>
+                        <div *ngIf="selectorType === 'profiler'" class="time-filter-set action-label">
+                            Date Time :
+                        </div>
+                    </div>
+                    <div class="wrap-mat">
+                        <mat-select disableOptionCentering [disabled]="!enableTimeFilter"
+                            class="form-control drop-mat mat_width_css" [(ngModel)]="selectedTimeFilterFeature">
+                            <mat-option hidden disabled value="">Select</mat-option>
+                            <mat-option *ngFor="let timeFilterFeatureObj of timeFilterFeature"
+                                [value]="timeFilterFeatureObj.time_column">
+                                {{timeFilterFeatureObj.time_column}}</mat-option>
+                        </mat-select>
+                    </div>
+                </div>
+                <form #dateRange="ngForm">
+                    <div class="mar-b-header" *ngIf="enableTimeFilter && selectedTimeFilterFeature">
+                        <div class="action-label data-set mar-b-label">Data Range:</div>
+
+                        <div>
+                            <div class="date_time">
+                                <div>
+                                    <div class="main-date-div">
+                                        <input autocomplete="off" matInput class="inputfeild form-control" name="dateFrom"
+                                            [(ngModel)]="timeFilterVal.fromDate" placeholder="Select Date"
+                                            (dateChange)="onFromDateChange()" [matDatepicker]="pickerFrom" readonly
+                                            required />
+                                        <mat-datepicker-toggle class="dat-pixk" matSuffix [for]="pickerFrom">
+                                        </mat-datepicker-toggle>
+                                        <mat-datepicker #pickerFrom></mat-datepicker>
+                                    </div>
+                                    <div class="fil-bold">To</div>
+                                </div>
+                                <div class="input-time-div">
+                                    <input autocomplete="off" matInput class="input-feild-time form-control" placeholder="00"
+                                        [(ngModel)]="timeFilterVal.fromTimeHr" type="text" name="timeHrFrom"
+                                        [appAlphaNumeric]="'num'" maxlength="2" required>
+                                    <div class="time-stamp">
+                                        (HH)
+                                    </div>
+                                </div>
+                                <div class="input-time-div">
+                                    <input autocomplete="off" matInput class="input-feild-time form-control" placeholder="00"
+                                        [(ngModel)]="timeFilterVal.fromTimeMin" type="text" name="timeMinFrom"
+                                        [appAlphaNumeric]="'num'" maxlength="2" required>
+                                    <div class="time-stamp">
+                                        (MM)
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="date_time">
+                                <div>
+                                    <div class="main-date-div">
+                                        <input autocomplete="off" matInput class="inputfeild form-control" name="dateTo" [min]="minToDate"
+                                            [(ngModel)]="timeFilterVal.toDate" placeholder="Select Date"
+                                            [matDatepicker]="pickerTo" readonly required />
+                                        <mat-datepicker-toggle class="dat-pixk" matSuffix [for]="pickerTo">
+                                        </mat-datepicker-toggle>
+                                        <mat-datepicker #pickerTo></mat-datepicker>
+                                    </div>
+                                </div>
+                                <div class="input-time-div">
+                                    <input autocomplete="off" matInput class="input-feild-time form-control" placeholder="00"
+                                        [(ngModel)]="timeFilterVal.toTimeHr" type="text" name="timeHrTo"
+                                        [appAlphaNumeric]="'num'" maxlength="2" required>
+                                    <div class="time-stamp">
+                                        (HH)
+                                    </div>
+                                </div>
+                                <div class="input-time-div">
+                                    <input autocomplete="off" matInput class="input-feild-time form-control" placeholder="00"
+                                        [(ngModel)]="timeFilterVal.toTimeMin" type="text" name="timeMinTo"
+                                        [appAlphaNumeric]="'num'" maxlength="2" required>
+                                    <div class="time-stamp">
+                                        (MM)
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </form>
+
+                <div class="run-btn">
+                    <button type="button" class="shadowbtn btn-primary run-cor-btn run-cor-width"
+                        (click)="onRunCorr()">{{selectorType == 'profiler' ? 'Run Profiling' : 'Run Correlation'}}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="feature-body df-col">
+
+        <div class="dc-flex body-head">
+            <div class="feature-head-text">All Features <span
+                    class="feature-count-text">({{featureDetails.length}})</span></div>
+            <div>
+                <label class="check-outer">
+                    <input autocomplete="off" type="checkbox" [(ngModel)]="showSelected" (change)="onsearchChange(showSelected)"
+                        id="showSelectedId" name="showSelectedName" />
+                    <span class="checkmark"></span>
+                </label>
+            </div>
+
+            <div class="select-text">
+                Show Selected Features <span class="select-count-text">({{showSelectedFeature()}})</span>
+            </div>
+            <div class="shift-right">
+                <button type="button" class="shadowbtn btn btn-primary cancel-mod" [disabled]="!selectedFeature.length" (click)="groupCreate()">Save as new
+                    group</button>
+            </div>
+
+        </div>
+
+        <div class="body-tab f-max df-col">
+            <div *ngIf="featureLoader" class="spinner-div col-12">
+                <mat-progress-spinner color="slategrey" mode="indeterminate">
+                </mat-progress-spinner>
+            </div>
+
+            <div *ngIf="!featureLoader">
+                <div class="page_css_view">
+                    <div class="paginate_css">
+                        <span>
+                            <!-- <i class="fa fa-search search_fafa" aria-hidden="true">
+                            </i> -->
+                            <mat-icon aria-hidden="false" class="search_mat" aria-label="search icon">search</mat-icon>
+                            <input autocomplete="off" maxlength="150" matInput class="form-control css_search" type="text" [(ngModel)]="searchFilter"
+                                placeholder="Search" (ngModelChange)="onsearchChange(searchFilter)">
+                        </span>
+                    </div>
+                    <div class="dc-flex paginate-align">
+                        <pagination-template #pT="paginationApi" [id]="config.id" class="dc-flex"
+                            (pageChange)="changepage($event)">
+                            <div class="dc-flex process_rows_css">
+                                <span class="mar-r-8 paginate-text">Rows:</span>
+                                <mat-select disableOptionCentering class="select-page" [(ngModel)]="itemPerPage"
+                                    (selectionChange)="setNewPageSize(itemPerPage)">
+                                    <mat-option *ngFor="let pgrec of pageArr" [value]="pgrec">{{pgrec}}</mat-option>
+                                </mat-select>
+                            </div>
+                            <div class="pagination-previous" [class.disabled]="pT.isFirstPage()">
+                                <button type="button" class="pagination-btn" (click)="pT.previous()"
+                                    [disabled]="pT.isFirstPage()">
+                                    < </button>
+                            </div>
+
+                            <div class="dc-flex process_matselect">
+                                <span class="paginate-text"> Page</span>
+                                <input autocomplete="off" matInput class="currpage-input" type="text" [(ngModel)]="inputCurrentpage"
+                                    (change)="changepageinp(inputCurrentpage,pT.getLastPage())">
+
+                                <span class="paginate-text"> of {{pT.getLastPage()}}</span>
+                            </div>
+                            <div class="pagination-next" [class.disabled]="pT.isLastPage()">
+                                <button type="button" class="pagination-btn" (click)="pT.next()"
+                                    [disabled]="pT.isLastPage()"> > </button>
+                            </div>
+                        </pagination-template>
+
+                    </div>
+                </div>
+
+            </div>
+
+
+            <div *ngIf="!featureLoader" class="f-max out-table mod-table-scroll">
+                <table class="df-col">
+                    <thead class="sticky-head">
+                        <tr class="row no-mar head-tr">
+                            <th class="dc-flex feature-width">
+                                <div class="check-main">
+                                    <label class="check-outer">
+                                        <input autocomplete="off" type="checkbox" [(ngModel)]="checkAllFeature"
+                                            (change)="selectAllFeature(checkAllFeature)" id="selectAll"
+                                            name="selectAll" />
+                                        <span class="checkmark"></span>
+                                    </label>
+                                </div>
+                                <div class="wrap-text">Feature</div>
+                            </th>
+                            <th class="type-width">
+                                <div class="wrap-text">Property Type</div>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="row no-mar body-tr"
+                            *ngFor="let featureDet of featureDetails | filterBy : {$or: [{ 'name': searchFilter }, { 'type': searchFilter }], 'checkSelect' : showSelected ? showSelected : ''} | paginate: config">
+                            <td class="dc-flex feature-width">
+                                <div class="check-main">
+                                    <label class="check-outer">
+                                        <input autocomplete="off" type="checkbox" [(ngModel)]="featureDet.checkSelect"
+                                            (change)="onSelectFeature(featureDet)" id="{{featureDet.name}}"
+                                            name="{{featureDet.name}}" />
+                                        <span class="checkmark"></span>
+                                    </label>
+                                </div>
+                                <div class="wrap-text">{{featureDet.name}}</div>
+                            </td>
+                            <td class="type-width">
+                                <div class="wrap-text">{{featureDet.type}}</div>
+                            </td>
+
+                        </tr>
+                        <tr class="row no-mar no-rec body-tr"
+                            *ngIf="(featureDetails | filterBy : {$or: [{ 'name': searchFilter }, { 'type': searchFilter }], 'checkSelect' : showSelected ? showSelected : ''}).length == 0">
+                            <td class="col-12 wrap-text no_rec_css">Feature not available</td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+
+
+
+</div>
